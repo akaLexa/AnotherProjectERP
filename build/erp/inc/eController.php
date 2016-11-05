@@ -2,7 +2,6 @@
 namespace build\erp\inc;
 
 use mwce\ModuleController;
-use mwce\Tools;
 
 class eController extends ModuleController
 {

@@ -420,7 +420,7 @@ class router
                     {
                         $contoller_path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR . "controller" . DIRECTORY_SEPARATOR . $name . ".php";
 
-                        $cPath = 'build\\' . tbuild . '\\plugins\\controller\\' . $name;
+                        $cPath = 'build\\' . tbuild . '\\plugins\\' . $name;
 
                         //region проверка на пользователя (если есть)
                         $ccfg = Configs::readCfg("plugin_" . $name, tbuild);
