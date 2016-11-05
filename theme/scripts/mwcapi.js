@@ -151,7 +151,6 @@ function mwce_alert(msg,title) {
     });
 }
 
-
 function mwce_confirm(params) {
 
     if(params instanceof Object){
@@ -199,6 +198,7 @@ function mwce_confirm(params) {
         console.error('[mwce_confirm]: params must be a JSON');
     }
 }
+
 mwce_confirm.close = function () {
     $('#for_mwce_confirm').dialog('close');
 };

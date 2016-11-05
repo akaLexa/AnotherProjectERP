@@ -1,0 +1,27 @@
+<div class="container ">
+    <button type="button" class="btn btn-success" onclick="add()">
+        <span class="glyphicon glyphicon-plus"></span>
+        Добавить группу
+    </button>
+
+    <input type="button" class="btn btn-info" value="Обновить" onclick="genTabContent('Group');">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="">Название группы</th>
+            <th style="width:100px;">Опции</th>
+        </tr>
+        </thead>
+        <tbody id="groupTableBody">
+        |groupTableBody|
+        <tr>
+            <td>|col_gID|.|col_gName|</td>
+            <td>
+                <span onclick="groupEdit(|col_gID|)" class="glyphicon glyphicon-pencil" title="Редактировать" style="display: inline-block; margin-left: 5px; cursor: pointer;"></span>
+                <span onclick="groupDel(|col_gID|)" class="glyphicon glyphicon-remove" title="Удалить" style="display: inline-block; margin-left: 5px; cursor: pointer;"></span>
+            </td>
+        </tr>
+        |/groupTableBody|
+        </tbody>
+    </table>
+</div>

@@ -24,6 +24,7 @@ class DataLoader implements iStartable
     {
         return array(
             'MainPage' => ['title' => 'title_1','ppath' => 'main', 'caching' => '0', "ison" => '1', "isClass" => '1', "groups" => '2'],
+            'UnitManager' => ['title' => 'title_2','ppath' => 'adm', 'caching' => '0', "ison" => '1', "isClass" => '1', "groups" => '2'],
         );
     }
 
