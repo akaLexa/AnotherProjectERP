@@ -9,6 +9,7 @@
 namespace build\erp\adm;
 
 use build\erp\adm\m\mUserGroup;
+use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
 use mwce\Tools;
 
@@ -17,6 +18,7 @@ class UnitManager extends eController
     protected $postField = array(
         'id' => ['type'=>self::INT],
         'GroupNameText' => ['type'=>self::STR,'maxLength'=>250],
+        'roleName' => ['type'=>self::STR,'maxLength'=>250],
     );
 
     protected $getField = array(
@@ -35,29 +37,37 @@ class UnitManager extends eController
      */
     public function actionGetGroup(){
         if(empty($_POST)){
-            $curGeoups = mUserGroup::getModels();
-
-            if(empty($curGeoups))
-                $curGeoups = mUserGroup::getEmptyList();
+            self::actionGetGroupList();
 
             $this->view
-                ->loops('groupTableBody',$curGeoups,'GroupForm',$this->className)
+                ->setFContainer('groupTableBody',true)
                 ->out('GroupForm',$this->className);
         }
         else{
             try{
                 mUserGroup::Add($_POST['GroupNameText']);
+                echo json_encode(['success'=>1]);
             }
             catch (\Exception $e){
                 echo json_encode(['error'=>$e->getMessage()]);
             }
+        }
+    }
 
-            echo json_encode(['success'=>1]);
+    public function actionGetGroupList(){
+        $curGeoups = mUserGroup::getModels();
+        if(!empty($curGeoups)){
+            $ai = new \ArrayIterator($curGeoups);
+            foreach ($ai as $item) {
+                $this->view
+                    ->add_dict($item)
+                    ->out('groupCenter',$this->className);
+            }
         }
     }
 
     /**
-     * едактирование группы
+     * редактирование группы
      */
     public function actionEditGroup(){
         if(!empty($_GET['id'])){
@@ -87,8 +97,16 @@ class UnitManager extends eController
      * форма добавления
      */
     public function actionAddGroup(){
+
+        $list = mUserRole::getModels();
+        if(!empty($list)){
+            $this->view->loops('roleTblContent',$list,'AddGroupForm',$this->className);
+        }
+
         $this->view->out('AddGroupForm',$this->className);
     }
+
+
 
     /**
      * Удаление группы
@@ -103,6 +121,89 @@ class UnitManager extends eController
                 try{
                     $obj = mUserGroup::getCurModel($_POST['id']);
                     $obj->DelGroup();
+                    echo json_encode(['success'=>1]);
+                }
+                catch (\Exception $e){
+                    echo json_encode(['error'=>$e->getMessage()]);
+                }
+
+
+            }
+        }
+    }
+
+    //endregion
+
+    //region вкладка "Роли"
+
+    public function actionGetRole(){
+        self::actionGetRoleList();
+        $this->view
+            ->setFContainer('roleTblContent',true)
+            ->out('RoleIndex',$this->className);
+    }
+
+    public function actionGetRoleList(){
+        $list = mUserRole::getModels();
+        if(!empty($list)){
+            $ai = new \ArrayIterator($list);
+            foreach ($ai as $item){
+                $this->view
+                    ->add_dict($item)
+                    ->out('roleCenter',$this->className);
+            }
+        }
+    }
+
+    public function actionAddRole(){
+        if(empty($_POST)){
+            $this->view->out('AddRoleForm',$this->className);
+        }
+        else if(!empty($_POST['roleName'])){
+            try{
+                mUserRole::AddRole($_POST['roleName']);
+                echo json_encode(['success'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+        }
+    }
+
+    public function actionEditRole(){
+        if(!empty($_GET['id'])){
+            $info = mUserRole::getCurModel($_GET['id']);
+
+            if(empty($info))
+                return;
+
+            if(empty($_POST)){
+                $this->view
+                    ->add_dict($info)
+                    ->out('EditRoleForm',$this->className);
+            }
+            else{
+                try{
+                    $info->edit($_POST['roleName']);
+                    echo json_encode(['success'=>1]);
+                }
+                catch (\Exception $e){
+                    echo json_encode(['error'=>$e->getMessage()]);
+                }
+            }
+        }
+    }
+
+    public function actionDelRole(){
+        if(!empty($_POST['id'])){
+            if($_POST['id']<=1){
+                echo json_encode(['error'=>'Удалить основные роли нельзя!']);
+            }
+            else{
+
+                try{
+                    $obj = mUserRole::getCurModel($_POST['id']);
+                    $obj->delete();
                     echo json_encode(['success'=>1]);
                 }
                 catch (\Exception $e){

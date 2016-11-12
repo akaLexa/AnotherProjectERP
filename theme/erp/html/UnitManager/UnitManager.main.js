@@ -156,3 +156,140 @@ function groupDel(id) {
         }
     })
 }
+
+
+function addRole() {
+    $('#forDialogs').dialog({
+        title:'Добавить роль',
+        modal:true,
+        resizable:false,
+        width:300,
+        buttons:{
+            add:{
+                text:'Добавить',
+                click:function () {
+                    if(document.querySelector('#roleNameText').value.trim().length>0){
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/AddRole',
+                            type:'POST',
+                            data:$('#addRoleForm').serialize(),
+                            callback:function (r) {
+                                var receive = JSON.parse(r);
+                                if(receive.error != undefined){
+                                    mwce_alert(receive.error,'Ошибка..');
+                                }
+                                else{
+                                    genTabContent(currentTab);
+                                    $('#forDialogs').dialog('close');
+                                }
+                            }
+                        });
+                    }
+
+                }
+            },
+            cancel:{
+                text:'Отмена',
+                click:function () {
+                    $(this).dialog('close');
+                }
+            }
+        },
+        create:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/AddRole',
+                loadicon:'Загружаю...'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    })
+}
+
+function roleEdit(id) {
+    $('#forDialogs').dialog({
+        title:'Редактировать роль',
+        modal:true,
+        resizable:false,
+        buttons:{
+            add:{
+                text:'Сохранить',
+                click:function () {
+                    if(document.querySelector('#roleNameText').value.trim().length>0){
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/EditRole?id='+id,
+                            type:'POST',
+                            data:$('#editRoleForm').serialize(),
+                            callback:function (r) {
+                                var receive = JSON.parse(r);
+                                if(receive.error != undefined){
+                                    mwce_alert(receive.error,'Ошибка..');
+                                }
+                                else{
+                                    genTabContent(currentTab);
+                                    $('#forDialogs').dialog('close');
+                                }
+                            }
+                        });
+                    }
+
+                }
+            },
+            cancel:{
+                text:'Отмена',
+                click:function () {
+                    $(this).dialog('close');
+                }
+            }
+        },
+        create:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/EditRole?id='+id,
+                loadicon:'Загружаю...'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    })
+}
+
+function roleDel(id) {
+    mwce_confirm({
+        title:'Подтверждение действия',
+        text:'Внимание, чтобы удалить роль, сначала убедитесь, что к ней не привязаны гуппы и пользователи. Вы точно уверены, что хотите удалить группу?',
+        buttons:{
+            'Да':{
+                text:'Да',
+                click:function () {
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/DelRole',
+                        type:'POST',
+                        data:'id='+id,
+                        callback:function (r) {
+                            var receive = JSON.parse(r);
+                            if(receive.error != undefined)
+                                mwce_alert(receive.error,'Внимание!');
+                            else{
+                                genTabContent(currentTab);
+                            }
+                        }
+                    });
+                    mwce_confirm.close();
+                }
+            },
+            'Нет':{
+                text:'Нет',
+                click:function () {
+                    mwce_confirm.close();
+                }
+            }
+        }
+    })
+}

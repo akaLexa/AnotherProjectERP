@@ -19,3 +19,7 @@
     left: 0;
     overflow: auto;
 }
+
+.form-inline-element{
+    display: inline-block;
+}
