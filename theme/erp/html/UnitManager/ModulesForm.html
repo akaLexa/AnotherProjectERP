@@ -6,15 +6,21 @@
 
     <input type="button" class="btn btn-info" value="Обновить доступы" onclick="" style="margin:5px auto;">
 
-    <table class="table">
+    <table class="table table-hover">
         <thead>
         <tr>
-            <th class="col-md-1">Название</th>
-            <th class="col-md-2">Адрес</th>
-            <th class="col-md-1">Кеширование(сек.)</th>
-            <th class="col-md-1">Тип</th>
-            <th class="col-md-1"><b class="glyphicon glyphicon-wrench"></b></th>
+            <th class="col-xs-1">Название</th>
+            <th class="col-xs-2">Адрес</th>
+            <th class="col-xs-1">Кеширование(сек.)</th>
+            <th class="col-xs-1">Тип</th>
+            <th class="col-xs-1"><b class="glyphicon glyphicon-wrench"></b></th>
         </tr>
         </thead>
+        <tbody id="ModulesLists"></tbody>
     </table>
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        moduleFiltr();
+    })
+</script>

@@ -9,6 +9,7 @@
 namespace build\erp\adm;
 
 use build\erp\adm\m\mMenuManager;
+use build\erp\adm\m\mModules;
 use build\erp\adm\m\mUserGroup;
 use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
@@ -26,11 +27,15 @@ class UnitManager extends eController
         'menuType' => ['type'=>self::STR],
         'mtitel' => ['type'=>self::STR],
         'newtitle' => ['type'=>self::STR],
+        'titleList' => ['type'=>self::STR],
         'pagesList' => ['type'=>self::STR],
+        'adrCnt' => ['type'=>self::STR],
         'linkadr' => ['type'=>self::STR],
         'newName' => ['type'=>self::STR,'maxLength'=>254],
         'seq' => ['type'=>self::INT],
         'mSeq' => ['type'=>self::INT],
+        'isMVC' => ['type'=>self::INT],
+        'cachSec' => ['type'=>self::INT],
     );
 
     protected $getField = array(
@@ -249,12 +254,159 @@ class UnitManager extends eController
             }
 
             $titles = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
-            $titles[0] = '...';
-            $this->view
-                ->set('titleList',html_::select($titles,'titleList',0,'class="form-control form-inline-element" style="width:200px;"'))
-                ->out('AddModuleForm', $this->className);
-        } else {
+            $titles['0'] = '...';
 
+            $this->view
+                ->set('titleList',html_::select($titles,'titleList','0','class="form-control form-inline-element" style="width:200px;"'))
+                ->out('AddModuleForm', $this->className);
+        }
+        else {
+            $params = array();
+
+            if(!empty($_POST['newTitle'])){
+                $lng = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
+                $params['titleList'] = $lng->add2Dic($_POST['newTitle'],'auto_title');
+            }
+            else{
+                if(empty($_POST['titleList']))
+                    return;
+                else
+                    $params['titleList'] = $_POST['titleList'];
+            }
+
+            if(empty($_POST['adrCnt']))
+                return;
+            else
+                $params['adrCnt'] = $_POST['adrCnt'];
+
+            $params['isMVC'] = empty($_POST['isMVC']) ? 0 : 1;
+            $params['cachSec'] = empty($_POST['cachSec']) ? 0 : $_POST['cachSec'];
+
+            $pi = new \ArrayIterator($_POST);
+            $roles = array();
+
+            foreach ($pi as $id=>$item) {
+                if(stripos($id,'role_') !== FALSE){
+                    $roles[] = (int)$item;
+                }
+            }
+
+            $params['roles'] = $roles;
+            try{
+                mModules::Add($params);
+                echo json_encode(['success'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+
+        }
+    }
+
+    public function actionEditModule(){
+        if(!empty($_GET['id'])){
+            $info = mModules::getCurModel($_GET['id']);
+
+            if(empty($_POST))
+            {
+                $roles = mUserRole::getRoleList();
+
+                $rls = explode(',',$info['col_roles']);//isCheck
+
+                if (!empty($roles)) {
+                    foreach ($roles as $id => $role) {
+                        if(in_array($id,$rls)){
+                            $this->view->set('isCheck','checked');
+                        }
+                        else
+                            $this->view->set('isCheck','');
+
+                        $this->view
+                            ->set(['roleId' => $id, 'roleName' => $role])
+                            ->out('uRolesList', $this->className);
+                    }
+                    $this->view->setFContainer('roleList', true);
+                }
+
+                $titles = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
+                $titles['0'] = '...';
+
+                if((int)$info['col_isClass'] == 1)
+                    $info['isChecked'] = "checked";
+                else
+                    $info['isChecked'] = "";
+
+                $this->view
+                    ->add_dict($info)
+                    ->set('titleList',html_::select($titles,'titleList',$info['col_title'],'class="form-control form-inline-element" style="width:200px;"'))
+                    ->out('editModule', $this->className);
+            }
+            else{
+                $params = array();
+
+                if(!empty($_POST['newTitle'])){
+                    $lng = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
+                    $params['titleList'] = $lng->add2Dic($_POST['newTitle'],'auto_title');
+                }
+                else{
+                    if(empty($_POST['titleList']))
+                        return;
+                    else
+                        $params['titleList'] = $_POST['titleList'];
+                }
+
+                if(empty($_POST['adrCnt']))
+                    return;
+                else
+                    $params['adrCnt'] = $_POST['adrCnt'];
+
+                $params['isMVC'] = empty($_POST['isMVC']) ? 0 : 1;
+                $params['cachSec'] = empty($_POST['cachSec']) ? 0 : $_POST['cachSec'];
+
+                $pi = new \ArrayIterator($_POST);
+                $roles = array();
+
+                foreach ($pi as $id=>$item) {
+                    if(stripos($id,'role_') !== FALSE){
+                        $roles[] = (int)$item;
+                    }
+                }
+
+                try{
+                    $info->edit($params);
+                    mModules::addRolesToModule($_GET['id'],$roles);
+                    echo json_encode(['success'=>1]);
+                }
+                catch (\Exception $e){
+                    echo json_encode(['error'=>$e->getMessage()]);
+                }
+            }
+        }
+    }
+
+    public function actionDelModule()
+    {
+        if(!empty($_GET['id'])){
+            $info = mModules::getCurModel($_GET['id']);
+            $info->delete();
+        }
+    }
+
+    public function actionGetModuleList(){
+        $list = mModules::getModels();
+        if(!empty($list)){
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
+            $ai = new \ArrayIterator($list);
+            foreach ($ai as $item) {
+
+                if(!empty($lang[$item['col_title']])){
+                    $item['col_title'] = "<h5>{$lang[$item['col_title']]} <small>{$item['col_title']}</small></h5> ";
+                }
+
+                $this->view
+                    ->add_dict($item)
+                    ->out('moduleCenter',$this->className);
+            }
         }
     }
     //endregion

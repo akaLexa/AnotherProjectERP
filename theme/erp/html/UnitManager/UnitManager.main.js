@@ -18,6 +18,21 @@ function genTabContent(tab) {
     });
 }
 
+function moduleFiltr() {
+    genIn({
+        element:'ModulesLists',
+        address:'|site|page/|currentPage|/GetModuleList',
+        type:'POST',
+       /* data:$('#filterMenus input[type=text],#filterMenus select').serialize(),*/
+        loadicon:'<tr><td colspan="5" style="color:green;text-align: center;">Загружаю..</td></tr>',
+        callback:function () {
+          /*  knowMenuSec();*/
+        }
+    })
+}
+
+
+
 $(document).ready(function(){
     genTabContent('Group');
 });
@@ -310,13 +325,20 @@ function addModule() {
                             type:'POST',
                             data:$('#addModuleForm').serialize(),
                             callback:function (r) {
-                                var receive = JSON.parse(r);
-                                if(receive.error != undefined){
-                                    mwce_alert(receive.error,'Ошибка..');
+                                try{
+                                    var receive = JSON.parse(r);
+                                    if(receive.error != undefined){
+                                        mwce_alert(receive.error,'Ошибка..');
+                                    }
+                                    else{
+                                        $('#forDialogs').dialog('close');
+                                    }
                                 }
-                                else{
-                                    genTabContent(currentTab);
-                                    $('#forDialogs').dialog('close');
+                                catch (e){
+                                    console.error(e.message);
+                                }
+                                finally {
+                                    moduleFiltr();
                                 }
                             }
                         });
@@ -340,6 +362,84 @@ function addModule() {
             $(this).dialog('destroy');
         }
     })
+}
+
+function editModule(id) {
+    $('#forDialogs').dialog({
+        title:'Редактировать модуль',
+        modal:true,
+        resizable:false,
+        width:800,
+        buttons:{
+            add:{
+                text:'Сохранить',
+                click:function () {
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/EditModule?id='+id,
+                            type:'POST',
+                            data:$('#editMForm').serialize(),
+                            callback:function (r) {
+                                try{
+                                    var receive = JSON.parse(r);
+                                    if(receive.error != undefined){
+                                        mwce_alert(receive.error,'Ошибка..');
+                                    }
+                                    else{
+                                        $('#forDialogs').dialog('close');
+                                    }
+                                }
+                                catch (e){
+                                    console.error(e.message);
+                                }
+                                finally {
+                                    moduleFiltr();
+                                }
+                            }
+                        });
+                }
+            },
+            cancel:{
+                text:'Отмена',
+                click:function () {
+                    $(this).dialog('close');
+                }
+            }
+
+        },
+        create:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/EditModule?id='+id,
+                loadicon:'Загружаю...'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    })
+}
+
+function delModule(id) {
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы действительно ходите удалить текущий модуль?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    element:'forDialogs',
+                    address:'|site|page/|currentPage|/DelModule?id='+id,
+                    callback:function () {
+                        mwce_confirm.close();
+                        moduleFiltr();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
 }
 
 function mfilter() {

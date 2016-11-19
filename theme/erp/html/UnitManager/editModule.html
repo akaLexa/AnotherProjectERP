@@ -1,4 +1,4 @@
-<form id="addModuleForm">
+<form id="editMForm">
     <table class="table">
         <tr>
             <th>Заголовок</th>
@@ -6,15 +6,15 @@
         </tr>
         <tr>
             <th>Контроллер(адрес скрипта)</th>
-            <td><input type="text" class="form-control form-inline-element" name="adrCnt" style="width: 200px;" placeholder="main/controller.php"></td>
+            <td><input type="text" class="form-control form-inline-element" name="adrCnt" value="|col_path|" style="width: 200px;" placeholder="main/controller.php"></td>
         </tr>
         <tr>
             <th><label style="width: auto;" for="isMVC">MVC?</label></th>
-            <td><input type="checkbox" value="1" name="isMVC" id="isMVC"></td>
+            <td><input type="checkbox" value="1" name="isMVC" id="isMVC" |isChecked|></td>
         </tr>
         <tr>
             <th>Кеширование (сек.)</th>
-            <td><input type="text" class="form-control form-inline-element" name="cachSec" style="width:100px;" value="0"></td>
+            <td><input type="text" class="form-control form-inline-element" name="cachSec" style="width:100px;" value="|col_cache|"></td>
         </tr>
         <tr>
             <th>Доступен ролям</th>
