@@ -34,6 +34,25 @@ class mUserRole extends Model
     }
 
     /**
+     * список ролей
+     * @return array
+     */
+    public static function getRoleList(){
+        if(!empty(self::$sdata['RoleList']))
+            return self::$sdata['RoleList'];
+
+        $db = Connect::start();
+        $ar = array();
+        $q = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName");
+        while ($r = $q->fetch()){
+            $ar[$r['col_roleID']] = $r['col_roleName'];
+        }
+
+        self::$sdata['RoleList'] = $ar;
+
+        return $ar;
+    }
+    /**
      * @param $id
      * @return mUserRole
      */

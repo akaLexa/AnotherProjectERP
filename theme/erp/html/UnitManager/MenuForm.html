@@ -1,0 +1,43 @@
+<div class="container" style="padding: 3px;">
+    <table class="table table-hover" style="max-width: 1210px;">
+        <thead>
+        <tr id="filterMenus">
+            <td>
+                <form id="seq_Menu">
+                    <label style="width: auto;"> Порядок отображения: <input type="text" class="form-control" name="mSeq" id="mSeq" style="width: 40px; display: inline-block;">
+                    </label>
+                    <button type="button" class="btn btn-default" style="height:34px;" onclick="setMenuSec();">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                </form>
+            </td>
+            <td>|mList|</td>
+            <td colspan="2">
+                <button type="button" class="btn btn-default"  onclick="mfilter();">
+                    <b class="glyphicon glyphicon-filter"></b> Фильтр
+                </button>
+                <button type="button" class="btn btn-default" onclick="AddInMenu();">
+                    <b class="glyphicon glyphicon-plus"></b> Добавить
+                </button>
+                <button type="button" class="btn btn-warning" onclick="getAccess();">
+                    Разрешения
+                </button>
+                <button type="button" class="btn btn-info" onclick="NewMenu();">
+                    Новое меню
+                </button>
+                <button type="button" class="btn btn-danger" onclick="DelMenu();">
+                    Удалить меню
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <th style="width:300px;">Заголовок</th>
+            <th style="width:200px;">Меню</th>
+            <th style="width:200px;">Адрес</th>
+            <th></th>
+        </tr>
+
+        <tbody id="menu_Body"></tbody>
+    </table>
+</div>
+<div id="MdialogDiv" style="display: none;"></div>

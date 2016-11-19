@@ -12,7 +12,7 @@ function genTabContent(tab) {
 
     currentTab = tab;
     genIn({
-        element:'tab_'+currentTab.toLowerCase(),
+        element:'tab_content',//+currentTab.toLowerCase(),
         address:'|site|page/|currentPage|/Get'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>'
     });
@@ -290,6 +290,67 @@ function roleDel(id) {
                     mwce_confirm.close();
                 }
             }
+        }
+    })
+}
+
+function addModule() {
+    $('#forDialogs').dialog({
+        title:'Добавить модуль',
+        modal:true,
+        resizable:false,
+        width:800,
+        buttons:{
+            add:{
+                text:'Добавить',
+                click:function () {
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/AddModule',
+                            type:'POST',
+                            data:$('#addModuleForm').serialize(),
+                            callback:function (r) {
+                                var receive = JSON.parse(r);
+                                if(receive.error != undefined){
+                                    mwce_alert(receive.error,'Ошибка..');
+                                }
+                                else{
+                                    genTabContent(currentTab);
+                                    $('#forDialogs').dialog('close');
+                                }
+                            }
+                        });
+                }
+            },
+            cancel:{
+                text:'Отмена',
+                click:function () {
+                    $(this).dialog('close');
+                }
+            }
+        },
+        create:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/AddModule',
+                loadicon:'Загружаю...'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    })
+}
+
+function mfilter() {
+    genIn({
+        element:'menu_Body',
+        address:'|site|page/|currentPage|/GetMenu',
+        type:'POST',
+        data:$('#filterMenus input[type=text],#filterMenus select').serialize(),
+        loadicon:'<tr><td colspan="3" style="color:green;text-align: center;">Загружаю..</td></tr>',
+        callback:function () {
+            knowMenuSec();
         }
     })
 }

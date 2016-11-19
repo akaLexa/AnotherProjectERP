@@ -1,0 +1,24 @@
+<form id="addModuleForm">
+    <table class="table">
+        <tr>
+            <th>Заголовок</th>
+            <td><input type="text" class="form-control form-inline-element" name="newTitle" style="width: 200px;"> или |titleList|</td>
+        </tr>
+        <tr>
+            <th>Контроллер(адрес скрипта)</th>
+            <td><input type="text" class="form-control form-inline-element" name="adrCnt" style="width: 200px;" placeholder="erp/main/controller.php"></td>
+        </tr>
+        <tr>
+            <th><label style="width: auto;" for="isMVC">MVC?</label></th>
+            <td><input type="checkbox" value="1" name="isMVC" id="isMVC"></td>
+        </tr>
+        <tr>
+            <th>Кеширование (сек.)</th>
+            <td><input type="text" class="form-control form-inline-element" name="newTitle" style="width:100px;" value="0"></td>
+        </tr>
+        <tr>
+            <th>Доступен ролям</th>
+            <td><div style="height:80px; vert-align: top; overflow-y: auto; width: auto;">|roleList|</div></td>
+        </tr>
+    </table>
+</form>
