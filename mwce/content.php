@@ -705,6 +705,9 @@ class content
             }
 
 
+            $c[$sepatator . 'site' . $sepatator] = '/';
+
+
             foreach ($c as $key => $val) {
                 $content = str_replace($key, $val, $content);
             }
