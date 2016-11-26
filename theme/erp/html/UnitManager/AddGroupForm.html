@@ -1,6 +1,18 @@
 <form id="groupAddForm">
-    <div class="form-group">
-        <label for="GroupNameText">Название группы</label>
-        <input type="text" maxlength="250" class="form-control" id="GroupNameText" name="GroupNameText">
-    </div>
+    <table class="table">
+        <tr>
+            <th style="width: 230px;"><label for="GroupNameText">Название группы</label></th>
+            <td><input type="text" maxlength="250" class="form-control" id="GroupNameText" name="GroupNameText"></td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle;">Роли, входящие в группу</th>
+            <td>
+                <div style="height:100px; overflow-y:auto;">
+                    |roleTblContent|
+                    <label style="width: auto; display:block;font-weight: normal;"> <span style="display: inline-block; width:250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="|col_roleName|">|col_roleName|</span> <input type="checkbox" name="role_|col_roleID|" value="|col_roleID|"></label>
+                    |/roleTblContent|
+                </div>
+            </td>
+        </tr>
+    </table>
 </form>

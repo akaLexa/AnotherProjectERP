@@ -62,7 +62,19 @@ class UnitManager extends eController
         }
         else{
             try{
-                mUserGroup::Add($_POST['GroupNameText']);
+
+                $ai = new \ArrayIterator($_POST);
+                $roles = [];
+                foreach ($ai as $pid=>$item) {
+                    if(stripos($pid,'role_')!== false){
+                        $roles[] = (int)$item;
+                    }
+                }
+
+                $newGroup = mUserGroup::Add($_POST['GroupNameText']);
+                if(!empty($roles)){
+                    $newGroup->addRoles($roles);
+                }
                 echo json_encode(['success'=>1]);
             }
             catch (\Exception $e){
@@ -94,13 +106,52 @@ class UnitManager extends eController
                 return;
 
             if(empty($_POST)){
+
+                if($_GET['id'] != 2 && $_GET['id'] != 4) // у гостей и у группы "Все" не может быть ролей
+                {
+                    $list = mUserRole::getModels();
+
+                    if(!empty($list)){ //отображение доступных ролей для привязки
+                        $ai = new \ArrayIterator($list);
+                        if(!empty($info['col_roleList']))
+                            $roles = explode(',',$info['col_roleList']);
+                        else
+                            $roles = [];
+
+                        foreach ($ai as $item) {
+                            if(in_array($item['col_roleID'],$roles))
+                                $this->view->set('isChecked', 'checked');
+                            else
+                                $this->view->set('isChecked', '');
+
+                            $this->view
+                                ->add_dict($item)
+                                ->out('roleList',$this->className);
+                        }
+
+                        $this->view->setFContainer('roleTblContent',true);
+                    }
+                }
+
+
                 $this->view
                     ->add_dict($info)
                     ->out('EditGroupForm',$this->className);
             }
             else{
                 try{
-                    $info->edit($_POST['GroupNameText']);
+                    $ai = new \ArrayIterator($_POST);
+                    $roles = [];
+                    foreach ($ai as $pid=>$item) {
+                        if(stripos($pid,'role_')!== false){
+                            $roles[] = (int)$item;
+                        }
+                    }
+                    if(empty($roles))
+                        $roles = null;
+
+                    $info->edit($_POST['GroupNameText'],$roles);
+
                     echo json_encode(['success'=>1]);
                 }
                 catch (\Exception $e){
@@ -116,14 +167,15 @@ class UnitManager extends eController
     public function actionAddGroup(){
 
         $list = mUserRole::getModels();
-        if(!empty($list)){
-            $this->view->loops('roleTblContent',$list,'AddGroupForm',$this->className);
+
+        if(empty($list)){ //отображение доступных ролей для привязки
+            $list[] = array('col_roleName'=>'','col_roleID'=>'');
         }
 
-        $this->view->out('AddGroupForm',$this->className);
+        $this->view
+            ->loops('roleTblContent',$list,'AddGroupForm',$this->className)
+            ->out('AddGroupForm',$this->className);
     }
-
-
 
     /**
      * Удаление группы
@@ -233,7 +285,6 @@ class UnitManager extends eController
     }
 
     //endregion
-
 
     //region вкладка "модули"
     public function actionGetModules(){
@@ -418,5 +469,5 @@ class UnitManager extends eController
             ->set('mList',html_::select(mMenuManager::getMenuList(),'menuList',0,'class="form-control" style="display:inline-block;width:200px;" onchange="mfilter();"'))
             ->out('MenuForm',$this->className);
     }
-    //edregion
+    //endregion
 }

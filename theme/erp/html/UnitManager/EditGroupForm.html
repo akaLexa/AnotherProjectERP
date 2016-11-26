@@ -1,6 +1,16 @@
 <form id="groupEditForm">
-    <div class="form-group">
-        <label for="GroupNameText">Название группы</label>
-        <input type="text" maxlength="250" class="form-control" id="GroupNameText" value="|col_gName|" name="GroupNameText">
-    </div>
+    <table class="table">
+        <tr>
+            <th style="width: 230px;"><label for="GroupNameText">Название группы</label></th>
+            <td><input type="text" maxlength="250" class="form-control" id="GroupNameText" value="|col_gName|" name="GroupNameText"></td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle;">Роли, входящие в группу</th>
+            <td>
+                <div style="height:100px; overflow-y:auto;">
+                    |roleTblContent|
+                </div>
+            </td>
+        </tr>
+    </table>
 </form>

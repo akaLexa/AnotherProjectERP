@@ -20,7 +20,6 @@ class mUserRole extends Model
 
         $db = Connect::start();
         $db->exec("INSERT INTO tbl_user_roles (col_roleName) VALUE ('$name')");
-
     }
 
     /**

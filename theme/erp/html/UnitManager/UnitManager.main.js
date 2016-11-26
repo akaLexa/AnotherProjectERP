@@ -41,6 +41,7 @@ function groupEdit(id) {
     $('#forDialogs').dialog({
         title:'Редактировать группу',
         modal:true,
+        width:600,
         resizable:false,
         buttons:{
             add:{
@@ -91,6 +92,7 @@ function add() {
     $('#forDialogs').dialog({
         title:'Добавить группу',
         modal:true,
+        width:600,
         resizable:false,
         buttons:{
             add:{
