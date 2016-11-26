@@ -1,0 +1,40 @@
+<form id="editPluginForm">
+    <table class="table">
+        <tr>
+            <th style="width: 200px;">Название плагина(контроллер)</th>
+            <td><input type="text" name="pluginName" style="width: 250px;display: inline-block;" value="|col_pluginName|" class="form-control"></td>
+        </tr>
+        <tr>
+            <th>MVC?</th>
+            <td><input type="checkbox" name="isClass" value="1" |isChecked|></td>
+        </tr>
+        <tr>
+            <th>Кеш</th>
+            <td><input type="text" name="pluginCache" value="|col_cache|" style="width: 80px;display: inline-block;" class="form-control"> сек</td>
+        </tr>
+        <tr>
+            <th>Очередность загрузки</th>
+            <td><input type="text" name="pluginSeq" value="|col_seq|" style="width: 80px;display: inline-block;" class="form-control"></td>
+        </tr>
+        <tr>
+            <th>Статус модуля</th>
+            <td>|stateList|</td>
+        </tr>
+        <tr>
+            <th>Доступен группам:</th>
+            <td><div style="height:100px; overflow-y:auto;">|groupList|</div></td>
+        </tr>
+        <tr>
+            <th>Доступен ролям:</th>
+            <td><div style="height:100px; overflow-y:auto;">|rolesList|</div></td>
+        </tr>
+        <tr>
+            <th>Описание плагина</th>
+            <td><input type="text" name="pluginDesc" value="|pluginDesc|" style="width: 230px;display: inline-block;" class="form-control"></td>
+        </tr>
+        <tr>
+            <th>Отдельные пользователи (id)</th>
+            <td><input type="text" name="pluginCustomUsrs" value="|pluginCustomUsrs|" style="width: 230px;display: inline-block;" class="form-control"></td>
+        </tr>
+    </table>
+</form>

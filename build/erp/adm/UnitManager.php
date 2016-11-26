@@ -10,9 +10,11 @@ namespace build\erp\adm;
 
 use build\erp\adm\m\mMenuManager;
 use build\erp\adm\m\mModules;
+use build\erp\adm\m\mPlugin;
 use build\erp\adm\m\mUserGroup;
 use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
+use mwce\Configs;
 use mwce\DicBuilder;
 use mwce\html_;
 use mwce\Tools;
@@ -31,15 +33,23 @@ class UnitManager extends eController
         'pagesList' => ['type'=>self::STR],
         'adrCnt' => ['type'=>self::STR],
         'linkadr' => ['type'=>self::STR],
+        'pluginDesc' => ['type'=>self::STR],
         'newName' => ['type'=>self::STR,'maxLength'=>254],
+        'pluginName' => ['type'=>self::STR,'maxLength'=>254],
         'seq' => ['type'=>self::INT],
         'mSeq' => ['type'=>self::INT],
         'isMVC' => ['type'=>self::INT],
         'cachSec' => ['type'=>self::INT],
+        'stateList' => ['type'=>self::INT],
     );
 
     protected $getField = array(
         'id' => ['type' => self::INT],
+    );
+
+    private $state = array(
+        0=>'Выключен',
+        1=>'Включен',
     );
 
     public function actionIndex()
@@ -518,6 +528,181 @@ class UnitManager extends eController
         $this->view
             ->set('mList',html_::select(mMenuManager::getMenuList(),'menuList',0,'class="form-control" style="display:inline-block;width:200px;" onchange="mfilter();"'))
             ->out('MenuForm',$this->className);
+    }
+    //endregion
+
+    //region "плагины"
+    public function actionGetPlugins(){
+        self::actionGetPluginList();
+        $this->view
+            ->setFContainer('pluginsBodyTable',true)
+            ->set('unregisteredList', html_::select(mPlugin::getNonRegPlugins(),'unregPl',0,'style="display:inline-block;width:250px;" class="form-control"'))
+            ->out('PluginsForm',$this->className);
+    }
+
+    public function actionPluginAdd(){
+        if(!empty($_POST['pluginName'])){
+            mPlugin::Add($_POST['pluginName']);
+        }
+    }
+    
+    public function actionGetPluginList(){
+        $list = mPlugin::getModels();
+        if(!empty($list)){
+
+            $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+
+            foreach ($list as $item) {
+
+                if(!empty($pluginsLegend[$item['col_pluginName']])){
+                    $item['langDesc'] = $pluginsLegend[$item['col_pluginName']];
+                }
+                else
+                    $item['langDesc'] = '';
+
+                $this->view
+                    ->add_dict($item)
+                    ->out('PluginsCenter',$this->className);
+            }
+        }
+    }
+
+    public function actionEditPlugin(){
+        if(!empty($_GET['id'])){
+            $plugin = mPlugin::getCurModel($_GET['id']);
+
+            if(empty($_POST)){
+
+                if($plugin['col_isClass'] == 1){
+                    $plugin['isChecked'] = 'checked';
+                }
+                else{
+                    $plugin['isChecked'] = '';
+                }
+
+                $roles = mUserRole::getRoleList();
+
+                $ch_roles = explode(',',$plugin['col_roles']);
+                $ch_groups = explode(',',$plugin['col_groups']);
+
+                if (!empty($roles)) {
+                    foreach ($roles as $id => $role) {
+                        if(in_array($id,$ch_roles)){
+                            $this->view->set('isCheck','checked');
+                        }
+                        else{
+                            $this->view->set('isCheck','');
+                        }
+
+                        $this->view
+                            ->set(['roleId' => $id, 'roleName' => $role])
+                            ->out('uRolesList', $this->className);
+                    }
+                    $this->view->setFContainer('rolesList', true);
+                }
+
+                $groups = mUserGroup::getModels();
+
+                if (!empty($groups)) {
+                    foreach ($groups as $group) {
+
+                        if(in_array($group['col_gID'],$ch_groups)){
+                            $this->view->set('isCheck','checked');
+                        }
+                        else{
+                            $this->view->set('isCheck','');
+                        }
+
+                        $this->view
+                            ->add_dict($group)
+                            ->out('uGroupList', $this->className);
+                    }
+                    $this->view->setFContainer('groupList', true);
+                }
+
+                $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+
+                if(!empty($pluginsLegend[$plugin['col_pluginName']])){
+                    $plugin['pluginDesc'] = $pluginsLegend[$plugin['col_pluginName']];
+                }
+                else{
+                    $plugin['pluginDesc'] = '';
+                }
+
+                $cfg = Configs::readCfg('plugin_'.$plugin['col_pluginName'],tbuild);
+                if(!empty($cfg) && !empty($cfg['allowedUsrs'])){
+                    $plugin['pluginCustomUsrs'] = $cfg['allowedUsrs'];
+                }
+
+                $this->view
+                    ->add_dict($plugin)
+                    ->set('stateList',html_::select($this->state,'stateList',$plugin['col_pluginState'],' style="width:200px; display:inline-block;" class="form-control"'))
+                    ->out('editPlugins',$this->className);
+            }
+            else{
+
+                try{
+                    $pi = new \ArrayIterator($_POST);
+
+                    $roles = array();
+                    $groups = array();
+
+                    foreach ($pi as $id=>$item) {
+                        if(stripos($id,'role_') !== FALSE){
+                            $roles[] = (int)$item;
+                        }
+                        if(stripos($id,'group_') !== FALSE){
+                            $groups[] = (int)$item;
+                        }
+                    }
+
+                    if(empty($_POST['pluginName'])){
+                        return;
+                    }
+                    else
+                        $params['pluginName'] = $_POST['pluginName'];
+
+                    $params['isClass'] = !empty($_POST['isClass']) ? 1 : 0;
+                    $params['pluginCache'] = $_POST['pluginCache'];
+                    $params['pluginSeq'] = $_POST['pluginSeq'];
+                    $params['pluginState'] = $_POST['stateList'];
+
+                    if(!empty($_POST['pluginDesc'])){
+                        echo '-> go';
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+                        Tools::debug($db->add2Dic($_POST['pluginDesc'],$params['pluginName'],true));
+                    }
+
+                    if(!empty($_POST['pluginCustomUsrs'])){
+                        $cfg = Configs::readCfg('plugin_'.$params['pluginName'],tbuild);
+                        $cfg['allowedUsrs'] = $_POST['pluginCustomUsrs'];
+                        Configs::writeCfg($cfg,'plugin_'.$params['pluginName'],tbuild);
+                    }
+
+                    $plugin->edit($params);
+                    $plugin->addRoles($roles);
+                    $plugin->addGroup($groups);
+
+                    echo json_encode(['success'=>1]);
+                }
+                catch (\Exception $e){
+                    echo json_encode(['error'=>$e->getMessage()]);
+                }
+            }
+        }
+    }
+
+    public function actionDelPlugin(){
+        if(!empty($_GET['id'])){
+            try{
+                $plugin = mPlugin::getCurModel($_GET['id']);
+                $plugin->delete();
+                echo json_encode(['success'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+        }
     }
     //endregion
 }

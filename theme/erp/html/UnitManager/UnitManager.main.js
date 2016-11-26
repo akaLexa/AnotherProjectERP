@@ -32,11 +32,6 @@ function moduleFiltr() {
 }
 
 
-
-$(document).ready(function(){
-    genTabContent('Group');
-});
-
 function groupEdit(id) {
     $('#forDialogs').dialog({
         title:'Редактировать группу',
@@ -456,3 +451,132 @@ function mfilter() {
         }
     })
 }
+
+
+function addPlugin() {
+    var cPlugin = document.querySelector('#unregPl').value;
+    genIn({
+        noresponse:true,
+        address:'|site|page/|currentPage|/PluginAdd',
+        type:'POST',
+        data:'pluginName='+cPlugin,
+        callback:function (r) {
+            try{
+                var receive = JSON.parse(r);
+                if(receive.error != undefined){
+                    mwce_alert(receive.error,'Ошибка..');
+                }
+                else{
+                    PluginsFilter();
+                    var select = document.querySelector('#unregPl');
+                    select.options[select.selectedIndex]=null;
+                    select.selectedIndex = 0;
+                }
+            }
+            catch (e){
+                console.error(e.message);
+            }
+
+        }
+    })
+}
+function PluginsFilter() {
+    genIn({
+        element:'pluginsBodyTable',
+        address:'|site|page/|currentPage|/GetPluginList',
+        type:'POST',
+        loadicon:'<tr><td colspan="3" style="text-align: center;color:green;">Загружаю...</td></tr>'
+    })
+}
+function editPlugin(id) {
+    $('#forDialogs').dialog({
+        title:'Редактировать плагин',
+        width:600,
+        modal:true,
+        resizable:false,
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/EditPlugin?id='+id,
+                    type:'POST',
+                    data:$('#editPluginForm').serialize(),
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive.error != undefined){
+                                mwce_alert(receive.error,'Ошибка..');
+                            }
+                            else{
+                                PluginsFilter();
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                        catch (e){
+                            console.error(e.message);
+                        }
+
+
+                    }
+                });
+            },
+            'Удалить':function () {
+                mwce_confirm({
+                    title:'Требуется подтверждение',
+                    text:'Вы действительно хотите удалить плагин?',
+                    buttons:{
+                        'Да':function () {
+                            genIn({
+                                noresponse:true,
+                                address:'|site|page/|currentPage|/DelPlugin?id='+id,
+                                callback:function (r) {
+                                    try{
+                                        var receive = JSON.parse(r);
+                                        if(receive.error != undefined){
+                                            mwce_alert(receive.error,'Ошибка..');
+                                        }
+                                        else{
+                                            mwce_confirm.close();
+                                            PluginsFilter();
+                                            $('#forDialogs').dialog('close');
+                                        }
+                                    }
+                                    catch (e){
+                                        console.error(e.message);
+                                    }
+
+                                }
+                            });
+                        },
+                        'Нет':function () {
+                            mwce_confirm.close();
+                        }
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/EditPlugin?id='+id,
+                loadicon:'Загружаю...'
+            });
+        }
+    });
+}
+function clearPluginCache() {
+
+}
+
+
+
+
+$(document).ready(function(){
+    genTabContent('Group');
+});

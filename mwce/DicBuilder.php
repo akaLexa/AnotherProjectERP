@@ -82,9 +82,10 @@ class DicBuilder
      * Запись в словарь данных
      * @param string $value данные
      * @param string $preffix часть названия ключа массива
-     * @return bool|string  ключ от добавленного элеента
+     * @param bool $isIterate обновлять или дописывать вконце 1,2...н
+     * @return bool|string ключ от добавленного элеента
      */
-    public function add2Dic($value,$preffix='auto_lang')
+    public function add2Dic($value,$preffix='auto_lang',$isIterate = false)
     {
         if(!file_exists($this->location))
             return false;
@@ -92,21 +93,19 @@ class DicBuilder
         $container = include $this->location;
         $i=0;
 
-        if(!empty($container))
-        {
-            while (isset($container[$preffix.$i]))
-            {
-                $i++;
-            }
+        if (!empty($container[$preffix]) || $isIterate) {
+            $container[$preffix] = $value;
+            self::buildDic($container);
+            return $preffix;
+        }
 
-            $container[$preffix.$i] = $value;
-            self::buildDic($container);
-            return $preffix.$i;
+        while (isset($container[$preffix . $i])) {
+            $i++;
         }
-        else{
-            $container[$preffix.'0'] = $value;
-            self::buildDic($container);
-            return $preffix.'0';
-        }
+
+        $container[$preffix . $i] = $value;
+        self::buildDic($container);
+        return $preffix . $i;
+
     }
 }

@@ -1,5 +1,4 @@
-﻿--
--- Script date 26.11.2016 10:42:41
+﻿-- Script date 26.11.2016 14:45:32
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -94,7 +93,8 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules(col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 4
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -115,7 +115,6 @@ CREATE TABLE tbl_module_roles (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 2
-  AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'указание ролей с правами доступа';
@@ -133,11 +132,68 @@ CREATE TABLE tbl_modules (
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 3
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
+
+--
+-- Definition for table tbl_plugins
+--
+DROP TABLE IF EXISTS tbl_plugins;
+CREATE TABLE tbl_plugins (
+  col_pID INT(11) NOT NULL AUTO_INCREMENT,
+  col_pluginName VARCHAR(255) DEFAULT NULL,
+  col_seq INT(11) DEFAULT 0 COMMENT 'очередь загрузки',
+  col_isClass CHAR(1) DEFAULT '0',
+  col_pluginState CHAR(1) DEFAULT '0' COMMENT '0 - выключен 1- включен',
+  col_cache INT(11) DEFAULT 0,
+  PRIMARY KEY (col_pID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 3
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
+
+--
+-- Definition for table tbl_plugins_group
+--
+DROP TABLE IF EXISTS tbl_plugins_group;
+CREATE TABLE tbl_plugins_group (
+  col_pgID INT(11) NOT NULL AUTO_INCREMENT,
+  col_pID INT(11) DEFAULT NULL,
+  col_gID INT(11) DEFAULT NULL,
+  PRIMARY KEY (col_pgID),
+  CONSTRAINT FK_tbl_plugins_group_col_gID FOREIGN KEY (col_gID)
+  REFERENCES tbl_user_groups(col_gID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_plugins_group_col_pID FOREIGN KEY (col_pID)
+  REFERENCES tbl_plugins(col_pID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 11
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'группы и плагины';
+
+--
+-- Definition for table tbl_plugins_roles
+--
+DROP TABLE IF EXISTS tbl_plugins_roles;
+CREATE TABLE tbl_plugins_roles (
+  col_prID INT(11) NOT NULL AUTO_INCREMENT,
+  col_pID INT(11) DEFAULT NULL,
+  col_roleID INT(11) DEFAULT NULL,
+  PRIMARY KEY (col_prID),
+  CONSTRAINT FK_tbl_plugins_role_col_pID FOREIGN KEY (col_pID)
+  REFERENCES tbl_plugins(col_pID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_plugins_role_col_roleID FOREIGN KEY (col_roleID)
+  REFERENCES tbl_user_roles(col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 11
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
 
 --
 -- Definition for table tbl_roles_in_group
@@ -251,20 +307,38 @@ CREATE TABLE tbl_user_roles (
 --
 -- Dumping data for table tbl_module_groups
 --
-
--- Table erp_db.tbl_module_groups does not contain any data (it is empty)
+INSERT INTO tbl_module_groups VALUES
+  (3, 1, 1);
 
 --
 -- Dumping data for table tbl_module_roles
 --
-INSERT INTO tbl_module_roles VALUES
-  (1, 1, 1);
+
+-- Table erp_db.tbl_module_roles does not contain any data (it is empty)
 
 --
 -- Dumping data for table tbl_modules
 --
 INSERT INTO tbl_modules VALUES
   (1, 'title_2', 'adm/UnitManager', 0, '1');
+
+--
+-- Dumping data for table tbl_plugins
+--
+
+-- Table erp_db.tbl_plugins does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_plugins_group
+--
+
+-- Table erp_db.tbl_plugins_group does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_plugins_roles
+--
+
+-- Table erp_db.tbl_plugins_roles does not contain any data (it is empty)
 
 --
 -- Dumping data for table tbl_roles_in_group
