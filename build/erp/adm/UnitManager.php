@@ -304,6 +304,17 @@ class UnitManager extends eController
                 $this->view->setFContainer('roleList', true);
             }
 
+            $groups = mUserGroup::getModels();
+
+            if (!empty($groups)) {
+                foreach ($groups as $group) {
+                    $this->view
+                        ->add_dict($group)
+                        ->out('uGroupList', $this->className);
+                }
+                $this->view->setFContainer('GroupsList', true);
+            }
+
             $titles = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
             $titles['0'] = '...';
 
@@ -334,17 +345,26 @@ class UnitManager extends eController
             $params['cachSec'] = empty($_POST['cachSec']) ? 0 : $_POST['cachSec'];
 
             $pi = new \ArrayIterator($_POST);
+
             $roles = array();
+            $groups = array();
 
             foreach ($pi as $id=>$item) {
                 if(stripos($id,'role_') !== FALSE){
                     $roles[] = (int)$item;
                 }
+
+                if(stripos($id,'group_') !== FALSE){
+                    $groups[] = (int)$item;
+                }
             }
 
-            $params['roles'] = $roles;
             try{
-                mModules::Add($params);
+
+                $newModule = mModules::Add($params);
+                $newModule->addGroupToModule($groups);
+                $newModule->addRolesToModule($roles);
+
                 echo json_encode(['success'=>1]);
             }
             catch (\Exception $e){
@@ -364,6 +384,7 @@ class UnitManager extends eController
 
                 $rls = explode(',',$info['col_roles']);//isCheck
 
+                //todo: сделать так, чтобы при выборе отсуствовали роли, которые есть в выбранной группе, чтобы не дублировать данные
                 if (!empty($roles)) {
                     foreach ($roles as $id => $role) {
                         if(in_array($id,$rls)){
@@ -377,6 +398,29 @@ class UnitManager extends eController
                             ->out('uRolesList', $this->className);
                     }
                     $this->view->setFContainer('roleList', true);
+                }
+
+                $groups = mUserGroup::getModels();
+
+                if (!empty($groups)) {
+
+                    if(!empty($info['col_groups']))
+                        $grps = explode(',',$info['col_groups']);
+                    else
+                        $grps = array();
+
+                    foreach ($groups as $group) {
+                        if(!in_array($group['col_gID'],$grps)){
+                            $group['isCheck'] = '';
+                        }
+                        else{
+                            $group['isCheck'] = 'checked';
+                        }
+                        $this->view
+                            ->add_dict($group)
+                            ->out('uGroupList', $this->className);
+                    }
+                    $this->view->setFContainer('GroupsList', true);
                 }
 
                 $titles = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
@@ -416,16 +460,22 @@ class UnitManager extends eController
 
                 $pi = new \ArrayIterator($_POST);
                 $roles = array();
+                $groups = array();
 
                 foreach ($pi as $id=>$item) {
                     if(stripos($id,'role_') !== FALSE){
                         $roles[] = (int)$item;
                     }
+                    if(stripos($id,'group_') !== FALSE){
+                        $groups[] = (int)$item;
+                    }
                 }
 
                 try{
                     $info->edit($params);
-                    mModules::addRolesToModule($_GET['id'],$roles);
+                    $info->addRolesToModule($roles);
+                    $info->addGroupToModule($groups);
+
                     echo json_encode(['success'=>1]);
                 }
                 catch (\Exception $e){

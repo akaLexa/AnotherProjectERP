@@ -1,7 +1,7 @@
 <form id="addModuleForm">
     <table class="table">
         <tr>
-            <th>Заголовок</th>
+            <th style="width: 250px;">Заголовок</th>
             <td><input type="text" class="form-control form-inline-element" name="newTitle" style="width: 200px;"> или |titleList|</td>
         </tr>
         <tr>
@@ -17,8 +17,12 @@
             <td><input type="text" class="form-control form-inline-element" name="cachSec" style="width:100px;" value="0"></td>
         </tr>
         <tr>
-            <th>Доступен ролям</th>
-            <td><div style="height:80px; vert-align: top; overflow-y: auto; width: auto;">|roleList|</div></td>
+            <th>Доступен для групп</th>
+            <td><div style="height:100px; vert-align: top; overflow-y: auto; width: auto;">|GroupsList|</div></td>
+        </tr>
+        <tr>
+            <th>Доступен ролям <small>(если роль не входит в уже выбранную группу)</small></th>
+            <td><div style="height:100px; vert-align: top; overflow-y: auto; width: auto;">|roleList|</div></td>
         </tr>
     </table>
 </form>
