@@ -1,4 +1,4 @@
-﻿-- Script date 26.11.2016 14:45:32
+﻿-- Script date 27.11.2016 17:33:49
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -114,7 +114,7 @@ CREATE TABLE tbl_module_roles (
   REFERENCES tbl_user_roles(col_roleID) ON DELETE RESTRICT ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 1
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'указание ролей с правами доступа';
@@ -132,8 +132,8 @@ CREATE TABLE tbl_modules (
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 3
-  AVG_ROW_LENGTH = 16384
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
@@ -152,7 +152,7 @@ CREATE TABLE tbl_plugins (
   PRIMARY KEY (col_pID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 3
+  AUTO_INCREMENT = 1
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -171,7 +171,8 @@ CREATE TABLE tbl_plugins_group (
   REFERENCES tbl_plugins(col_pID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 11
+  AUTO_INCREMENT = 1
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'группы и плагины';
@@ -191,7 +192,8 @@ CREATE TABLE tbl_plugins_roles (
   REFERENCES tbl_user_roles(col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 11
+  AUTO_INCREMENT = 1
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -210,7 +212,7 @@ CREATE TABLE tbl_roles_in_group (
   REFERENCES tbl_user_roles(col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 6
+  AUTO_INCREMENT = 3
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -227,9 +229,14 @@ CREATE TABLE tbl_user (
   col_Lastname VARCHAR(100) DEFAULT NULL COMMENT 'очество',
   col_login VARCHAR(100) DEFAULT NULL COMMENT 'логин',
   col_pwd VARCHAR(255) DEFAULT NULL COMMENT 'пароль',
-  col_gID INT(11) DEFAULT NULL COMMENT 'группа',
+  col_roleID INT(11) DEFAULT NULL COMMENT 'роль',
   col_isBaned CHAR(1) DEFAULT '0' COMMENT 'забанен ли?',
-  PRIMARY KEY (col_uID)
+  col_deputyID INT(11) DEFAULT NULL,
+  col_StartDep DATETIME DEFAULT NULL,
+  col_banDate DATETIME DEFAULT NULL,
+  PRIMARY KEY (col_uID),
+  CONSTRAINT FK_tbl_user_col_roleID FOREIGN KEY (col_roleID)
+  REFERENCES tbl_user_roles(col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 1
@@ -247,28 +254,11 @@ CREATE TABLE tbl_user_groups (
   PRIMARY KEY (col_gID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 7
+  AUTO_INCREMENT = 5
   AVG_ROW_LENGTH = 4096
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'группы пользователей';
-
---
--- Definition for table tbl_user_role_rule
---
-DROP TABLE IF EXISTS tbl_user_role_rule;
-CREATE TABLE tbl_user_role_rule (
-  col_urID INT(11) NOT NULL AUTO_INCREMENT,
-  col_uID INT(11) DEFAULT NULL,
-  PRIMARY KEY (col_urID),
-  CONSTRAINT FK_tbl_user_role_tbl_user_col_uID FOREIGN KEY (col_uID)
-  REFERENCES tbl_user(col_uID) ON DELETE RESTRICT ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 1
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'роли, что назначены пользователю';
 
 --
 -- Definition for table tbl_user_roles
@@ -277,7 +267,8 @@ DROP TABLE IF EXISTS tbl_user_roles;
 CREATE TABLE tbl_user_roles (
   col_roleID INT(11) NOT NULL AUTO_INCREMENT,
   col_roleName VARCHAR(250) DEFAULT NULL,
-  PRIMARY KEY (col_roleID)
+  PRIMARY KEY (col_roleID),
+  UNIQUE INDEX UK_tbl_user_roles_col_roleName (col_roleName)
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 7
@@ -285,6 +276,30 @@ CREATE TABLE tbl_user_roles (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'роли для пользователя';
+
+--
+-- Definition for table tbl_users
+--
+DROP TABLE IF EXISTS tbl_users;
+CREATE TABLE tbl_users (
+  col_uID INT(11) NOT NULL AUTO_INCREMENT,
+  col_Name VARCHAR(255) DEFAULT NULL COMMENT 'имя',
+  col_Sername VARCHAR(255) DEFAULT NULL COMMENT 'фамилия',
+  col_Lastname VARCHAR(255) DEFAULT NULL COMMENT 'очество',
+  col_RegDate DATETIME DEFAULT NULL COMMENT 'дата регистрации',
+  col_roleID INT(11) DEFAULT NULL COMMENT 'роль',
+  col_isBlock CHAR(1) DEFAULT '0' COMMENT 'блокирован?',
+  col_blockDate DATETIME DEFAULT NULL COMMENT 'когда блокирован?',
+  col_deputy INT(11) DEFAULT NULL COMMENT 'id замещающего',
+  col_DepStartDate DATETIME DEFAULT NULL COMMENT 'когда начато замещение',
+  col_login VARCHAR(255) DEFAULT NULL,
+  col_pwd VARCHAR(128) DEFAULT NULL,
+  PRIMARY KEY (col_uID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 1
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
 
 --
 -- Dumping data for table tbl_group_roles
@@ -362,12 +377,6 @@ INSERT INTO tbl_user_groups VALUES
   (4, 'Все');
 
 --
--- Dumping data for table tbl_user_role_rule
---
-
--- Table erp_db.tbl_user_role_rule does not contain any data (it is empty)
-
---
 -- Dumping data for table tbl_user_roles
 --
 INSERT INTO tbl_user_roles VALUES
@@ -377,6 +386,12 @@ INSERT INTO tbl_user_roles VALUES
   (4, 'тестовая роль 3'),
   (5, 'тестовая роль 4'),
   (6, 'тестовая роль 5');
+
+--
+-- Dumping data for table tbl_users
+--
+
+-- Table erp_db.tbl_users does not contain any data (it is empty)
 
 -- 
 -- Restore previous SQL mode
