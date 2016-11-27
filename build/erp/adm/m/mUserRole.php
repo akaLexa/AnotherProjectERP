@@ -78,6 +78,9 @@ ORDER BY ur.col_roleName")->fetchAll(static::class);
     }
 
     public function delete(){
+        $this->db->exec("DELETE FROM tbl_roles_in_group WHERE col_roleID=".$this['col_roleID']);
+        $this->db->exec("DELETE FROM tbl_plugins_roles WHERE col_roleID=".$this['col_roleID']);
+        $this->db->exec("DELETE FROM tbl_module_roles WHERE col_roleID=".$this['col_roleID']);
         $this->db->exec("DELETE FROM tbl_user_roles WHERE col_roleID =".$this['col_roleID']);
     }
 }
