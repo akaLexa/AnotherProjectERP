@@ -176,7 +176,7 @@ class UnitManager extends eController
      */
     public function actionAddGroup(){
 
-        $list = mUserRole::getModels();
+        $list = mUserRole::getModels(['notInGroup'=>true]);
 
         if(empty($list)){ //отображение доступных ролей для привязки
             $list[] = array('col_roleName'=>'','col_roleID'=>'');
@@ -394,7 +394,6 @@ class UnitManager extends eController
 
                 $rls = explode(',',$info['col_roles']);//isCheck
 
-                //todo: сделать так, чтобы при выборе отсуствовали роли, которые есть в выбранной группе, чтобы не дублировать данные
                 if (!empty($roles)) {
                     foreach ($roles as $id => $role) {
                         if(in_array($id,$rls)){
