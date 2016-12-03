@@ -103,6 +103,20 @@ WHERE col_pID =".$this['col_pID']);
     }
 
     /**
+     * очищает кеш зарегитсрированных плагинов
+     */
+    public static function RefreshCache(){
+
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if(stripos($file,'_plugins.php') != false){
+                unlink($path . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+    }
+
+    /**
      * @param array $groups
      */
     public function addGroup($groups){

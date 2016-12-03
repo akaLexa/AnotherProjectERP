@@ -576,7 +576,27 @@ function editPlugin(id) {
     });
 }
 function clearPluginCache() {
-
+    mwce_confirm({
+        title: 'Очистка кеша плагинов',
+        text: 'Вы уверены что хотите очистить кеш плагинов?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ClearPluginCache',
+                    before:function () {
+                        document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
+                    },
+                    callback:function () {
+                        mwce_confirm.close();
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
 }
 
 function UserFilter() {

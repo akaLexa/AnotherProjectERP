@@ -733,6 +733,10 @@ class UnitManager extends eController
             }
         }
     }
+
+    public function actionClearPluginCache(){
+        mPlugin::RefreshCache();
+    }
     //endregion
 
     //region пользователи
