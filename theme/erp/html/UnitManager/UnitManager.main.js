@@ -574,6 +574,63 @@ function clearPluginCache() {
 
 }
 
+function UserFilter() {
+    genIn({
+        element:'UserFormContent',
+        address:'|site|page/|currentPage|/GetUserList',
+        type:'POST',
+        data:$('#userFilter select,#userFilter input[type=text]').serialize(),
+        loadicon:'<tr><td colspan="4" style="text-align: center;color:green;">Загружаю...</td></tr>'
+    })
+}
+function AddUserForm() {
+    $('#forDialogs').dialog({
+        title:'Добавить пользователя',
+        modal:true,
+        resizable:false,
+        width:600,
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/AddUser',
+                loadicon:'Загружаю...'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Добавить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/AddUser',
+                    type:'POST',
+                    data:$('#AddUserForm').serialize(),
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r.trim());
+                            if(receive['error']!= undefined){
+                                mwce_alert(receive['error'],'Ошибка');
+                            }
+                            else{
+                                UserFilter();
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                        catch (e)
+                        {
+                            console.error(e.message)
+                        }
+                    }
+                })
+            },
+            'Закрыть':function () {
+                $('#forDialogs').dialog('close');
+            }
+        }
+    });
+}
+
 
 
 

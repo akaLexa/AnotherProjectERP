@@ -1,0 +1,30 @@
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <td colspan="4">
+                <button class="btn btn-default" onclick="AddUserForm()">Добавить пользователя</button>
+                <button class="btn btn-default" onclick="UserFilter();">Фильтр</button>
+            </td>
+        </tr>
+        <tr id="userFilter">
+            <td><input type="text" name="Usurname" placeholder="Фамилия" style="width:100%;display: inline-block;" class="form-control"></td>
+            <td>|groupList|</td>
+            <td>|roleList|</td>
+            <td>
+                <select style="width:100%;display: inline-block;" name="uBlock" class="form-control">
+                    <option value="0">Нет</option>
+                    <option value="1">Да</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>ФИО</th>
+            <th style="width:300px;">Группа</th>
+            <th style="width:300px;">Роль</th>
+            <th style="width: 150px;">Состояние</th>
+        </tr>
+        </thead>
+        <tbody id="UserFormContent">|UserFormContent|</tbody>
+    </table>
+</div>

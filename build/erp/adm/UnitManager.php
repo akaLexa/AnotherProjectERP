@@ -11,9 +11,11 @@ namespace build\erp\adm;
 use build\erp\adm\m\mMenuManager;
 use build\erp\adm\m\mModules;
 use build\erp\adm\m\mPlugin;
+use build\erp\adm\m\mUser;
 use build\erp\adm\m\mUserGroup;
 use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
+use build\erp\inc\User;
 use mwce\Configs;
 use mwce\DicBuilder;
 use mwce\html_;
@@ -41,6 +43,18 @@ class UnitManager extends eController
         'isMVC' => ['type'=>self::INT],
         'cachSec' => ['type'=>self::INT],
         'stateList' => ['type'=>self::INT],
+
+        'Usurname' => ['type'=>self::STR],
+        'addUsurname' => ['type'=>self::STR],
+        'addUlastname' => ['type'=>self::STR],
+        'addUname' => ['type'=>self::STR],
+        'addUlogin' => ['type'=>self::STR],
+        'addUpwd' => ['type'=>self::STR],
+        'uGroupList' => ['type'=>self::INT],
+        'uRoleList' => ['type'=>self::INT],
+        'uBlock' => ['type'=>self::INT],
+        'uAddRoleList' => ['type'=>self::INT],
+        'uBlockList' => ['type'=>self::INT],
     );
 
     protected $getField = array(
@@ -701,6 +715,117 @@ class UnitManager extends eController
             catch (\Exception $e){
                 echo json_encode(['error'=>$e->getMessage()]);
             }
+        }
+    }
+    //endregion
+
+    //region пользователи
+
+    public function actionGetUser(){
+        $group = User::getGropList();
+        $group[0] = '...';
+
+        $role = User::getRoleList();
+        $role[0] = '...';
+
+        $_POST['uBlock'] =0;
+        self::actionGetUserList();
+
+        $this->view
+            ->setFContainer('UserFormContent',true)
+            ->set('groupList',html_::select($group,'uGroupList',0,'style="width:100%;display:inline-block;" class="form-control"'))
+            ->set('roleList',html_::select($role,'uRoleList',0,'style="width:100%;display:inline-block;" class="form-control"'))
+            ->out('UserForm',$this->className);
+    }
+
+    public function actionGetUserList(){
+
+        $params = array();
+        if(!empty($_POST['Usurname'])){
+            $params['col_Sername'] = $_POST['Usurname'];
+        }
+
+        if(!empty($_POST['uGroupList'])){
+            $params['col_gID'] = $_POST['uGroupList'];
+        }
+
+        if(!empty($_POST['uRoleList'])){
+            $params['col_roleID'] = $_POST['uRoleList'];
+        }
+
+        if(isset($_POST['uBlock'])){
+            $params['col_isBlock'] = $_POST['uBlock'];
+        }
+
+        $list = User::getModels($params);
+        if(!empty($list)){
+            foreach ($list as $item){
+                $this->view
+                    ->add_dict($item)
+                    ->out('UserFormCenter',$this->className);
+            }
+        }
+    }
+
+    public function actionAddUser(){
+        if(!empty($_POST)){
+            try{
+                $params = array();
+
+                if(empty($_POST['addUsurname'])){
+                    echo json_encode(['error'=>'Не указана фамилия']);
+                    return;
+                }
+                else{
+                    $params['surname'] = $_POST['addUsurname'];
+                }
+
+                if(empty($_POST['addUname'])){
+                    echo json_encode(['error'=>'Не указано имя']);
+                    return;
+                }
+                else{
+                    $params['name'] = $_POST['addUname'];
+                }
+
+                if(empty($_POST['addUlogin'])){
+                    echo json_encode(['error'=>'Не указан логин']);
+                    return;
+                }
+                else{
+                    $params['login'] = $_POST['addUlogin'];
+                }
+
+                if(empty($_POST['addUpwd'])){
+                    echo json_encode(['error'=>'Не указан пароль']);
+                    return;
+                }
+                else{
+                    $params['pwd'] = $_POST['addUpwd'];
+                }
+
+                if(!empty($_POST['addUlastname'])){
+                    $params['lastname'] = $_POST['addUlastname'];
+                }
+                else
+                    $params['lastname'] = ' ';
+
+                $params['role'] = $_POST['uAddRoleList'];
+                $params['block'] = $_POST['uBlockList'];
+
+                mUser::AddUser($params);
+                echo json_encode(['success'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+        }
+        else{
+            $role = User::getRoleList();
+
+            $this->view
+                ->set('roleList',html_::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
+                ->out('AddUser',$this->className);
         }
     }
     //endregion

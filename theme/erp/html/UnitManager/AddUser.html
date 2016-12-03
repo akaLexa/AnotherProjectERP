@@ -1,0 +1,37 @@
+<form id="AddUserForm">
+    <table class="table table-hover">
+        <tr>
+            <th style="width: 250px;">Фамилия</th>
+            <td><input type="text" style="display: inline-block; width:250px;" class="form-control" name="addUsurname"></td>
+        </tr>
+        <tr>
+            <th>Имя</th>
+            <td><input type="text" style="display: inline-block; width:250px;" class="form-control" name="addUname"></td>
+        </tr>
+        <tr>
+            <th>Отчество</th>
+            <td><input type="text" style="display: inline-block; width:250px;" class="form-control" name="addUlastname"></td>
+        </tr>
+        <tr>
+            <th>Логин</th>
+            <td><input type="text" style="display: inline-block; width:250px;" class="form-control" name="addUlogin"></td>
+        </tr>
+        <tr>
+            <th>Пароль</th>
+            <td><input type="password" style="display: inline-block; width:250px;" class="form-control" name="addUpwd"></td>
+        </tr>
+        <tr>
+            <th>Роль</th>
+            <td>|roleList|</td>
+        </tr>
+        <tr>
+            <th>Блокировка</th>
+            <td>
+                <select name="uBlockList" style="display: inline-block; width:250px;" class="form-control">
+                    <option value="0" selected>Нет</option>
+                    <option value="1">Да</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
