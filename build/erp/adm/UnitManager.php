@@ -697,12 +697,11 @@ class UnitManager extends eController
                     $params['pluginState'] = $_POST['stateList'];
 
                     if(!empty($_POST['pluginDesc'])){
-                        echo '-> go';
                         $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
-                        Tools::debug($db->add2Dic($_POST['pluginDesc'],$params['pluginName'],true));
+                        $db->add2Dic($_POST['pluginDesc'],$params['pluginName'],true);
                     }
 
-                    if(!empty($_POST['pluginCustomUsrs'])){
+                    if(!empty(trim($_POST['pluginCustomUsrs']))){
                         $cfg = Configs::readCfg('plugin_'.$params['pluginName'],tbuild);
                         $cfg['allowedUsrs'] = $_POST['pluginCustomUsrs'];
                         Configs::writeCfg($cfg,'plugin_'.$params['pluginName'],tbuild);
