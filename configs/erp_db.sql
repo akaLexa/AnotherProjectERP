@@ -1,4 +1,4 @@
-﻿-- Script date 27.11.2016 17:33:49
+﻿-- Script date 03.12.2016 15:42:54
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -93,8 +93,8 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules(col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 4
-  AVG_ROW_LENGTH = 16384
+  AUTO_INCREMENT = 7
+  AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -129,10 +129,11 @@ CREATE TABLE tbl_modules (
   col_path VARCHAR(255) DEFAULT NULL COMMENT 'местонахождения скрипта',
   col_cache INT(11) DEFAULT 0 COMMENT 'кеширование в секундах',
   col_isClass CHAR(1) DEFAULT '1' COMMENT 'mvc или обычный скрипт',
+  col_moduleName VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 3
   AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -152,7 +153,8 @@ CREATE TABLE tbl_plugins (
   PRIMARY KEY (col_pID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 3
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -171,7 +173,7 @@ CREATE TABLE tbl_plugins_group (
   REFERENCES tbl_plugins(col_pID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 5
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -234,12 +236,14 @@ CREATE TABLE tbl_user (
   col_deputyID INT(11) DEFAULT NULL,
   col_StartDep DATETIME DEFAULT NULL,
   col_banDate DATETIME DEFAULT NULL,
+  col_regDate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (col_uID),
   CONSTRAINT FK_tbl_user_col_roleID FOREIGN KEY (col_roleID)
   REFERENCES tbl_user_roles(col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'пользователи';
@@ -323,7 +327,8 @@ CREATE TABLE tbl_users (
 -- Dumping data for table tbl_module_groups
 --
 INSERT INTO tbl_module_groups VALUES
-  (3, 1, 1);
+  (5, 2, 4),
+  (6, 1, 1);
 
 --
 -- Dumping data for table tbl_module_roles
@@ -335,19 +340,20 @@ INSERT INTO tbl_module_groups VALUES
 -- Dumping data for table tbl_modules
 --
 INSERT INTO tbl_modules VALUES
-  (1, 'title_2', 'adm/UnitManager', 0, '1');
+  (1, 'title_2', 'adm/UnitManager', 0, '1', 'UnitManager'),
+  (2, 'title_1', 'main/MainPage', 0, '1', 'MainPage');
 
 --
 -- Dumping data for table tbl_plugins
 --
-
--- Table erp_db.tbl_plugins does not contain any data (it is empty)
+INSERT INTO tbl_plugins VALUES
+  (2, 'Login', 0, '1', '1', 0);
 
 --
 -- Dumping data for table tbl_plugins_group
 --
-
--- Table erp_db.tbl_plugins_group does not contain any data (it is empty)
+INSERT INTO tbl_plugins_group VALUES
+  (4, 2, 4);
 
 --
 -- Dumping data for table tbl_plugins_roles
@@ -364,8 +370,8 @@ INSERT INTO tbl_roles_in_group VALUES
 --
 -- Dumping data for table tbl_user
 --
-
--- Table erp_db.tbl_user does not contain any data (it is empty)
+INSERT INTO tbl_user VALUES
+  (1, 'Админ', 'Админов', ' ', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, '0', NULL, NULL, NULL, NOW());
 
 --
 -- Dumping data for table tbl_user_groups
