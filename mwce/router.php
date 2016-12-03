@@ -55,19 +55,6 @@ class router
     protected $buildCfg;
 
     /**
-     * @var bool|array
-     * набор страниц, что зарегистрированы
-     */
-    protected $pages;
-
-    /**
-     * @var bool|array
-     * набор зарегистрированнных
-     * плагинов
-     */
-    protected $plugins;
-
-    /**
      * @var content
      */
     protected $view;
@@ -393,7 +380,7 @@ class router
      */
     public function startPlugins()
     {
-        if (is_array($this->plugins) && !$this->isBg) //если в бекграунде, то плагины не включаем.
+        if (!$this->isBg) //если в бекграунде, то плагины не включаем.
         {
            self::$accessor->renderPlugin($this->userGroup,$this->userRole,$this->curUserId);
         }

@@ -15,6 +15,7 @@ use mwce\Exceptions\ModException;
 use mwce\Logs;
 use mwce\mwceAccessor;
 use mwce\PluginController;
+use mwce\Tools;
 
 
 class AccessRouter extends mwceAccessor
@@ -197,6 +198,7 @@ ORDER BY tp.col_seq");
 
     /**
      * @param int $group
+     * @param int $role
      * @param int $uid
      */
     public function renderPlugin($group,$role,$uid){

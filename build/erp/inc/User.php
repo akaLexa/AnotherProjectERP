@@ -77,7 +77,7 @@ ORDER BY tu.col_Sername")->fetchAll(static::class);
 
         return $db->query("SELECT 
  tu.*,
- tr.*,
+ ur.*,
  tug.*
 FROM 
 tbl_user tu,
@@ -141,7 +141,7 @@ tu.col_uID = $id")->fetch(static::class);
     protected function _adding($name, $value)
     {
         switch ($name){
-            case 'col_RegDate':
+            case 'col_regDate':
             case 'col_blockDate':
                 if(!empty($value)){
                     parent::_adding($name.'Legend', date_::transDate($value,true));
