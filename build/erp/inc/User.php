@@ -69,7 +69,7 @@ ORDER BY tu.col_Sername")->fetchAll(static::class);
 
     /**
      * @param int $id
-     * @return array|User
+     * @return User
      */
     public static function getCurModel($id)
     {
@@ -86,7 +86,7 @@ LEFT JOIN tbl_roles_in_group ug ON ug.col_roleID = ur.col_roleID
 LEFT JOIN tbl_user_groups tug ON tug.col_gID = ug.col_gID
 WHERE
 ur.col_roleID = tu.col_roleID
-tu.col_uID = $id")->fetch(static::class);
+AND tu.col_uID = $id")->fetch(static::class);
     }
 
     /**

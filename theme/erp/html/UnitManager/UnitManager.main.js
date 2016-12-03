@@ -655,6 +655,53 @@ function AddUserForm() {
         }
     });
 }
+function EditUser(uid) {
+    $('#forDialogs').dialog({
+        title:'Редактировать пользователя',
+        modal:true,
+        resizable:false,
+        width:600,
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/EditUser?id='+uid,
+                loadicon:'Загружаю...'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/EditUser?id='+uid,
+                    type:'POST',
+                    data:$('#editUserForm').serialize(),
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r.trim());
+                            if(receive['error']!= undefined){
+                                mwce_alert(receive['error'],'Ошибка');
+                            }
+                            else{
+                                UserFilter();
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                        catch (e)
+                        {
+                            console.error(e.message)
+                        }
+                    }
+                })
+            },
+            'Закрыть':function () {
+                $('#forDialogs').dialog('close');
+            }
+        }
+    });
+}
 
 function mfilter() {
     genIn({

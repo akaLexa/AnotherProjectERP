@@ -773,7 +773,7 @@ class UnitManager extends eController
         }
 
         if(isset($_POST['uBlock'])){
-            $params['col_isBlock'] = $_POST['uBlock'];
+            $params['col_isBaned'] = $_POST['uBlock'];
         }
 
         $list = User::getModels($params);
@@ -845,6 +845,73 @@ class UnitManager extends eController
             $this->view
                 ->set('roleList',html_::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
                 ->out('AddUser',$this->className);
+        }
+    }
+
+    public function actionEditUser(){
+        if(empty($_GET['id']))
+            return;
+        $info = mUser::getCurModel($_GET['id']);
+        if(empty($info))
+            return;
+
+        if(!empty($_POST)){
+            try{
+                $params = array();
+
+                if(empty($_POST['addUsurname'])){
+                    echo json_encode(['error'=>'Не указана фамилия']);
+                    return;
+                }
+                else{
+                    $params['surname'] = $_POST['addUsurname'];
+                }
+
+                if(empty($_POST['addUname'])){
+                    echo json_encode(['error'=>'Не указано имя']);
+                    return;
+                }
+                else{
+                    $params['name'] = $_POST['addUname'];
+                }
+
+                if(empty($_POST['addUlogin'])){
+                    echo json_encode(['error'=>'Не указан логин']);
+                    return;
+                }
+                else{
+                    $params['login'] = $_POST['addUlogin'];
+                }
+
+                if(!empty($_POST['addUpwd'])){
+                    $params['pwd'] = $_POST['addUpwd'];
+                }
+
+                if(!empty($_POST['addUlastname'])){
+                    $params['lastname'] = $_POST['addUlastname'];
+                }
+                else
+                    $params['lastname'] = ' ';
+
+                $params['role'] = $_POST['uAddRoleList'];
+                $params['block'] = $_POST['uBlockList'];
+
+                $info->editUser($params);
+
+                echo json_encode(['success'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+        }
+        else{
+            $role = User::getRoleList();
+
+            $this->view
+                ->set('roleList',html_::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
+                ->set('blockList',html_::select([0=>'Нет',1=>'Да'],'uBlockList',$info['col_isBaned'],'style="width:250px;display:inline-block;" class="form-control"'))
+                ->add_dict($info)
+                ->out('EditUser',$this->className);
         }
     }
     //endregion
