@@ -39,18 +39,20 @@ interface ImwceAccessor
 
 
     /**
-     * @param string $page
+     * @param string $page название модуля страницы
      * @param string $acton
-     * @param int $group
+     * @param int $group группа
+     * @param int $role роль
      * @param int $uid
      * @param string $defController
      * @return \Exception|void
      */
-    public function renderPage($page,$acton,$group,$uid,$defController);
+    public function renderPage($page,$acton,$group,$role,$uid,$defController);
 
     /**
      * @param int $group
+     * @param int $role
      * @param int $uid
      */
-    public function renderPlugin($group,$uid);
+    public function renderPlugin($group,$role,$uid);
 }

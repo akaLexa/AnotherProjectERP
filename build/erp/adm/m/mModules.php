@@ -18,7 +18,7 @@ class mModules extends Model
      */
     public static function Add($params){
         $db = Connect::start();
-        $db->exec("INSERT INTO tbl_modules (col_title,col_path,col_cache,col_isClass) VALUE('{$params['titleList']}','{$params['adrCnt']}',{$params['cachSec']},{$params['isMVC']})");
+        $db->exec("INSERT INTO tbl_modules (col_title,col_path,col_cache,col_isClass,col_moduleName) VALUE('{$params['titleList']}','{$params['adrCnt']}',{$params['cachSec']},{$params['isMVC']},'{$params['module']}')");
         return self::getCurModel($db->lastId('tbl_modules'));
     }
 
@@ -96,7 +96,7 @@ ORDER BY mm.col_title")->fetch(static::class);
     }
 
     public function edit($params){
-        $this->db->exec("UPDATE tbl_modules SET col_title='{$params['titleList']}',col_path='{$params['adrCnt']}',col_cache={$params['cachSec']},col_isClass = {$params['isMVC']} WHERE col_modID = ".$this['col_modID']);
+        $this->db->exec("UPDATE tbl_modules SET col_title='{$params['titleList']}',col_path='{$params['adrCnt']}',col_cache={$params['cachSec']},col_isClass = {$params['isMVC']},col_moduleName='{$params['module']}' WHERE col_modID = ".$this['col_modID']);
     }
 
     public function delete(){

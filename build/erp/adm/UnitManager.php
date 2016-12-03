@@ -365,6 +365,8 @@ class UnitManager extends eController
             else
                 $params['adrCnt'] = $_POST['adrCnt'];
 
+            $t = explode('/',$params['adrCnt']);
+            $params['module'] = end($t);
             $params['isMVC'] = empty($_POST['isMVC']) ? 0 : 1;
             $params['cachSec'] = empty($_POST['cachSec']) ? 0 : $_POST['cachSec'];
 
@@ -477,6 +479,9 @@ class UnitManager extends eController
                     return;
                 else
                     $params['adrCnt'] = $_POST['adrCnt'];
+
+                $t = explode('/',$params['adrCnt']);
+                $params['module'] = end($t);
 
                 $params['isMVC'] = empty($_POST['isMVC']) ? 0 : 1;
                 $params['cachSec'] = empty($_POST['cachSec']) ? 0 : $_POST['cachSec'];

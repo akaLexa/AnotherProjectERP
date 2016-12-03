@@ -85,6 +85,12 @@ class router
     protected $userGroup = 2;
 
     /**
+     * @var int
+     * роль пользователя
+     */
+    protected $userRole;
+
+    /**
      * @var string
      * контроллер по умолчанию
      */
@@ -223,12 +229,21 @@ class router
                     define('tbuild', $_SESSION['mwcbuild']);
                 }
 
-                if (empty($_SESSION['mwcpoints'])) {
-                    $_SESSION['mwcpoints'] = $this->userGroup;
+                if (empty($_SESSION['mwcGroup'])) {
+                    $_SESSION['mwcGroup'] = $this->userGroup;
                 }
                 else {
-                    $this->userGroup = $_SESSION['mwcpoints'];
+                    $this->userGroup = $_SESSION['mwcGroup'];
                 }
+
+                if (empty($_SESSION['mwcRole'])) {
+                    $_SESSION['mwcRole'] = $this->userRole;
+                }
+                else {
+                    $this->userRole = $_SESSION['mwcRole'];
+                }
+
+
 
                 if (!empty($_SESSION['mwcuid'])) {
                     $this->curUserId = $_SESSION['mwcuid'];
@@ -244,11 +259,18 @@ class router
                     define('tbuild', $_SESSION['mwcabuild']);
                 }
 
-                if (empty($_SESSION['mwcapoints'])) {
-                    $_SESSION['mwcapoints'] = $this->userGroup;
+                if (empty($_SESSION['mwcaGroup'])) {
+                    $_SESSION['mwcaGroup'] = $this->userGroup;
                 }
                 else {
-                    $this->userGroup = $_SESSION['mwcapoints'];
+                    $this->userGroup = $_SESSION['mwcaGroup'];
+                }
+
+                if (empty($_SESSION['mwcaRole'])) {
+                    $_SESSION['mwcaRole'] = $this->userRole;
+                }
+                else {
+                    $this->userRole = $_SESSION['mwcaRole'];
                 }
 
                 if (!empty($_SESSION['mwcauid'])) {
@@ -270,10 +292,11 @@ class router
                 $_SESSION['mwclang'] = $this->buildCfg['dlang'];
             }
 
+            define('curLang',$_SESSION['mwclang']);
 
             $this->defController = '\\build\\' . tbuild . '\\' . 'inc\\' . $this->buildCfg['defController'];
 
-            $this->view = new content(Tools::getAddress(), $this->buildCfg["theme"], $_SESSION["mwclang"]);
+            $this->view = new content(Tools::getAddress(), $this->buildCfg["theme"], curLang);
 
             //region запуск роутинга доступов для плагинов и модулей
 
@@ -336,7 +359,7 @@ class router
                 return;
             }
 
-            self::$accessor->renderPage(self::$curController,self::$curAction,$this->userGroup,$this->curUserId,$this->defController);
+            self::$accessor->renderPage(self::$curController,self::$curAction,$this->userGroup,$this->userRole,$this->curUserId,$this->defController);
         }
         catch (\Exception $e) {
             Logs::log($e);
@@ -357,7 +380,7 @@ class router
     {
         if (is_array($this->plugins) && !$this->isBg) //если в бекграунде, то плагины не включаем.
         {
-           self::$accessor->renderPlugin($this->userGroup,$this->curUserId);
+           self::$accessor->renderPlugin($this->userGroup,$this->userRole,$this->curUserId);
         }
     }
 

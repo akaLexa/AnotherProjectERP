@@ -10,6 +10,7 @@ namespace build\erp\inc;
 
 use mwce\Configs;
 use mwce\content;
+use mwce\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\Logs;
 use mwce\mwceAccessor;
@@ -28,6 +29,54 @@ class AccessRouter extends mwceAccessor
         );
 
         $this->plugins = array();
+        $this->pages = $this->getModuleList();
+    }
+
+    /**
+     * получение списка зарегистрированных модулей
+     * @return array|mixed
+     */
+    protected function getModuleList(){
+
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_pages.php';
+
+        if(file_exists($path)){
+            $pages = require $path;
+            if(!empty($pages))
+                return $pages;
+        }
+
+
+        $q = $this->db->query("SELECT 
+  mm.*,
+  (SELECT GROUP_CONCAT(tmg.col_gID SEPARATOR ',') FROM tbl_module_groups tmg WHERE tmg.col_modID = mm.col_modID) AS col_groups,
+  (SELECT GROUP_CONCAT(tmr.col_roleID SEPARATOR ',') FROM tbl_module_roles tmr WHERE tmr.col_modID = mm.col_modID) AS col_roles
+FROM 
+   tbl_modules mm 
+ORDER BY
+   mm.col_title");
+
+        $pages = array();
+        $inFile = '';
+        $dict = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . curLang . DIRECTORY_SEPARATOR . 'titles.php');
+
+        while ($res = $q->fetch()){
+            $pages[$res['col_moduleName']] = array(
+                'title' => $res['col_title'],
+                'path' => $res['col_path'],
+                'cache' => $res['col_cache'],
+                'isClass' => $res['col_isClass'],
+                'groupAccess' => $res['col_groups'],
+                'roleAccess' => $res['col_roles'],
+                'titleLegend' => !empty($dict[$res['col_title']]) ? $dict[$res['col_title']] : '',
+            );
+            $inFile.="\t'{$res['col_moduleName']}' => ['title' => '{$res['col_title']}','path' => '{$res['col_path']}','cach' => {$res['col_cache']}, 'isClass' => {$res['col_isClass']}, 'groupAccess' => '{$res['col_groups']}', 'roleAccess'=>'{$res['col_roles']}','titleLegend' => '{$pages[$res['col_moduleName']]['titleLegend']}',],\r\n";
+        }
+        if(!empty($inFile)){
+            file_put_contents($path,'<?php return array('.$inFile.');',LOCK_EX);
+        }
+
+        return $pages;
     }
 
     /**
@@ -38,13 +87,14 @@ class AccessRouter extends mwceAccessor
      * @param string $defController
      * @return \Exception|void
      */
-    public function renderPage($page, $acton, $group,$uid,$defController)
+    public function renderPage($page, $acton, $group,$role,$uid,$defController)
     {
 
-        if (!empty($this->pages[$page]) && $this->pages[$page]["ison"] == '1') {
+        if (!empty($this->pages[$page])) {
 
+            $access = explode(",", $this->pages[$page]["groupAccess"]);
+            $roleAccess = explode(",", $this->pages[$page]["roleAccess"]);
 
-            $access = explode(",", $this->pages[$page]["groups"]);
 
             //region проверка на пользователя (если есть)
             $ccfg = Configs::readCfg($page, tbuild);
@@ -63,11 +113,15 @@ class AccessRouter extends mwceAccessor
             }
             //endregion
 
-            if (in_array($group, $access) || in_array(4, $access) || (in_array(5, $access) && $group != 2) || $err == 0)//если пользователю дозволен вход и нет проблем с allowedUsrs
+            if (in_array($group, $access)
+                || in_array($role, $roleAccess)
+                || in_array(4, $access)
+                || (in_array(5, $access) && $group != 2)
+                || $err == 0)//если пользователю дозволен вход и нет проблем с allowedUsrs
             {
                 if ($this->pages[$page]["isClass"] == '1') //если модуль является православным MVC
                 {
-                    $cPath = '\\build\\' . tbuild . '\\' . $this->pages[$page]['ppath'] . '\\' . $page;
+                    $cPath = '\\build\\' . tbuild . '\\' . str_replace('/', '\\', $this->pages[$page]['path']);
                     if (class_exists($cPath)) {
 
                         $controller = new $cPath($this->view, $this->pages);
@@ -82,7 +136,7 @@ class AccessRouter extends mwceAccessor
                 }
                 else {
                     $controller = new $defController ($this->view, $this->pages);
-                    $controller->genNonMVC(baseDir . DIRECTORY_SEPARATOR . 'build/' . tbuild . '/' . str_replace('\\', '/', $this->pages[$page]['ppath']) . '/' . $page . '.php');
+                    $controller->genNonMVC(baseDir . DIRECTORY_SEPARATOR . 'build/' . tbuild . '/' . $this->pages[$page]['path'] . '/' . $page . '.php');
                 }
             }
             else {
@@ -99,7 +153,7 @@ class AccessRouter extends mwceAccessor
      * @param int $group
      * @param int $uid
      */
-    public function renderPlugin($group,$uid){
+    public function renderPlugin($group,$role,$uid){
 
         if (is_array($this->plugins)) //если в бекграунде, то плагины не включаем.
         {
