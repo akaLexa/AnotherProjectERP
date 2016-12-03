@@ -23,7 +23,7 @@ class AccessRouter extends mwceAccessor
     {
         parent::__construct($view, $conNum);
 
-        $this->plugins = array();
+        $this->plugins =$this->getPluginsList();
         $this->pages = $this->getModuleList();
     }
 
@@ -72,6 +72,45 @@ ORDER BY
         }
 
         return $pages;
+    }
+
+    protected function getPluginsList(){
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_plugins.php';
+
+        if(file_exists($path)){
+            $plugins = require $path;
+            if(!empty($plugins))
+                return $plugins;
+        }
+
+
+        $q = $this->db->query("SELECT
+  tp.*,
+  (SELECT GROUP_CONCAT(col_roleID SEPARATOR ',') FROM tbl_plugins_roles tpr WHERE tpr.col_pID = tp.col_pID) AS col_roles,
+  (SELECT GROUP_CONCAT(col_gID SEPARATOR ',') FROM tbl_plugins_group tpg WHERE tpg.col_pID = tp.col_pID) AS col_groups
+FROM
+  tbl_plugins tp
+ORDER BY tp.col_seq");
+
+        $plugins = array();
+        $inFile = '';
+
+        while ($res = $q->fetch()){
+            $plugins[$res['col_pluginName']] = array(
+                'cache' => $res['col_cache'],
+                'isClass' => $res['col_isClass'],
+                'state' => $res['col_pluginState'],
+                'groupAccess' => $res['col_groups'],
+                'roleAccess' => $res['col_roles'],
+                'seq' => $res['col_seq'],
+            );
+            $inFile.="\t'{$res['col_pluginName']}' => ['cache' => {$res['col_cache']}, 'isClass' => {$res['col_isClass']}, 'groupAccess' => '{$res['col_groups']}', 'roleAccess'=>'{$res['col_roles']}','state' => {$res['col_pluginState']},'seq' => {$res['col_seq']}],\r\n";
+        }
+        if(!empty($inFile)){
+            file_put_contents($path,'<?php return array('.$inFile.');',LOCK_EX);
+        }
+
+        return $plugins;
     }
 
     /**
@@ -168,62 +207,66 @@ ORDER BY
 
             foreach ($ai as $name => $param) {
                 try {
-                    if ($param["pstate"] == '1')//если плагин включен
+                    if ($param["state"] == 1)//если плагин включен
                     {
-                        $contoller_path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR . "controller" . DIRECTORY_SEPARATOR . $name . ".php";
+                        $contoller_path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name . '.php';
 
                         $cPath = 'build\\' . tbuild . '\\plugins\\' . $name;
-
-                        //region проверка на пользователя (если есть)
-                        $ccfg = Configs::readCfg("plugin_" . $name, tbuild);
-                        if (!empty($ccfg["allowedUsrs"])) {
-                            $usrs = explode(",", $ccfg["allowedUsrs"]); //доступ по id для определенных пользователей
-
-                            if (!in_array($uid, $usrs)) {
-                                $err = 2;
-                            }
-                            else {
-                                $err = 0;
-                            }
-                        }
-                        else {
-                            $err = 2;
-                        }
-                        //endregion
 
                         if(!file_exists($contoller_path))
                         {
                             Logs::log(new ModException('Plugin controller "' . $cPath . '" not exists'));
                         }
-                        else if (!empty($param["groups"]) || $err == 0)
+                        else
                         {
-                            if (empty($param["groups"])) {
-                                $paccess = array();
+                            //region проверка на пользователя (если есть)
+                            $ccfg = Configs::readCfg("plugin_" . $name, tbuild);
+                            if (!empty($ccfg["allowedUsrs"])) {
+                                $usrs = explode(",", $ccfg["allowedUsrs"]); //доступ по id для определенных пользователей
+
+                                if (!in_array($uid, $usrs)) {
+                                    $err = 2;
+                                }
+                                else {
+                                    $err = 0;
+                                }
                             }
                             else {
-                                $paccess = explode(",", $param["groups"]);
+                                $err = 2;
+                            }
+                            //endregion
+
+                            if (empty($param["groupAccess"])) {
+                                $paccess = [];
+                            }
+                            else {
+                                $paccess = explode(",", $param["groupAccess"]);
                             }
 
+                            if(!empty($param['roleAccess'])){
+                                $rAccess = explode(',',$param['roleAccess']);
+                            }
+                            else{
+                                $rAccess = [];
+                            }
 
-                            if ($param["isClass"] == '1') //если это MVC плагин
+                            if (in_array($group, $paccess)
+                                || in_array($role, $rAccess)
+                                || in_array(4, $paccess)
+                                || (in_array(5, $paccess) && $group != 2)
+                                || $err == 0
+                            ) //если есть доступ к плагинам показываем
                             {
-
-                                if (in_array($group, $paccess) || in_array(4, $paccess) || (in_array(5, $paccess) && $group != 2) || $err == 0) //если есть доступ к плагинам показываем
+                                if ($param["isClass"] == 1) //если это MVC плагин
                                 {
                                     if (class_exists($cPath)) {
                                         $pcontoller = new $cPath($this->view, $this->plugins);
                                         $pcontoller->action('actionIndex');
                                         $pcontoller->parentOut();
-                                    }
-                                    else {
+                                    } else {
                                         Logs::log(3, 'class ' . $cPath . ' not found');
                                     }
-                                }
-
-                            }
-                            else {
-                                if (in_array($group, $paccess) || in_array(4, $paccess) || (in_array(5, $paccess) && $group != 2)) //если есть доступ к плагинам показываем
-                                {
+                                } else {
                                     $pcontoller = new PluginController($this->view, $this->plugins);
                                     $pcontoller->genNonMVC($contoller_path);
                                     $pcontoller->parentOut($name);
