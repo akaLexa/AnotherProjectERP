@@ -18,6 +18,7 @@ use build\erp\inc\eController;
 use build\erp\inc\User;
 use mwce\Configs;
 use mwce\DicBuilder;
+use mwce\Exceptions\ModException;
 use mwce\html_;
 use mwce\Tools;
 
@@ -564,7 +565,13 @@ class UnitManager extends eController
 
     public function actionPluginAdd(){
         if(!empty($_POST['pluginName'])){
-            mPlugin::Add($_POST['pluginName']);
+            try{
+                mPlugin::Add($_POST['pluginName']);
+                echo json_encode(['success'=>1]);
+            }
+            catch (ModException $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
         }
     }
     
@@ -707,7 +714,7 @@ class UnitManager extends eController
 
                     echo json_encode(['success'=>1]);
                 }
-                catch (\Exception $e){
+                catch (ModException $e){
                     echo json_encode(['error'=>$e->getMessage()]);
                 }
             }

@@ -17,7 +17,7 @@
             <td><input type="text" name="pluginSeq" value="|col_seq|" style="width: 80px;display: inline-block;" class="form-control"></td>
         </tr>
         <tr>
-            <th>Статус модуля</th>
+            <th>Статус плагина</th>
             <td>|stateList|</td>
         </tr>
         <tr>
@@ -25,8 +25,12 @@
             <td><div style="height:100px; overflow-y:auto;">|groupList|</div></td>
         </tr>
         <tr>
-            <th>Доступен ролям:</th>
-            <td><div style="height:100px; overflow-y:auto;">|rolesList|</div></td>
+            <td colspan="2">
+                <details>
+                    <summary>Доступен ролям</summary>
+                    <div style="height:100px; overflow-y:auto;">|rolesList|</div>
+                </details>
+            </td>
         </tr>
         <tr>
             <th>Описание плагина</th>
