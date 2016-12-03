@@ -538,6 +538,10 @@ class UnitManager extends eController
             }
         }
     }
+
+    public function actionClearModuleCache(){
+        mModules::RefreshCache();
+    }
     //endregion
 
     //region вкладка "меню"

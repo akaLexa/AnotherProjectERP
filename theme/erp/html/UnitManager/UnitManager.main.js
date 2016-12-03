@@ -18,19 +18,6 @@ function genTabContent(tab) {
     });
 }
 
-function moduleFiltr() {
-    genIn({
-        element:'ModulesLists',
-        address:'|site|page/|currentPage|/GetModuleList',
-        type:'POST',
-       /* data:$('#filterMenus input[type=text],#filterMenus select').serialize(),*/
-        loadicon:'<tr><td colspan="5" style="color:green;text-align: center;">Загружаю..</td></tr>',
-        callback:function () {
-          /*  knowMenuSec();*/
-        }
-    })
-}
-
 
 function groupEdit(id) {
     $('#forDialogs').dialog({
@@ -82,7 +69,6 @@ function groupEdit(id) {
         }
     })
 }
-
 function add() {
     $('#forDialogs').dialog({
         title:'Добавить группу',
@@ -133,7 +119,6 @@ function add() {
         }
     })
 }
-
 function groupDel(id) {
     mwce_confirm({
         title:'Подтверждение действия',
@@ -220,7 +205,6 @@ function addRole() {
         }
     })
 }
-
 function roleEdit(id) {
     $('#forDialogs').dialog({
         title:'Редактировать роль',
@@ -270,7 +254,6 @@ function roleEdit(id) {
         }
     })
 }
-
 function roleDel(id) {
     mwce_confirm({
         title:'Подтверждение действия',
@@ -306,6 +289,18 @@ function roleDel(id) {
     })
 }
 
+function moduleFiltr() {
+    genIn({
+        element:'ModulesLists',
+        address:'|site|page/|currentPage|/GetModuleList',
+        type:'POST',
+        /* data:$('#filterMenus input[type=text],#filterMenus select').serialize(),*/
+        loadicon:'<tr><td colspan="5" style="color:green;text-align: center;">Загружаю..</td></tr>',
+        callback:function () {
+            /*  knowMenuSec();*/
+        }
+    })
+}
 function addModule() {
     $('#forDialogs').dialog({
         title:'Добавить модуль',
@@ -360,7 +355,6 @@ function addModule() {
         }
     })
 }
-
 function editModule(id) {
     $('#forDialogs').dialog({
         title:'Редактировать модуль',
@@ -416,7 +410,6 @@ function editModule(id) {
         }
     })
 }
-
 function delModule(id) {
     mwce_confirm({
         title:'Требуется решение',
@@ -438,19 +431,31 @@ function delModule(id) {
         }
     });
 }
-
-function mfilter() {
-    genIn({
-        element:'menu_Body',
-        address:'|site|page/|currentPage|/GetMenu',
-        type:'POST',
-        data:$('#filterMenus input[type=text],#filterMenus select').serialize(),
-        loadicon:'<tr><td colspan="3" style="color:green;text-align: center;">Загружаю..</td></tr>',
-        callback:function () {
-            knowMenuSec();
+function clearModuleCache() {
+    mwce_confirm({
+        title: 'Очистка кеша модулей',
+        text: 'Вы уверены что хотите очистить кеш модулей?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ClearModuleCache',
+                    before:function () {
+                        document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
+                    },
+                    callback:function () {
+                        mwce_confirm.close();
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
         }
-    })
+    });
 }
+
+
 
 
 function addPlugin() {
@@ -631,7 +636,18 @@ function AddUserForm() {
     });
 }
 
-
+function mfilter() {
+    genIn({
+        element:'menu_Body',
+        address:'|site|page/|currentPage|/GetMenu',
+        type:'POST',
+        data:$('#filterMenus input[type=text],#filterMenus select').serialize(),
+        loadicon:'<tr><td colspan="3" style="color:green;text-align: center;">Загружаю..</td></tr>',
+        callback:function () {
+            knowMenuSec();
+        }
+    })
+}
 
 
 $(document).ready(function(){

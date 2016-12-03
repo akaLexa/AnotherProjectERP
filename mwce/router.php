@@ -32,14 +32,14 @@ class router
      * @var string
      * контроллер для вызова
      */
-    public static $curController;
+    protected static $curController;
 
     /**
      * @var string
      * метод, что нужно вызвать
      * у контроллера
      */
-    public static $curAction;
+    protected static $curAction;
 
     /**
      * @var bool
@@ -88,7 +88,7 @@ class router
      * @var int
      * роль пользователя
      */
-    protected $userRole;
+    protected $userRole = 0;
 
     /**
      * @var string
@@ -346,6 +346,21 @@ class router
         }
     }
 
+    /**
+     * установть текущую страницу
+     * @param string $controller
+     */
+    public static function setCurController($controller){
+        self::$curController = $controller;
+    }
+
+    /**
+     * установить текущее действие (функцию)
+     * @param string $action
+     */
+    public static function setCurAction($action){
+        self::$curAction = $action;
+    }
 
     /**
      * запуск обработки моделей

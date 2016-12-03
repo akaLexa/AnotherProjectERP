@@ -23,11 +23,6 @@ class AccessRouter extends mwceAccessor
     {
         parent::__construct($view, $conNum);
 
-        $this->pages = array(
-            'MainPage' => ['title' => 'title_1','ppath' => 'main', 'caching' => '0', "ison" => '1', "isClass" => '1', "groups" => '2'],
-            'UnitManager' => ['title' => 'title_2','ppath' => 'adm', 'caching' => '0', "ison" => '1', "isClass" => '1', "groups" => '2'],
-        );
-
         $this->plugins = array();
         $this->pages = $this->getModuleList();
     }
@@ -92,8 +87,20 @@ ORDER BY
 
         if (!empty($this->pages[$page])) {
 
-            $access = explode(",", $this->pages[$page]["groupAccess"]);
-            $roleAccess = explode(",", $this->pages[$page]["roleAccess"]);
+            if(!empty($this->pages[$page]["groupAccess"])){
+                $access = explode(",", $this->pages[$page]["groupAccess"]);
+            }
+            else{
+                $access = [];
+            }
+
+            if(!empty($this->pages[$page]["roleAccess"])){
+                $roleAccess = explode(",", $this->pages[$page]["roleAccess"]);
+            }
+            else{
+                $roleAccess = [];
+            }
+
 
 
             //region проверка на пользователя (если есть)

@@ -105,6 +105,20 @@ ORDER BY mm.col_title")->fetch(static::class);
         $this->db->exec("DELETE FROM tbl_modules WHERE col_modID = {$this['col_modID']}");
     }
 
+    /**
+     * очищает кеш зарегитсрированных модулей
+     */
+    public static function RefreshCache(){
+
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if(stripos($file,'_pages.php') != false){
+                unlink($path . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+    }
+
     protected function _adding($name, $value)
     {
         switch ($name){
