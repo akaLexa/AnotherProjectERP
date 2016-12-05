@@ -24,7 +24,7 @@ class mMenuManager extends Model
      */
     public function getAccessList($menu){
 
-        $config = Configs::readCfg('plugin_hMenu',tbuild);
+        $config = Configs::readCfg('plugin_mainMenu',tbuild);
         if(!empty($config)){
             $m = $config;
             foreach ($m as $name =>$item) {
@@ -62,11 +62,11 @@ class mMenuManager extends Model
 
         $db = Connect::start();
 
-        $q = $db->query("SELECT * FROM tbl_menu_type WHERE col_tbuild='".tbuild."'");
+        $q = $db->query("SELECT * FROM tbl_menu_type");
         $ma = array();
         while($result = $q->fetch())
         {
-            $ma[$result["id"]]=$result["ttitle"];
+            $ma[$result["col_id"]]=$result["col_ttitle"];
         }
         self::$sdata['MenuList'] = $ma;
         return $ma;
@@ -77,7 +77,7 @@ class mMenuManager extends Model
      */
     public static function addMenu($name){
         $db = Connect::start();
-        $db->exec("INSERT INTO tbl_menu_type (col_ttitle,col_tbuild,col_seq) VALUE ('$name','".tbuild."',99)");
+        $db->exec("INSERT INTO tbl_menu_type (col_ttitle,col_seq) VALUE ('$name',99)");
     }
 
     /**
@@ -122,7 +122,7 @@ FROM
 WHERE
  mm.col_mtype = {$params['menuId']}
  AND mt.id = mm.col_mtype
- AND mt.col_tbuild = '".tbuild."' order by mm.col_Seq");
+ORDER BY mm.col_Seq");
         $return = array();
 
 
@@ -216,8 +216,4 @@ WHERE
         return $array;
     }
 
-   /* protected function _adding($name, $value)
-    {
-        parent::_adding($name, $value);
-    }*/
 }
