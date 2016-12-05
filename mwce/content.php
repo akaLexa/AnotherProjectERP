@@ -558,7 +558,7 @@ class content
                 if(!empty($this->curModule))
                     $js = strtr($js, $this->vars[$this->curModule]);
 
-                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "/*imputed $tpl*/ " . $js;
+                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "\r\n/* imputed $tpl */\r\n" . $js;
                 $this->connectjs[$folder . "." . $tpl . ".js"] = 1;
             }
         }
@@ -572,7 +572,7 @@ class content
                 if(!empty($this->curModule))
                     $js = strtr($js, $this->vars[$this->curModule]);
 
-                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "/*imputed $tpl*/ " . $js;
+                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "\r\n/* imputed $tpl */\r\n " . $js;
                 $this->connectjs[$folder . "." . $tpl . ".js_"] = 1;
             }
         }
@@ -582,7 +582,7 @@ class content
         if (file_exists($csspath)) {
             if (empty($this->connectCss[$folder . "." . $tpl . ".css"])) {
 
-                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "{/*imputed $tpl*/}  " . trim(@file_get_contents($csspath));
+                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "\r\n{/*imputed $tpl*/}\r\n  " . trim(@file_get_contents($csspath));
                 $this->connectCss[$folder . "." . $tpl . ".css"] = 1;
             }
 
@@ -592,7 +592,7 @@ class content
 
         if (file_exists($csspath)) {
             if (empty($this->connectCss[$folder . "." . $tpl . ".css_"])) {
-                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "{/*imputed $tpl*/}  " . trim(@file_get_contents($csspath));
+                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "\r\n{/*imputed $tpl*/}\r\n  " . trim(@file_get_contents($csspath));
                 $this->connectCss[$folder . "." . $tpl . ".css_"] = 1;
             }
 

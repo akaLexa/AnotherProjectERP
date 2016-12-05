@@ -141,8 +141,6 @@ ORDER BY tp.col_seq");
                 $roleAccess = [];
             }
 
-
-
             //region проверка на пользователя (если есть)
             $ccfg = Configs::readCfg($page, tbuild);
 
@@ -162,8 +160,8 @@ ORDER BY tp.col_seq");
 
             if (in_array($group, $access)
                 || in_array($role, $roleAccess)
-                || in_array(4, $access)
-                || (in_array(5, $access) && $group != 2)
+                || in_array(4, $access) //все
+                || (in_array(3, $access) && $group != 2)  //пользователи (кроме гостей)
                 || $err == 0)//если пользователю дозволен вход и нет проблем с allowedUsrs
             {
                 if ($this->pages[$page]["isClass"] == '1') //если модуль является православным MVC
@@ -255,7 +253,7 @@ ORDER BY tp.col_seq");
                             if (in_array($group, $paccess)
                                 || in_array($role, $rAccess)
                                 || in_array(4, $paccess)
-                                || (in_array(5, $paccess) && $group != 2)
+                                || (in_array(3, $paccess) && $group != 2)
                                 || $err == 0
                             ) //если есть доступ к плагинам показываем
                             {
