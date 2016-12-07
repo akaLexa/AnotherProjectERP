@@ -53,7 +53,7 @@ WHERE
 
         foreach ($dir as $val)
         {
-            if($val!="." && $val!="..")
+            if($val!="." && $val!=".."&& $val!="m")
             {
                 $bname = basename($val,".php");
                 $curPlugins[$bname] = $bname;

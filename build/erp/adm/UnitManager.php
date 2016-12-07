@@ -548,10 +548,227 @@ class UnitManager extends eController
     //region вкладка "меню"
     public function actionGetMenu(){
 
+        $_POST['menuList'] = 1;
+        self::actionGetMenuList();
         $this->view
+            ->setFContainer('menu_Body',true)
             ->set('mList',html_::select(mMenuManager::getMenuList(),'menuList',0,'class="form-control" style="display:inline-block;width:200px;" onchange="mfilter();"'))
             ->out('MenuForm',$this->className);
     }
+
+    public function actionGetMenuList(){
+        $params = [];
+
+        $params['menuId'] = !empty($_POST['menuList']) ? $_POST['menuList'] : 0;
+        $list = mMenuManager::getModels($params);
+
+        if(!empty($list)){
+
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+            foreach ($list as $item) {
+                if(!empty($lang[$item['mtitle']])){
+                    $item['mtitle'] = $lang[$item['mtitle']];
+                }
+
+                $this->view
+                    ->add_dict($item)
+                    ->out('menucenter',$this->className);
+            }
+        }
+    }
+
+    public function actionAddNewMenu(){
+        if(!empty($_POST['newName'])){
+            mMenuManager::addMenu($_POST['newName']);
+        }
+    }
+
+    public function actionAddMenu(){
+        if(!empty($_POST['newName'])){
+            mMenuManager::addMenu($_POST['newName']);
+        }
+    }
+
+    public function actionEditInMenu(){
+
+        if(!empty($_GET["id"]))
+        {
+            $tmenu = $_GET["id"];
+
+            $info  = mMenuManager::getCurentPos($tmenu);
+
+            if(empty($info))
+                return;
+
+            if(empty($_POST)){
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lang = DicBuilder::getLang($lpath);
+                asort($lang);
+
+                $this->view
+                    ->set("titlest",html_::select($lang,"mtitel",$info['col_mtitle'],"class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("modullist",html_::select($info->pageList(),"pagesList",$info['col_modul'],"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->add_dict($info)
+                    ->out("menueditPos",$this->className);
+            }
+            else{
+
+                if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
+                    if(!empty($_POST['newtitle'])) {
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
+                    }
+                    elseif(empty($_POST["mtitel"])){
+                        return;
+                    }
+                }
+                else
+                    $mtytle = $_POST["mtitel"];
+
+                if(empty($_POST["linkadr"]))
+                    $link = '';
+                else
+                    $link = $_POST["linkadr"];
+
+                if(empty($_POST["pagesList"]))
+                    $modul = '';
+                else
+                    $modul = $_POST["pagesList"];
+
+                $info->editCurrentPos($mtytle,$link,$modul,empty($_POST['seq'])? 0 : $_POST['seq']);
+            }
+        }
+
+    }
+
+    public function actionAddInMenu(){
+
+        if(!empty($_GET["id"]))
+        {
+            $tmenu = $_GET["id"];
+
+            $info  = mMenuManager::getCurModel($tmenu);
+
+            if(empty($info))
+                return;
+
+            if(empty($_POST)){
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lang = DicBuilder::getLang($lpath);
+                asort($lang);
+                $mlist = $info->pageList();
+                asort($mlist);
+
+                $this->view
+                    ->set("titlest",html_::select($lang,"mtitel",1,"class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("modullist",html_::select($mlist,"pagesList",-1,"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->add_dict($info)
+                    ->out("menuaddPos",$this->className);
+            }
+            else{
+
+                if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
+                    if(!empty($_POST['newtitle'])) {
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
+                    }
+                    elseif(empty($_POST["mtitel"])){
+                        return;
+                    }
+                }
+                else
+                    $mtytle = $_POST["mtitel"];
+
+                if(empty($_POST["linkadr"]))
+                    $link = '';
+                else
+                    $link = $_POST["linkadr"];
+
+                if(empty($_POST["pagesList"]))
+                    $modul = '';
+                else
+                    $modul = $_POST["pagesList"];
+
+                mMenuManager::addToMenu($mtytle,$tmenu,$link,$modul,empty($_POST['seq'])? 0 : $_POST['seq']);
+            }
+        }
+    }
+
+    public function actionDelMenu()
+    {
+        if(!empty($_GET['id'])){
+            mMenuManager::delMenu($_GET['id']);
+        }
+    }
+
+    public function actionDelPosMenu()
+    {
+        if(!empty($_GET['id'])){
+            mMenuManager::delPosMenu($_GET['id']);
+        }
+    }
+
+    /**
+     * параметры доступа
+     */
+    public function actionGetMenuAccess(){
+        if(!empty($_POST['menuType'])){
+            $menu = new mMenuManager();
+            $menuAcs = '';
+
+            if(!empty($_GET['upd'])) {
+                $ai = new \ArrayIterator($_POST);
+                foreach ($ai as $id => $item) {
+                    if (strpos($id, 'acs_') !== FALSE) {
+                        if(!empty($menuAcs))
+                            $menuAcs.=',';
+
+                        $menuAcs.= substr($id, 4);
+                    }
+                }
+                $old = Configs::readCfg('plugin_mainMenu',tbuild);
+                $old[$_POST['menuType']] = $menuAcs;
+                Configs::writeCfg($old,'plugin_mainMenu',tbuild);
+            }
+            else{
+                $list = $menu->getAccessList($_POST['menuType']);
+                $listF = [];
+
+                if(!empty($list)){
+                    foreach ($list['roles'] as $id=>$roleName) {
+                        $tm = !empty($list['access'][$id]) ? ' checked ' : '';
+
+                        $listF[]= array(
+                            'rName' => $roleName,
+                            'idA' => $id,
+                            'ischecked' =>$tm,
+                        );
+                    }
+                }
+
+                $this->view
+                    ->loops('accessForsm',$listF,'menuaForm',$this->className)
+                    ->out('menuaForm',$this->className);
+            }
+        }
+    }
+
+    /**
+     * узнать/сменить очережность меню
+     */
+    public function actionMenuSeq(){
+        if(!empty($_GET['id'])){
+            if(!isset($_POST['mSeq'])){
+                $seq = mMenuManager::KnowMenuSequence($_GET['id']);
+                echo json_encode(['seq'=>$seq]);
+            }
+            else{
+                mMenuManager::SetMenuSequence($_GET['id'],$_POST['mSeq']);
+            }
+
+        }
+    }
+
     //endregion
 
     //region "плагины"

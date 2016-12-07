@@ -11,6 +11,7 @@ use build\erp\plugins\m\mMainMenu;
 use mwce\content;
 use mwce\PluginController;
 
+
 class mainMenu extends PluginController
 {
     public function __construct(content $view, $plugins)
@@ -26,7 +27,7 @@ class mainMenu extends PluginController
 
     public function actionIndex()
     {
-        if($this->isCached('mainMenu_'.$_SESSION['mwcpoints'])) //кешик
+        if($this->isCached('mainMenu_'.$_SESSION['mwcGroup'])) //кешик
             return;
         $list = mMainMenu::getModels();
 
@@ -36,7 +37,7 @@ class mainMenu extends PluginController
             $curMenu = '';
             foreach ($ai as $menu_name=>$item) {
                 if($menu_name != $curMenu){
-                    if(!empty($this->configs[$menu_name]) && (in_array($_SESSION['mwcpoints'],$this->configs[$menu_name])
+                    if(!empty($this->configs[$menu_name]) && (in_array($_SESSION['mwcGroup'],$this->configs[$menu_name])
                             || in_array(3,$this->configs[$menu_name]))){
                         $inShow =  $list[$menu_name];
 
@@ -60,6 +61,6 @@ class mainMenu extends PluginController
             }
         }
         if($this->cacheNeed()) //если нужен кеш
-            $this->doCache('mainMenu_'.$_SESSION['mwcpoints']);
+            $this->doCache('mainMenu_'.$_SESSION['mwcGroup']);
     }
 }

@@ -19,7 +19,7 @@ class PluginController extends Controller
     /**
      * @var array
      */
-    private $plugins;
+    protected $plugins;
     /**
      * @var int показывать ли полное окно или только кусок модуля
      * (если кому-то приспичит аяксить мплагины, то это будет очень полезное свойство)
@@ -172,7 +172,7 @@ class PluginController extends Controller
         if (is_null($name))
             $name = $this->className;
 
-        if ($this->plugins[$name]["pcache"] > 0)
+        if ($this->plugins[$name]["cache"] > 0)
             return true;
         return false;
     }
@@ -220,7 +220,7 @@ class PluginController extends Controller
         if (!is_null($name))
             $fname = $name . "_" . $fname;
 
-        if ($this->cacheDif($fname) <= $prop["pcache"]) //если модуль кешируется и кеш еще актуален, вместо работы модуля берем кеш
+        if ($this->cacheDif($fname) <= $prop["cache"]) //если модуль кешируется и кеш еще актуален, вместо работы модуля берем кеш
         {
             $cache = $this->cacheGive($fname);
             if (empty($cache))

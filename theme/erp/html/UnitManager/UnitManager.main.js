@@ -14,8 +14,15 @@ function genTabContent(tab) {
     genIn({
         element:'tab_content',//+currentTab.toLowerCase(),
         address:'|site|page/|currentPage|/Get'+currentTab,
-        loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>'
+        loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
+        callback:function () {
+            if(currentTab == 'Menu'){
+                knowMenuSec();
+            }
+        }
     });
+
+
 }
 
 
@@ -455,9 +462,6 @@ function clearModuleCache() {
     });
 }
 
-
-
-
 function addPlugin() {
     var cPlugin = document.querySelector('#unregPl').value;
     genIn({
@@ -706,16 +710,253 @@ function EditUser(uid) {
 function mfilter() {
     genIn({
         element:'menu_Body',
-        address:'|site|page/|currentPage|/GetMenu',
+        address:'|site|page/|currentPage|/GetMenuList',
         type:'POST',
         data:$('#filterMenus input[type=text],#filterMenus select').serialize(),
         loadicon:'<tr><td colspan="3" style="color:green;text-align: center;">Загружаю..</td></tr>',
         callback:function () {
             knowMenuSec();
         }
+    });
+}
+function addNewMenu(){
+    $('#forDialogs').dialog({
+        title:'Добавить меню',
+        width:500,
+        modal:true,
+        resizable:false,
+        buttons:{
+            'Добавить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/AddNewMenu',
+                    type:'POST',
+                    data:$('#newMenu').serialize(),
+                    before:function () {
+                        document.querySelector('#newMenu').style.opacity = '0.2';
+                    },
+                    callback:function (){
+                        $('#forDialogs').dialog('close');
+                        window.location.reload();
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            document.querySelector('#forDialogs').innerHTML='<form id="newMenu">' +
+                '<input type="text" class="form-control" style="width:400px;display: inline-block;" name="newName" placeholder="Название нового меню">'+
+                '</form>';
+
+        },
+        close:function () {
+            $(this).dialog('destroy');
+            document.querySelector('#forDialogs').innerHTML='';
+        }
+    });
+}
+function AddInMenu() {
+    var curMenu = document.querySelector('#menuList').value;
+    $('#forDialogs').dialog({
+        title:'Добавление позиции',
+        width:580,
+        modal:true,
+        resizable:false,
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/AddInMenu?id='+curMenu,
+                    type:'POST',
+                    data:$('#addInMenu').serialize(),
+                    before:function () {
+                        document.querySelector('#addInMenu').style.opacity = '0.2';
+                    },
+                    callback:function (){
+                        $('#forDialogs').dialog('close');
+                        mfilter();
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/AddInMenu?id='+curMenu,
+                loadicon:'Загружаю'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function EditInMenu(id) {
+
+    $('#forDialogs').dialog({
+        title:'Изменение позиции',
+        width:580,
+        modal:true,
+        resizable:false,
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/EditInMenu?id='+id,
+                    type:'POST',
+                    data:$('#EditInMenu').serialize(),
+                    before:function () {
+                        document.querySelector('#EditInMenu').style.opacity = '0.2';
+                    },
+                    callback:function (){
+                        $('#forDialogs').dialog('close');
+                        mfilter();
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/EditInMenu?id='+id,
+                loadicon:'Загружаю'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function DelPosMenu(id) {
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы уверены, что хотите удалить текущее меню?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelPosMenu?id='+id,
+                    callback:function (r){
+                        mwce_confirm.close();
+                        mfilter();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
     })
 }
+function DelMenu() {
+    var curMenu = document.querySelector('#menuList').value;
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы уверены, что хотите удалить позицию из меню?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelMenu?id='+curMenu,
+                    callback:function (r){
+                        mwce_confirm.close();
+                        window.location.reload();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
+function knowMenuSec() {
+    var curMenu = document.querySelector('#menuList').value;
+    genIn({
+        noresponse:true,
+        address:"|site|page/|currentPage|/MenuSeq?id="+curMenu,
+        callback:function (r) {
+            var answ = JSON.parse(r);
+            document.querySelector('#mSeq').value = answ['seq'];
+        }
+    });
 
+}
+function setMenuSec() {
+    var curMenu = document.querySelector('#menuList').value;
+    genIn({
+        noresponse:true,
+        address:"|site|page/|currentPage|/MenuSeq?id="+curMenu,
+        type:'POST',
+        data:$('#seq_Menu').serialize()
+    });
+
+}
+function getAccess(){
+    var obj = document.querySelector('#menuList');
+    $('#forDialogs').dialog({
+        title:'Просмотр Прав',
+        width:380,
+        modal:true,
+        resizable:false,
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/GetMenuAccess?upd=1',
+                    type:'POST',
+                    data:'menuType='+obj.options[obj.selectedIndex].text+'&'+$('#accessFrom').serialize(),
+                    before:function () {
+                        document.querySelector('#accessFrom').style.opacity = '0.2';
+                    },
+                    callback:function (r){
+                        $('#forDialogs').dialog('close');
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/GetMenuAccess',
+                type:'POST',
+                data:'menuType='+obj.options[obj.selectedIndex].text,
+                loadicon:'Загружаю'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function getlink()
+{
+    check = document.getElementById("cptype").checked;
+    textbx = document.getElementById("linkadr");
+
+    if(textbx.value.indexOf("http",0)==-1)
+    {
+        if($("#pagesList").val()!='-1')
+        {
+            if (check)
+                textbx.value =  'page/'+ $("#pagesList").val() + '.html';
+            else
+                textbx.value =  '' + $("#pagesList").val();
+        }
+
+    }
+}
 
 $(document).ready(function(){
     genTabContent('Group');

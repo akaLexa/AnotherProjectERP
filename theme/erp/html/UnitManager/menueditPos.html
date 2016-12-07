@@ -1,0 +1,23 @@
+<form id="EditInMenu">
+    <table class="table" style="width: 500px;">
+        <tr>
+            <th>Название</th>
+            <td>|titlest| или <input type="text" class="form-control" style="width:120px;display: inline-block;" maxlength="50" name="newtitle"></td>
+        </tr>
+        <tr>
+            <th>Модуль</th>
+            <td>|modullist|</td>
+        </tr>
+        <tr>
+            <th>Ссылка</th>
+            <td>
+                <input type="text" name="linkadr" value="|col_link|" class="form-control" id="linkadr" style="display: inline-block;width:290px;" onchange="getlink()">
+                <input  onclick="getlink();" type="checkbox" value="1" id="cptype"> |usemodrewr|
+            </td>
+        </tr>
+        <tr>
+            <th>Очередность</th>
+            <td><input type="text" name="seq" class="form-control" value="|col_Seq|" style="display: inline-block;width:90px;"></td>
+        </tr>
+    </table>
+</form>

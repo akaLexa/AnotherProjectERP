@@ -14,6 +14,7 @@ use mwce\Configs;
 use mwce\Connect;
 use mwce\DicBuilder;
 use mwce\Model;
+use mwce\Tools;
 
 class mMenuManager extends Model
 {
@@ -110,6 +111,7 @@ class mMenuManager extends Model
         $db = Connect::start();
         if(empty($params['menuId']))
             return [];
+
         $q = $db->query("SELECT
  mm.col_id,
  mm.col_mtitle,
@@ -120,9 +122,10 @@ FROM
  tbl_menu mm,
  tbl_menu_type mt
 WHERE
- mm.col_mtype = {$params['menuId']}
- AND mt.id = mm.col_mtype
+ mt.col_id = '{$params['menuId']}'
+ AND mt.col_id = mm.col_mtype
 ORDER BY mm.col_Seq");
+
         $return = array();
 
 
@@ -131,10 +134,10 @@ ORDER BY mm.col_Seq");
         {
             $r["col_link"] = empty($r["col_link"]) ? 'Заголовок' : $r["col_link"];
 
-            $return[$r["id"]] = array(
+            $return[$r["col_id"]] = array(
                 "mtitle"=>$r["col_mtitle"],
                 "link"=>$r["col_link"],
-                "mtype"=>$r["col_mtype"],
+                "mtype"=>$r["mtype"],
                 'col_Seq'=>$r['col_Seq'],
                 'id'=>$r['col_id']
             );
@@ -188,7 +191,8 @@ ORDER BY mm.col_Seq");
      * @param int $col_Seq
      */
     public function editCurrentPos($mtitle,$link,$modul,$col_Seq){
-        $this->db->exec("UPDATE tbl_menu SET col_mtitle='$mtitle',col_link='$link',col_modul='$modul',col_Seq=$col_Seq WHERE col_id =".$this['id']);
+        Tools::debug("UPDATE tbl_menu SET col_mtitle='$mtitle',col_link='$link',col_modul='$modul',col_Seq=$col_Seq WHERE col_id =".$this['col_id']);
+        $this->db->exec("UPDATE tbl_menu SET col_mtitle='$mtitle',col_link='$link',col_modul='$modul',col_Seq=$col_Seq WHERE col_id =".$this['col_id']);
     }
 
     public static function addToMenu($title,$type,$link,$modul,$seq)
@@ -200,17 +204,17 @@ ORDER BY mm.col_Seq");
     public function pageList()
     {
         $array = array(-1=>"...");
-        $q = $this->db->query("SELECT col_pname,col_ptitle FROM tbl_pages WHERE col_tbuild='".tbuild."'");
+        $q = $this->db->query("SELECT col_moduleName,col_title FROM tbl_modules ORDER BY col_moduleName");
 
-        $lpath = "build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION["mwclang"].DIRECTORY_SEPARATOR."titles.php";
+        $lpath = "build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR."titles.php";
         $lang = DicBuilder::getLang($lpath);
 
         while ($r = $q->fetch())
         {
-            if(!empty($lang[$r["col_ptitle"]]))
-                $array[$r["col_pname"]] = $lang[$r["col_ptitle"]];
+            if(!empty($lang[$r["col_title"]]))
+                $array[$r["col_moduleName"]] = $lang[$r["col_title"]];
             else
-                $array[$r["col_pname"]] = $r["col_ptitle"];
+                $array[$r["col_moduleName"]] = $r["col_title"];
         }
 
         return $array;
