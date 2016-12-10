@@ -940,8 +940,7 @@ function getAccess(){
         }
     });
 }
-function getlink()
-{
+function getlink(){
     check = document.getElementById("cptype").checked;
     textbx = document.getElementById("linkadr");
 
@@ -956,6 +955,31 @@ function getlink()
         }
 
     }
+}
+function menuRefresh() {
+    mwce_confirm({
+        title:'Требуется принять решение',
+        text:'Вы действительно хотите очистеть кеш меню?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ClearMenuCache',
+                    type:'POST',
+                    before:function () {
+                       document.querySelector('#for_mwce_confirm').style.opacity = 0.3;
+                    },
+                    callback:function (){
+                        mwce_confirm.close();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+
 }
 
 $(document).ready(function(){

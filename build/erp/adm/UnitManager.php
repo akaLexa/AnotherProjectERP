@@ -708,6 +708,10 @@ class UnitManager extends eController
         }
     }
 
+    public function actionClearMenuCache(){
+        mMenuManager::RefreshCache();
+    }
+
     /**
      * параметры доступа
      */

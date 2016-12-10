@@ -1,0 +1,23 @@
+<div class="container">
+    <form method="post" id="addingForm">
+    <table>
+        <tr>
+            <td><label for="projectName" style="width: 250px;">Название проекта</label></td>
+            <td><input type="text" class="form-control" maxlength="200" style="width:350px; display: inline-block;" name="projectName" id="projectName"></td>
+        </tr>
+        <tr>
+            <td><label for="isSerial" style="width: 250px; cursor: pointer;">Серийный проект</label></td>
+            <td><input type="checkbox" value="1" onchange="if(this.checked) {document.querySelector('#isSerialRow').style.opacity=1;isSerialProject =true;} else {document.querySelector('#isSerialRow').style.opacity=0.1;document.querySelector('#projectNum').value='';isSerialProject =false;} "  name="isSerial" id="isSerial" ></td>
+        </tr>
+        <tr id="isSerialRow" style="opacity: 0.1">
+            <td><label for="projectNum" style="width: 250px;">Пожалуйста, введите номер проекта</label></td>
+            <td><input type="text" onkeyup="if(isSerialProject == false) {this.value ='';}" class="form-control" style="width:150px; display: inline-block;" name="projectNum" id="projectNum"> <button title="Проверить" onclick="checkSerialProject();" type="button" style="position: relative; top:-1px;" class="btn btn-default"><b class="glyphicon glyphicon-ok"></b>&nbsp;</button></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <button class="btn btn-default" type="button" onclick="beforeAdd();">Добавить</button>
+            </td>
+        </tr>
+    </table>
+    </form>
+</div>

@@ -191,7 +191,6 @@ ORDER BY mm.col_Seq");
      * @param int $col_Seq
      */
     public function editCurrentPos($mtitle,$link,$modul,$col_Seq){
-        Tools::debug("UPDATE tbl_menu SET col_mtitle='$mtitle',col_link='$link',col_modul='$modul',col_Seq=$col_Seq WHERE col_id =".$this['col_id']);
         $this->db->exec("UPDATE tbl_menu SET col_mtitle='$mtitle',col_link='$link',col_modul='$modul',col_Seq=$col_Seq WHERE col_id =".$this['col_id']);
     }
 
@@ -218,6 +217,20 @@ ORDER BY mm.col_Seq");
         }
 
         return $array;
+    }
+
+    /**
+     * очитка файлов кеша
+     */
+    public static function RefreshCache(){
+
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR .'cache';
+        $files = scandir($path);
+        foreach ($files as $file) {
+            if(stripos($file,'plugin_mainMenu') != false){
+                unlink($path . DIRECTORY_SEPARATOR . $file);
+            }
+        }
     }
 
 }

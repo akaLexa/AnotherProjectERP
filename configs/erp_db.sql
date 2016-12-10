@@ -1,4 +1,4 @@
-﻿-- Script date 03.12.2016 15:42:54
+﻿-- Script date 10.12.2016 11:56:37
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -58,7 +58,8 @@ CREATE TABLE tbl_menu (
   PRIMARY KEY (col_id)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 6
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -69,12 +70,12 @@ DROP TABLE IF EXISTS tbl_menu_type;
 CREATE TABLE tbl_menu_type (
   col_id INT(11) NOT NULL AUTO_INCREMENT,
   col_ttitle VARCHAR(255) DEFAULT NULL,
-  col_tbuild VARCHAR(255) DEFAULT NULL,
   col_seq INT(11) DEFAULT NULL,
   PRIMARY KEY (col_id)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 3
+  AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -93,8 +94,8 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules(col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 8192
+  AUTO_INCREMENT = 10
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -133,8 +134,8 @@ CREATE TABLE tbl_modules (
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 3
-  AVG_ROW_LENGTH = 8192
+  AUTO_INCREMENT = 6
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
@@ -153,8 +154,7 @@ CREATE TABLE tbl_plugins (
   PRIMARY KEY (col_pID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 3
-  AVG_ROW_LENGTH = 16384
+  AUTO_INCREMENT = 4
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -173,8 +173,8 @@ CREATE TABLE tbl_plugins_group (
   REFERENCES tbl_plugins(col_pID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 5
-  AVG_ROW_LENGTH = 16384
+  AUTO_INCREMENT = 18
+  AVG_ROW_LENGTH = 8192
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'группы и плагины';
@@ -198,6 +198,44 @@ CREATE TABLE tbl_plugins_roles (
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
+
+--
+-- Definition for table tbl_project
+--
+DROP TABLE IF EXISTS tbl_project;
+CREATE TABLE tbl_project (
+  col_projectID INT(11) NOT NULL AUTO_INCREMENT,
+  col_projectName VARCHAR(200) DEFAULT NULL,
+  col_pnID INT(11) DEFAULT NULL,
+  col_founderID INT(11) DEFAULT NULL,
+  col_CreateDate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (col_projectID),
+  CONSTRAINT FK_tbl_project_col_founderID FOREIGN KEY (col_founderID)
+  REFERENCES tbl_user(col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_col_pnID FOREIGN KEY (col_pnID)
+  REFERENCES tbl_project_num(col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
+
+--
+-- Definition for table tbl_project_num
+--
+DROP TABLE IF EXISTS tbl_project_num;
+CREATE TABLE tbl_project_num (
+  col_pnID INT(11) NOT NULL AUTO_INCREMENT,
+  col_serNum INT(11) DEFAULT 1,
+  PRIMARY KEY (col_pnID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'серийные номера';
 
 --
 -- Definition for table tbl_roles_in_group
@@ -243,7 +281,6 @@ CREATE TABLE tbl_user (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 2
-  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'пользователи';
@@ -305,6 +342,36 @@ CREATE TABLE tbl_users (
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
+DELIMITER $$
+
+--
+-- Definition for function f_setProjectNum
+--
+DROP FUNCTION IF EXISTS f_setProjectNum$$
+CREATE FUNCTION f_setProjectNum(orderNum INT)
+  RETURNS int(11)
+  SQL SECURITY INVOKER
+MODIFIES SQL DATA
+  COMMENT 'получение id номера'
+  BEGIN
+    DECLARE numsID int DEFAULT NULL;
+
+    IF orderNum > 0 THEN
+      SELECT tpn.col_serNum INTO numsID FROM tbl_project_num tpn WHERE tpn.col_pnID = orderNum;
+      IF numsID IS not NULL AND numsID >0 THEN
+        UPDATE tbl_project_num set orderNum = numsID + 1 WHERE col_pnID = orderNum;
+        RETURN orderNum;
+      END IF;
+    ELSE
+      INSERT INTO  tbl_project_num (col_serNum)  VALUE (1);
+      RETURN LAST_INSERT_ID();
+    END IF;
+    RETURN 1;
+  END
+$$
+
+DELIMITER ;
+
 --
 -- Dumping data for table tbl_group_roles
 --
@@ -314,21 +381,29 @@ CREATE TABLE tbl_users (
 --
 -- Dumping data for table tbl_menu
 --
-
--- Table erp_db.tbl_menu does not contain any data (it is empty)
+INSERT INTO tbl_menu VALUES
+  (1, 'auto_title2', 1, 'page/UnitManager.html', 'UnitManager', 2),
+  (2, 'auto_title3', 1, '', '-1', 1),
+  (3, 'auto_title4', 2, '', '-1', 1),
+  (4, 'auto_title1', 2, 'page/projectList.html', 'projectList', 2),
+  (5, 'auto_title5', 2, 'page/addProject.html', 'addProject', 3);
 
 --
 -- Dumping data for table tbl_menu_type
 --
-
--- Table erp_db.tbl_menu_type does not contain any data (it is empty)
+INSERT INTO tbl_menu_type VALUES
+  (1, 'controlMenu', 2),
+  (2, 'mainMenu', 1);
 
 --
 -- Dumping data for table tbl_module_groups
 --
 INSERT INTO tbl_module_groups VALUES
   (5, 2, 4),
-  (6, 1, 1);
+  (6, 1, 1),
+  (7, 3, 3),
+  (8, 4, 1),
+  (9, 5, 1);
 
 --
 -- Dumping data for table tbl_module_roles
@@ -341,25 +416,42 @@ INSERT INTO tbl_module_groups VALUES
 --
 INSERT INTO tbl_modules VALUES
   (1, 'title_2', 'adm/UnitManager', 0, '1', 'UnitManager'),
-  (2, 'title_1', 'main/MainPage', 0, '1', 'MainPage');
+  (2, 'title_1', 'main/MainPage', 0, '1', 'MainPage'),
+  (3, 'auto_title1', 'main/projectList', 0, '1', 'projectList'),
+  (4, 'auto_title5', 'project/addProject', 0, '1', 'addProject'),
+  (5, 'auto_title6', 'project/inProject', 0, '1', 'inProject');
 
 --
 -- Dumping data for table tbl_plugins
 --
 INSERT INTO tbl_plugins VALUES
-  (2, 'Login', 0, '1', '1', 0);
+  (2, 'Login', 0, '1', '1', 0),
+  (3, 'mainMenu', 0, '1', '1', 3600);
 
 --
 -- Dumping data for table tbl_plugins_group
 --
 INSERT INTO tbl_plugins_group VALUES
-  (4, 2, 4);
+  (8, 2, 4),
+  (17, 3, 3);
 
 --
 -- Dumping data for table tbl_plugins_roles
 --
 
 -- Table erp_db.tbl_plugins_roles does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_project
+--
+INSERT INTO tbl_project VALUES
+  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09');
+
+--
+-- Dumping data for table tbl_project_num
+--
+INSERT INTO tbl_project_num VALUES
+  (1, 1);
 
 --
 -- Dumping data for table tbl_roles_in_group
@@ -371,7 +463,7 @@ INSERT INTO tbl_roles_in_group VALUES
 -- Dumping data for table tbl_user
 --
 INSERT INTO tbl_user VALUES
-  (1, 'Админ', 'Админов', ' ', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, '0', NULL, NULL, NULL, NOW());
+  (1, 'Админ', 'Админов', 'Админович', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, '0', NULL, NULL, '2016-12-03 16:12:32', '2016-12-03 11:56:42');
 
 --
 -- Dumping data for table tbl_user_groups
