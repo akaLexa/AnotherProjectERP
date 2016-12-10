@@ -65,13 +65,26 @@ class mModules extends Model
         }
     }
 
+    /**
+     * @param null $params
+     * @return array|mModules
+     */
     public static function getModels($params = null)
     {
         $db = Connect::start();
+        $filter = '';
+
+        if(!empty($params['adr']))
+            $filter = " mm.col_path like '%{$params['adr']}%'";
+
+        if(!empty($filter))
+            $filter = 'WHERE '.$filter;
+
         return $db->query("SELECT 
   mm.* 
 FROM 
   tbl_modules mm 
+$filter
 order BY mm.col_title")->fetchAll(static::class);
     }
 
@@ -106,6 +119,21 @@ ORDER BY mm.col_title")->fetch(static::class);
     }
 
     /**
+     * возврашает адресный список директорий, где лежат контроллеры
+     * @return array
+     */
+    public static function getAddressList(){
+        $db = Connect::start();
+        $ar = array();
+        $q = $db->query("SELECT col_path FROM tbl_modules ORDER BY col_cache");
+        while ($r = $q->fetch()){
+            $t = explode('/',$r['col_path']);
+            $ar[$t[0]] = $t[0];
+        }
+        return $ar;
+    }
+
+    /**
      * очищает кеш зарегитсрированных модулей
      */
     public static function RefreshCache(){
@@ -127,6 +155,10 @@ ORDER BY mm.col_title")->fetch(static::class);
                     parent::_adding($name.'Legend', 'MVC');
                 else
                     parent::_adding($name.'Legend', 'script');
+                break;
+            case 'col_path':
+                $t = explode('/',$value);
+                    parent::_adding($name.'Link', end($t));
                 break;
         }
         parent::_adding($name, $value);

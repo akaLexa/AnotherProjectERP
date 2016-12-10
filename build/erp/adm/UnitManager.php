@@ -37,6 +37,7 @@ class UnitManager extends eController
         'adrCnt' => ['type'=>self::STR],
         'linkadr' => ['type'=>self::STR],
         'pluginDesc' => ['type'=>self::STR],
+        'AddressList' => ['type'=>self::STR],
         'newName' => ['type'=>self::STR,'maxLength'=>254],
         'pluginName' => ['type'=>self::STR,'maxLength'=>254],
         'seq' => ['type'=>self::INT],
@@ -313,7 +314,11 @@ class UnitManager extends eController
 
     //region вкладка "модули"
     public function actionGetModules(){
-        $this->view->out('ModulesForm',$this->className);
+        $list = mModules::getAddressList();
+
+        $this->view
+            ->set('adrList',html_::select($list,'AddressList',current($list),'class="form-control" style="width:200px; display:inline-block;" onchange="moduleFiltr();"'))
+            ->out('ModulesForm',$this->className);
     }
 
     public function actionAddModule(){
@@ -523,14 +528,18 @@ class UnitManager extends eController
     }
 
     public function actionGetModuleList(){
-        $list = mModules::getModels();
+        $params = array();
+        if(!empty($_POST['AddressList'])){
+            $params['adr'] = $_POST['AddressList'];
+        }
+        $list = mModules::getModels($params);
         if(!empty($list)){
             $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'erp'.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'titles.php');
             $ai = new \ArrayIterator($list);
             foreach ($ai as $item) {
 
                 if(!empty($lang[$item['col_title']])){
-                    $item['col_title'] = "<h5>{$lang[$item['col_title']]} <small>{$item['col_title']}</small></h5> ";
+                    $item['col_title'] = "<h5>{$lang[$item['col_title']]} <small style='color:red'>{$item['col_title']}</small></h5> ";
                 }
 
                 $this->view

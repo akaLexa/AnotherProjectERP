@@ -6,7 +6,7 @@
  * 05.12.2016
  * список проектов
  **/
-namespace build\erp\main;
+namespace build\erp\project;
 use build\erp\inc\eController;
 
 class projectList extends eController

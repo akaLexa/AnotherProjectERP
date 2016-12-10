@@ -301,10 +301,10 @@ function moduleFiltr() {
         element:'ModulesLists',
         address:'|site|page/|currentPage|/GetModuleList',
         type:'POST',
-        /* data:$('#filterMenus input[type=text],#filterMenus select').serialize(),*/
+         data:$('#filterModule select').serialize(),
         loadicon:'<tr><td colspan="5" style="color:green;text-align: center;">Загружаю..</td></tr>',
         callback:function () {
-            /*  knowMenuSec();*/
+
         }
     })
 }

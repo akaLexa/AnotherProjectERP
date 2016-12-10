@@ -1,4 +1,4 @@
-﻿-- Script date 10.12.2016 11:56:37
+﻿-- Script date 10.12.2016 12:20:35
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -94,7 +94,7 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules(col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 10
+  AUTO_INCREMENT = 11
   AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -401,9 +401,9 @@ INSERT INTO tbl_menu_type VALUES
 INSERT INTO tbl_module_groups VALUES
   (5, 2, 4),
   (6, 1, 1),
-  (7, 3, 3),
   (8, 4, 1),
-  (9, 5, 1);
+  (9, 5, 1),
+  (10, 3, 3);
 
 --
 -- Dumping data for table tbl_module_roles
@@ -417,7 +417,7 @@ INSERT INTO tbl_module_groups VALUES
 INSERT INTO tbl_modules VALUES
   (1, 'title_2', 'adm/UnitManager', 0, '1', 'UnitManager'),
   (2, 'title_1', 'main/MainPage', 0, '1', 'MainPage'),
-  (3, 'auto_title1', 'main/projectList', 0, '1', 'projectList'),
+  (3, 'auto_title1', 'project/projectList', 0, '1', 'projectList'),
   (4, 'auto_title5', 'project/addProject', 0, '1', 'addProject'),
   (5, 'auto_title6', 'project/inProject', 0, '1', 'inProject');
 
