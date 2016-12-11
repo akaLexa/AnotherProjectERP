@@ -21,8 +21,6 @@ function genTabContent(tab) {
             }
         }
     });
-
-
 }
 
 

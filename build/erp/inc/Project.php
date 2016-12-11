@@ -48,6 +48,25 @@ WHERE
 tpn.col_pnID = tp.col_pnID AND tp.col_projectID =".$id)->fetch(static::class);
     }
 
+    /**
+     * Список всех стадий в проекте
+     * @return array
+     */
+    public static function getStagesList(){
+        if(!empty(self::$sdata['StagesList']))
+            return self::$sdata['StagesList'];
+        else{
+            $db = Connect::start();
+            $stages = array();
+            $q = $db->query("SELECT col_StageID,col_StageName FROM tbl_hb_project_stage WHERE col_isDel = 0 ORDER BY col_StageName");
+            while ($r = $q->fetch()){
+                $stages[$r['col_StageID']] = $r['col_StageName'];
+            }
+            self::$sdata['StagesList'] = $stages;
+            return $stages;
+        }
+    }
+
     protected function _adding($name, $value)
     {
         switch ($name){
