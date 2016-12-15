@@ -63,7 +63,7 @@ class router
      * @var int
      * id пользователя
      */
-    protected $curUserId = 0;
+    protected static $curUserId = 0;
 
     /**
      * @var int
@@ -233,7 +233,7 @@ class router
 
 
                 if (!empty($_SESSION['mwcuid'])) {
-                    $this->curUserId = $_SESSION['mwcuid'];
+                    self::$curUserId = $_SESSION['mwcuid'];
                 }
             }
             else //админка
@@ -261,7 +261,7 @@ class router
                 }
 
                 if (!empty($_SESSION['mwcauid'])) {
-                    $this->curUserId = $_SESSION['mwcauid'];
+                    self::$curUserId = $_SESSION['mwcauid'];
                 }
             }
 
@@ -350,6 +350,14 @@ class router
     }
 
     /**
+     * текущий пользователь
+     * @return int
+     */
+    public static function getCurUser(){
+        return self::$curUserId;
+    }
+
+    /**
      * запуск обработки моделей
      */
     public function startModules()
@@ -361,7 +369,7 @@ class router
                 return;
             }
 
-            self::$accessor->renderPage(self::$curController,self::$curAction,$this->userGroup,$this->userRole,$this->curUserId,$this->defController);
+            self::$accessor->renderPage(self::$curController,self::$curAction,$this->userGroup,$this->userRole,self::$curUserId,$this->defController);
         }
         catch (\Exception $e) {
             Logs::log($e);
@@ -382,7 +390,7 @@ class router
     {
         if (!$this->isBg) //если в бекграунде, то плагины не включаем.
         {
-           self::$accessor->renderPlugin($this->userGroup,$this->userRole,$this->curUserId);
+           self::$accessor->renderPlugin($this->userGroup,$this->userRole,self::$curUserId);
         }
     }
 

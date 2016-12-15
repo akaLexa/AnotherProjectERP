@@ -11,10 +11,8 @@ use build\erp\adm\m\mStages;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use mwce\Configs;
-use mwce\content;
 use mwce\DicBuilder;
 use mwce\html_;
-use mwce\Tools;
 
 
 class ProjectManager extends eController
@@ -28,6 +26,7 @@ class ProjectManager extends eController
 
         // настройки проекта
         'startStageID' => ['type'=>self::INT],
+        'countDefStartDays' => ['type'=>self::INT],
         'endStagesID' => ['type'=>self::STR],
     );
 
@@ -38,6 +37,7 @@ class ProjectManager extends eController
     protected $types = array(
         'startStageID' =>['select','stages'],
         'endStagesID' =>['checkGroup','stagesGroup'],
+        'countDefStartDays' =>['text','text'],
     );
 
     public function actionIndex()
