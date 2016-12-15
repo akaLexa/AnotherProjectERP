@@ -8,6 +8,7 @@
  **/
 namespace build\erp\project;
 use build\erp\inc\eController;
+use build\erp\inc\Project;
 use mwce\Tools;
 
 class inProject extends eController
@@ -24,7 +25,20 @@ class inProject extends eController
                 ->out('error');
         }
         else{
-            Tools::debug($_GET);
+            $project = Project::getCurModel($_GET['id']);
+            if(empty($project)){
+                $this->view
+                    ->set(['errTitle'=>'Сообщение','msg_desc'=>'Такого проекта не существует'])
+                    ->out('error');
+            }
+            else{
+                $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
+              //  Tools::debug($project);
+                $this->view
+                    ->add_dict($project)
+                    ->out('main',$this->className);
+            }
+
         }
     }
 

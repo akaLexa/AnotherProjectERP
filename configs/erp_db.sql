@@ -1,4 +1,4 @@
-﻿-- Script date 11.12.2016 14:01:11
+﻿-- Script date 15.12.2016 12:26:54
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -55,8 +55,8 @@ CREATE TABLE tbl_hb_project_stage (
   PRIMARY KEY (col_StageID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 3
-  AVG_ROW_LENGTH = 8192
+  AUTO_INCREMENT = 5
+  AVG_ROW_LENGTH = 4096
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'стадии проекта';
@@ -71,8 +71,8 @@ CREATE TABLE tbl_hb_status (
   PRIMARY KEY (col_StatusID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 5
-  AVG_ROW_LENGTH = 4096
+  AUTO_INCREMENT = 6
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'статусы';
@@ -92,7 +92,7 @@ CREATE TABLE tbl_menu (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 3276
+  AVG_ROW_LENGTH = 4096
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -128,7 +128,7 @@ CREATE TABLE tbl_module_groups (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 12
-  AVG_ROW_LENGTH = 2730
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -168,7 +168,7 @@ CREATE TABLE tbl_modules (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 2730
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
@@ -249,7 +249,8 @@ CREATE TABLE tbl_project (
   REFERENCES tbl_project_num(col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 4
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -263,7 +264,8 @@ CREATE TABLE tbl_project_num (
   PRIMARY KEY (col_pnID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
+  AUTO_INCREMENT = 4
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'серийные номера';
@@ -278,11 +280,13 @@ CREATE TABLE tbl_project_stage (
   col_statusID INT(11) DEFAULT NULL,
   col_respID INT(11) DEFAULT NULL,
   col_dateCreate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  col_dateEndPlan DATETIME DEFAULT NULL,
+  col_dateStart DATETIME DEFAULT NULL,
   col_dateEnd DATETIME DEFAULT NULL COMMENT 'дата окончания принятия решения',
+  col_dateEndPlan DATETIME DEFAULT NULL,
   col_dateEndFact DATETIME DEFAULT NULL,
   col_comment TEXT DEFAULT NULL,
   col_stageID INT(11) DEFAULT NULL,
+  col_prevStageID INT(11) DEFAULT NULL COMMENT 'предыдущий статус (для возврата при отказе)',
   PRIMARY KEY (col_pstageID),
   CONSTRAINT FK_tbl_project_stage_col_proje FOREIGN KEY (col_projectID)
   REFERENCES tbl_project(col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
@@ -294,7 +298,8 @@ CREATE TABLE tbl_project_stage (
   REFERENCES tbl_hb_status(col_StatusID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -406,6 +411,22 @@ CREATE TABLE tbl_users (
 DELIMITER $$
 
 --
+-- Definition for function f_getUserFIO
+--
+DROP FUNCTION IF EXISTS f_getUserFIO$$
+CREATE FUNCTION f_getUserFIO(userID INT)
+  RETURNS varchar(255) CHARSET utf8
+  SQL SECURITY INVOKER
+READS SQL DATA
+  COMMENT 'возвращает Фамилия И.О. по id'
+  BEGIN
+
+    RETURN (SELECT CONCAT(tu.col_Sername,' ',COALESCE(LEFT(tu.col_Name,1),'?'),'.',COALESCE(LEFT(tu.col_Lastname,1),'?'),'.') FROM tbl_user tu WHERE tu.col_uID = userID);
+
+  END
+$$
+
+--
 -- Definition for function f_setProjectNum
 --
 DROP FUNCTION IF EXISTS f_setProjectNum$$
@@ -444,7 +465,9 @@ DELIMITER ;
 --
 INSERT INTO tbl_hb_project_stage VALUES
   (1, 'Создание. Сбор информации', '0'),
-  (2, 'тестовая стадия', '0');
+  (2, 'Выполнение проекта', '0'),
+  (3, 'Проект завершен', '0'),
+  (4, 'Отказ', '0');
 
 --
 -- Dumping data for table tbl_hb_status
@@ -453,7 +476,8 @@ INSERT INTO tbl_hb_status VALUES
   (1, 'В работе'),
   (2, 'Отклонено'),
   (3, 'Завершено'),
-  (4, 'Принятие решения');
+  (4, 'Принятие решения'),
+  (5, 'План');
 
 --
 -- Dumping data for table tbl_menu
@@ -536,8 +560,8 @@ INSERT INTO tbl_project_num VALUES
 --
 -- Dumping data for table tbl_project_stage
 --
-
--- Table erp_db.tbl_project_stage does not contain any data (it is empty)
+INSERT INTO tbl_project_stage VALUES
+  (1, 1, 1, 1, '2016-12-15 11:18:59', '2016-12-15 11:18:59', '2016-12-15 11:18:59', '2016-12-19 11:18:59', NULL, 'Создан автоматически при заведении проекта', 1, NULL);
 
 --
 -- Dumping data for table tbl_roles_in_group

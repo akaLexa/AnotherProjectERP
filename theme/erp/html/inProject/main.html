@@ -1,0 +1,49 @@
+<div style="text-align: left; background-color: rgba(30,193,20,0.05); margin-top:-18px;margin-bottom: 2px; padding-left:10px;padding-right:10px;">
+    <div style="margin-left: 20px; display: inline-block"><h4><small>Проект</small> |col_pnID|:|col_projectName|</h4></div>
+    <div style="margin-left: 10px; display: inline-block"><h4><small>Текущая стадия:</small> |col_StageName| <sup class="projectState|col_statusID|">|col_StatusName|</sup></h4></div>
+    <div style="margin-left: 10px; display: inline-block"><h4><small>Плановое окончание:</small> |col_dateEndPlanLegend|</h4></div>
+    <div style="margin-left: 10px; display: inline-block"><h4><small>Ответственный:</small> |col_respName|</h4></div>
+</div>
+<div style="margin-bottom: 8px;margin-top: 8px;padding-left:10px;padding-right:10px;">
+    <button class="btn btn-default">Сменить стадию</button>
+    <button class="btn btn-default"><b class="glyphicon glyphicon-plus"></b> Задача</button>
+    <button class="btn btn-default"><b class="glyphicon glyphicon-play"></b>/<b class="glyphicon glyphicon-stop"></b> План проекта</button>
+    <button class="btn btn-default"><b class="glyphicon glyphicon-pencil"></b> Сообщение</button>
+    <button class="btn btn-default disabled">Кнопка 5</button>
+    <button class="btn btn-default disabled">Кнопка 6</button>
+    <button class="btn btn-default disabled">Кнопка 7</button>
+    <button class="btn btn-default disabled">Кнопка 8</button>
+    <button class="btn btn-default disabled">Кнопка 9</button>
+</div>
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-align-justify" ></b> Основные данные</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-th-list"></b> План проекта</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-folder-open"></b> Документы</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-check"></b> Задачи</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-comment"></b> Переписка</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-eye-close"></b> События</a>
+        </li>
+        <li role="presentation" >
+            <a href="#GetStageForm" id="GetStageForm" aria-controls="tab_content" role="tab" data-toggle="tab"><b class="glyphicon glyphicon-calendar"></b> История</a>
+        </li>
+
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active tabIn" id="tab_content"></div>
+    </div>
+
+</div>
+<div id="forDialogs" style="display: none;"></div>
