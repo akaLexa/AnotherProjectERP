@@ -15,6 +15,12 @@ use mwce\Model;
 class Project extends Model
 {
     /**
+     * конфиг проекта
+     * @var array
+     */
+    protected static $projectCfg = array();
+
+    /**
      * @param string $prName
      * @param int $founder
      * @param int $serialNum

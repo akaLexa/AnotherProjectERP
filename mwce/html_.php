@@ -93,4 +93,41 @@ class html_
     {
         return "<input type='text' name='$name' id='$name' value='$value' $others>";
     }
+
+    /**
+     * html элемент input
+     * @param string $type text,tel,checkbox, etc тип
+     * @param string $name имя/ид
+     * @param int|mixed $value значение
+     * @param string $other класс, стиль и все что не указано выше
+     * @return string html
+     */
+    public static function input($type,$name,$value=0,$other =''){
+        return '<input type="'.$type.'" name="'.$name.'" id="'.$name.'" value="'.$value.'" '.$other.'>';
+    }
+
+    /**
+     * группа чекбоксов
+     * @param string $name название для каждого чекбокса(выведет $name_н, где н- кол-во элементов, начиная с 0)
+     * @param array $values массив значений и надписей для чекбоксов [легенда , значение , bool checked]
+     * @param string $styles стили для дива, в котором чекбоксы
+     * @return string html
+     */
+    public static function checkGroup($name,$values,$styles){
+        if(!is_array($values))
+            return 'values must be an array["legend"=>value]';
+
+        $ret = "<div $styles>";
+        $i =0;
+        foreach ($values as $item){
+            $ret.=" <label style='width:auto;display: block; font-weight: normal;'>{$item[0]} <input type='checkbox' name='{$name}_{$i}' value='{$item[1]}'";
+            if($item[2]){
+                $ret.= ' checked ';
+            }
+            $ret.="> </label>";
+            $i++;
+        }
+
+        return $ret.'</div>';
+    }
 }
