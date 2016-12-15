@@ -69,13 +69,13 @@ class router
      * @var int
      * группа, по умолчанию - гости
      */
-    protected $userGroup = 2;
+    protected static $userGroup = 2;
 
     /**
      * @var int
      * роль пользователя
      */
-    protected $userRole = 0;
+    protected static $userRole = 0;
 
     /**
      * @var string
@@ -217,17 +217,17 @@ class router
                 }
 
                 if (empty($_SESSION['mwcGroup'])) {
-                    $_SESSION['mwcGroup'] = $this->userGroup;
+                    $_SESSION['mwcGroup'] = self::$userGroup;
                 }
                 else {
-                    $this->userGroup = $_SESSION['mwcGroup'];
+                    self::$userGroup = $_SESSION['mwcGroup'];
                 }
 
                 if (empty($_SESSION['mwcRole'])) {
-                    $_SESSION['mwcRole'] = $this->userRole;
+                    $_SESSION['mwcRole'] = self::$userRole;
                 }
                 else {
-                    $this->userRole = $_SESSION['mwcRole'];
+                    self::$userRole = $_SESSION['mwcRole'];
                 }
 
 
@@ -247,17 +247,17 @@ class router
                 }
 
                 if (empty($_SESSION['mwcaGroup'])) {
-                    $_SESSION['mwcaGroup'] = $this->userGroup;
+                    $_SESSION['mwcaGroup'] = self::$userGroup;
                 }
                 else {
-                    $this->userGroup = $_SESSION['mwcaGroup'];
+                    self::$userGroup = $_SESSION['mwcaGroup'];
                 }
 
                 if (empty($_SESSION['mwcaRole'])) {
-                    $_SESSION['mwcaRole'] = $this->userRole;
+                    $_SESSION['mwcaRole'] = self::$userRole;
                 }
                 else {
-                    $this->userRole = $_SESSION['mwcaRole'];
+                    self::$userRole = $_SESSION['mwcaRole'];
                 }
 
                 if (!empty($_SESSION['mwcauid'])) {
@@ -358,6 +358,22 @@ class router
     }
 
     /**
+     * текущая группа пользователя
+     * @return int
+     */
+    public static function getUserGroup(){
+        return self::$userGroup;
+    }
+
+    /**
+     * текущая роль пользователя
+     * @return int
+     */
+    public static function getUserRole(){
+        return self::$userRole;
+    }
+
+    /**
      * запуск обработки моделей
      */
     public function startModules()
@@ -369,7 +385,7 @@ class router
                 return;
             }
 
-            self::$accessor->renderPage(self::$curController,self::$curAction,$this->userGroup,$this->userRole,self::$curUserId,$this->defController);
+            self::$accessor->renderPage(self::$curController,self::$curAction,self::$userGroup,self::$userRole,self::$curUserId,$this->defController);
         }
         catch (\Exception $e) {
             Logs::log($e);
@@ -390,7 +406,7 @@ class router
     {
         if (!$this->isBg) //если в бекграунде, то плагины не включаем.
         {
-           self::$accessor->renderPlugin($this->userGroup,$this->userRole,self::$curUserId);
+           self::$accessor->renderPlugin(self::$userGroup,self::$userRole,self::$curUserId);
         }
     }
 

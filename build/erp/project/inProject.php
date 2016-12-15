@@ -9,6 +9,8 @@
 namespace build\erp\project;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
+use build\erp\project\m\m_inProject;
+use mwce\router;
 use mwce\Tools;
 
 class inProject extends eController
@@ -32,10 +34,22 @@ class inProject extends eController
                     ->out('error');
             }
             else{
+
+                $tabs = m_inProject::GetTabList(router::getUserGroup(),router::getUserRole());
+
+                if(empty($tabs))
+                    $tabs = array(
+                        'customClass'=>'',
+                        'tabName'=>'',
+                        'tabIcon'=>'',
+                        'tabTitle'=>'',
+                    );
+
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
               //  Tools::debug($project);
                 $this->view
                     ->add_dict($project)
+                    ->loops('tabsList',$tabs,'main',$this->className)
                     ->out('main',$this->className);
             }
 
