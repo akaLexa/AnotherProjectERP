@@ -8,11 +8,19 @@
  **/
 namespace build\erp\project\m;
 use mwce\Model;
+
 use mwce\Tools;
 
 class m_inProject extends Model
 {
     public static function GetTabList($group,$role){
+        $fileCache = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'_dat'.DIRECTORY_SEPARATOR.'generatedTabs'.$role;
+        if(file_exists($fileCache)){
+            $uns = unserialize(file_get_contents($fileCache));
+            if(!empty($uns))
+                return $uns;
+        }
+
         $tabs = array();
 
         $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
@@ -32,6 +40,9 @@ class m_inProject extends Model
             }
         }
         ksort($tabs);
+        $ser = serialize($tabs);
+        file_put_contents($fileCache,$ser,LOCK_EX);
+
         return $tabs;
     }
 
