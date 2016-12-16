@@ -13,6 +13,11 @@ use mwce\Tools;
 
 class m_inProject extends Model
 {
+    /**
+     * @param int $group
+     * @param int $role
+     * @return array|mixed
+     */
     public static function GetTabList($group,$role){
         $fileCache = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'_dat'.DIRECTORY_SEPARATOR.'generatedTabs'.$role;
         if(file_exists($fileCache)){
@@ -29,7 +34,7 @@ class m_inProject extends Model
         if(!empty($dirs)){
             foreach ($dirs as $dir) {
                 $curCfg = require $path.DIRECTORY_SEPARATOR.$dir;
-                if(!empty($curCfg)){
+                if(!empty($curCfg) && $curCfg['state'] > 0){
                     $tabs[$curCfg['num']] = array(
                         'tabName' => $curCfg['name'],
                         'tabIcon' => $curCfg['icon'],
@@ -42,6 +47,29 @@ class m_inProject extends Model
         ksort($tabs);
         $ser = serialize($tabs);
         file_put_contents($fileCache,$ser,LOCK_EX);
+
+        return $tabs;
+    }
+
+    /**
+     * перечень найденных вкладок
+     * @return array
+     */
+    public static function getAllTabs(){
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
+        $dirs = scandir($path);
+        unset($dirs[0],$dirs[1]);
+
+        $tabs = array();
+
+        if(!empty($dirs)){
+            foreach ($dirs as $dir) {
+                $curCfg = require $path.DIRECTORY_SEPARATOR.$dir;
+                if(!empty($curCfg)){
+                    $tabs[$curCfg['name']] = $curCfg['title'];
+                }
+            }
+        }
 
         return $tabs;
     }

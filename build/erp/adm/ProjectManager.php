@@ -10,15 +10,20 @@ namespace build\erp\adm;
 use build\erp\adm\m\mStages;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
+use build\erp\inc\User;
+use build\erp\project\m\m_inProject;
+use build\erp\project\m\m_TabsCfgs;
 use mwce\Configs;
 use mwce\DicBuilder;
 use mwce\html_;
+use mwce\Tools;
 
 
 class ProjectManager extends eController
 {
     protected $getField = array(
         'id' => ['type'=>self::INT],
+        'tab' => ['type'=>self::STR],
     );
 
     protected $postField = array(
@@ -28,6 +33,15 @@ class ProjectManager extends eController
         'startStageID' => ['type'=>self::INT],
         'countDefStartDays' => ['type'=>self::INT],
         'endStagesID' => ['type'=>self::STR],
+
+        //настройки вкладок проекта
+        'TabChosen' => ['type'=>self::STR],
+        'name' => ['type'=>self::STR],
+        'title' => ['type'=>self::STR],
+        'icon' => ['type'=>self::STR],
+        'isActive' => ['type'=>self::INT],
+        'num' => ['type'=>self::INT],
+        'state' => ['type'=>self::INT],
     );
 
     /**
@@ -129,7 +143,7 @@ class ProjectManager extends eController
                             else
                                 $tm_ar[$id][2] = false;
                         }
-                        $cval = html_::checkGroup('endStagesID',$tm_ar," style='height:120px; width:auto; overflow-y:auto;' ");
+                        $cval = html_::checkGroup($cname,$tm_ar," style='height:120px; width:auto; overflow-y:auto;' ");
                         break;
                     default:
                         $cval = html_::input('text',$cname,$cval,'style="display:inline-block; width:300px;" class="form-control"');
@@ -162,7 +176,7 @@ class ProjectManager extends eController
                 if(empty ($this->types[$pId])){
                     $c = explode('_',$pId);
                     if(!empty ($this->types[$c[0]])){
-                        $curID = $c[0];
+                        $curID = $this->paramsControl($pValue,$c[0]);
                     }
                     else{
                         continue;
@@ -174,16 +188,16 @@ class ProjectManager extends eController
 
                 switch ($this->types[$curID][0]){
                     case 'select':
-                        $cfg[$curID] = $pValue;
+                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
                         break;
                     case 'checkGroup':
                         if(!empty($cfg[$curID]))
-                            $cfg[$curID].=','.$pValue;
+                            $cfg[$curID].=','.$this->paramsControl($pValue,self::STR);
                         else
-                            $cfg[$curID] = $pValue;
+                            $cfg[$curID] = $this->paramsControl($pValue,self::STR);
                         break;
                     default:
-                        $cfg[$curID] = $pValue;
+                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
                         break;
                 }
             }
@@ -200,5 +214,136 @@ class ProjectManager extends eController
         }
     }
 
+    //endregion
+
+    //region Видимость вкладок в проекте
+
+    protected $configTypes = array(
+        'name' => ['text','text'],
+        'title' => ['text','text'],
+        'icon' =>['text','text'],
+        'groupAccessR' => ['checkGroup','groups'],
+        'userAccessR' => ['checkGroup','roles'],
+        'groupAccessRW' => ['checkGroup','groups'],
+        'userAccessRW' => ['checkGroup','roles'],
+        'isActive' => ['select','boolVars'],
+        'num' => ['text','text'],
+        'state'=>['select','boolVars'],
+    );
+
+    public function actionTabsManagement(){
+        $tabs = m_inProject::getAllTabs();
+
+        $this->view
+            ->set('tabsList',html_::select($tabs,'TabChosen',0,'class="form-control inlineBlock" onchange="showTabsCfg(this.value)"'))
+            ->out('TabsManagementMain',$this->className);
+    }
+
+    public function actionTabCfg(){
+
+        if(!empty($_POST['TabChosen'])){
+
+            $boolVars = array(0=>'Нет',1=>'Да');
+
+            $groups = array();
+            $groups_ = User::getGropList();
+
+            foreach ($groups_ as $num=>$group){
+                $groups[] = array($group,$num);
+            }
+
+            $roles = array();
+            $roles_ = User::getRoleList();
+            foreach ($roles_ as $num=>$role){
+                $roles[] = array($role,$num);
+            }
+
+
+            $curTab = m_TabsCfgs::getCurModel($_POST['TabChosen']);
+            if(!empty($curTab)){
+
+                if(!empty($curTab)){
+                    foreach ($curTab as $pName => $item) {
+                        if(!empty($this->configTypes[$pName]))
+                        {
+                            switch ($this->configTypes[$pName][0]){
+                                case 'select':
+                                    $item['value'] = html_::select(${$this->configTypes[$pName][1]},$pName,$item['value'],' class="form-control inlineBlock"');
+                                    break;
+                                case 'checkGroup':
+                                    $curVal = explode(',',$item['value']);
+                                    $tmVal = ${$this->configTypes[$pName][1]};
+                                    $ai = new \ArrayIterator($tmVal);
+                                    foreach ($ai as $id=>$item_) {
+                                        if(in_array($item_[1],$curVal)){
+                                            $tmVal[$id][2] = true;
+                                        }
+                                        else{
+                                            $tmVal[$id][2] = false;
+                                        }
+                                    }
+                                    $item['value'] = html_::checkGroup($pName,$tmVal," style='height:120px; width:auto; overflow-y:auto;' ");
+                                    break;
+                                default:
+                                    $item['value'] = html_::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
+                                    break;
+                            }
+                        }
+                        else
+                            $item['value'] = html_::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
+
+
+                        $this->view
+                            ->add_dict($item)
+                            ->out('TabsManagementCenter',$this->className);
+                    }
+                }
+
+            }
+        }
+    }
+
+    public function actionSaveTabCfg(){
+        if(!empty($_POST) && !empty($_GET['tab'])){
+            $curTab = m_TabsCfgs::getCurModel($_GET['tab']);
+            if(empty($curTab))
+                return;
+
+            $cfg = [];
+
+            $pa = new \ArrayIterator($_POST);
+            foreach ($pa as $pId => $pValue) {
+                if (empty ($this->configTypes[$pId])) {
+                    $c = explode('_', $pId);
+                    if (!empty ($this->configTypes[$c[0]])) {
+                        $curID = $c[0];
+                    } else {
+                        continue;
+                    }
+                } else {
+                    $curID = $pId;
+                }
+
+                switch ($this->configTypes[$curID][0]) {
+                    case 'select':
+                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
+                        break;
+                    case 'checkGroup':
+                        if (!empty($cfg[$curID])) {
+                            $cfg[$curID] .= ',' . $this->paramsControl($pValue,self::STR);
+                        } else {
+                            $cfg[$curID] = $this->paramsControl($pValue,self::STR);
+                        }
+                        break;
+                    default:
+                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
+                        break;
+                }
+            }
+
+            $curTab->save($cfg);
+
+        }
+    }
     //endregion
 }

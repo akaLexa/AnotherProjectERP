@@ -110,7 +110,7 @@ WHERE col_pID =".$this['col_pID']);
         $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
-            if(stripos($file,'_plugins.php') != false){
+            if(stripos($file,'_plugins.php') !== false){
                 unlink($path . DIRECTORY_SEPARATOR . $file);
             }
         }

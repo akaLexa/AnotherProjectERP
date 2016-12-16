@@ -23,3 +23,17 @@
 .form-inline-element{
     display: inline-block;
 }
+
+.inlineBlock{
+    display: inline-block;
+    width:auto;
+}
+.mwceCustomCheckGroup{
+    width:auto;
+    display: block;
+    font-weight: normal;
+}
+.mwceCustomCheckGroupSpan{
+    display: inline-block;
+    width: 220px;
+}

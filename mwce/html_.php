@@ -120,7 +120,7 @@ class html_
         $ret = "<div $styles>";
         $i =0;
         foreach ($values as $item){
-            $ret.=" <label style='width:auto;display: block; font-weight: normal;'>{$item[0]} <input type='checkbox' name='{$name}_{$i}' value='{$item[1]}'";
+            $ret.=" <label class='mwceCustomCheckGroup'><span class='mwceCustomCheckGroupSpan'>{$item[0]}</span> <input type='checkbox' name='{$name}_{$i}' value='{$item[1]}'";
             if($item[2]){
                 $ret.= ' checked ';
             }

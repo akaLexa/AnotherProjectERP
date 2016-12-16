@@ -3,10 +3,13 @@ return array(
     'name' => 'tabMessages',
     'title' => 'История',
     'icon' =>'glyphicon glyphicon-calendar',
-    'groupAccess' => '',
-    'userAccess' => '',
+    'groupAccessR' => '',
+    'userAccessR' => '',
+    'groupAccessRW' => '',
+    'userAccessRW' => '',
     'isActive' => 0,
     'num' => 6,
+    'state'=>1,
 );
 
 

@@ -15,6 +15,9 @@ function genTabContent(tab) {
         address:'|site|page/|currentPage|/'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
         callback:function () {
+            if(currentTab == 'TabsManagement'){
+                showTabsCfg(document.querySelector('#TabChosen').value);
+            }
 
         }
     });
@@ -160,6 +163,46 @@ function saveCfg() {
                     callback:function () {
                         document.querySelector('#projectCfgForm').style.opacity = 1;
                         document.querySelector('#statusIds').innerHTML='';
+                    }
+                });
+                mwce_confirm.close();
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
+
+/**
+ * настройка вкладок
+ */
+function showTabsCfg(tabName) {
+    genIn({
+        element:'tabsCfgList',
+        address:'|site|page/|currentPage|/TabCfg',
+        type:"POST",
+        data:'TabChosen='+tabName,
+        loadicon:'<tr><td colspan="2" style="text-align: center; color:green">Загружаю...</td></tr>'
+    })
+}
+function saveTabCfg() {
+
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы уверены, что хотите сохранить конфигурацию?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/SaveTabCfg?tab='+document.querySelector('#TabChosen').value,
+                    type:'POST',
+                    data:$('#configCustomForm').serialize(),
+                    before:function () {
+                        document.querySelector('#configCustomForm').style.opacity = 0.5;
+                    },
+                    callback:function () {
+                        document.querySelector('#configCustomForm').style.opacity = 1;
                     }
                 });
                 mwce_confirm.close();

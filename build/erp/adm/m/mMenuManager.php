@@ -227,7 +227,7 @@ ORDER BY mm.col_Seq");
         $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR .'cache';
         $files = scandir($path);
         foreach ($files as $file) {
-            if(stripos($file,'plugin_mainMenu') != false){
+            if(stripos($file,'plugin_mainMenu') !== false){
                 unlink($path . DIRECTORY_SEPARATOR . $file);
             }
         }

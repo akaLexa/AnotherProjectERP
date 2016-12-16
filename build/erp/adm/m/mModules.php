@@ -141,7 +141,7 @@ ORDER BY mm.col_title")->fetch(static::class);
         $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
-            if(stripos($file,'_pages.php') != false){
+            if(stripos($file,'_pages.php') !== false){
                 unlink($path . DIRECTORY_SEPARATOR . $file);
             }
         }
