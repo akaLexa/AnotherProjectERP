@@ -46,6 +46,12 @@ class inProject extends eController
                     );
 
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
+
+                if(strtotime($project['col_dateEndPlan']) < time())
+                    $this->view->set('customLState','infoBad');
+                else
+                    $this->view->set('customLState','infoGood');
+
               //  Tools::debug($project);
                 $this->view
                     ->add_dict($project)

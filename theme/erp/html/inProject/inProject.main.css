@@ -1,3 +1,4 @@
+/* подсветка статусов стадий*/
 .projectState1{
     color: #0000ff;
 }
@@ -9,4 +10,19 @@
 }
 .projectState4{
     color: #800080;
+}
+
+/* инфо полоска */
+.infoLabel{
+    text-align: left;
+    margin: -18px 3px 2px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.infoGood{
+    background-color: rgba(30,193,20,0.05);
+}
+.infoBad{
+    background-color: rgba(255, 0, 0, 0.05);
 }
