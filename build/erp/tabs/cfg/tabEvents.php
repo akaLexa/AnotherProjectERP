@@ -1,13 +1,1 @@
-<?php
-return array(
-    'name' => 'tabMessages',
-    'title' => 'События',
-    'icon' =>'glyphicon glyphicon-eye-close',
-    'groupAccessR' => '',
-    'userAccessR' => '',
-    'groupAccessRW' => '',
-    'userAccessRW' => '',
-    'isActive' => 0,
-    'num' => 6,
-    'state'=>1,
-);
+<?php return array("name"=>"tabEvents","title"=>"События","icon"=>"glyphicon glyphicon-eye-close","isActive"=>"0","num"=>"6","state"=>"1","groupAccessRW"=>"3","groupAccessR"=>"","userAccessR"=>"","userAccessRW"=>"",);

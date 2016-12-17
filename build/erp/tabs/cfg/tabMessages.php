@@ -1,14 +1,1 @@
-<?php
-return array(
-    'name' => 'tabMessages',
-    'title' => 'Переписка',
-    'icon' =>'glyphicon glyphicon-comment',
-    'groupAccessR' => '',
-    'userAccessR' => '',
-    'groupAccessRW' => '',
-    'userAccessRW' => '',
-    'isActive' => 0,
-    'num' => 5,
-    'state'=>1,
-);
-
+<?php return array("name"=>"tabMessages","title"=>"Переписка","icon"=>"glyphicon glyphicon-comment","isActive"=>"0","num"=>"5","state"=>"1","groupAccessRW"=>"3","groupAccessR"=>"","userAccessR"=>"","userAccessRW"=>"",);

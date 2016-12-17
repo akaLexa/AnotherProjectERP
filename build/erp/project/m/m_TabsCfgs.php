@@ -9,7 +9,6 @@
 namespace build\erp\project\m;
 use mwce\DicBuilder;
 use mwce\Model;
-use mwce\Tools;
 
 class m_TabsCfgs extends Model
 {
@@ -77,10 +76,8 @@ class m_TabsCfgs extends Model
         $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
-            Tools::debug($file);
             if(stripos($file,'generatedTabs') !== false){
                 unlink($path . DIRECTORY_SEPARATOR . $file);
-                Tools::debug($path . DIRECTORY_SEPARATOR . $file);
             }
         }
     }

@@ -9,8 +9,6 @@
 namespace build\erp\project\m;
 use mwce\Model;
 
-use mwce\Tools;
-
 class m_inProject extends Model
 {
     /**
@@ -32,15 +30,24 @@ class m_inProject extends Model
         $dirs = scandir($path);
         unset($dirs[0],$dirs[1]);
         if(!empty($dirs)){
+
             foreach ($dirs as $dir) {
                 $curCfg = require $path.DIRECTORY_SEPARATOR.$dir;
-                if(!empty($curCfg) && $curCfg['state'] > 0){
-                    $tabs[$curCfg['num']] = array(
-                        'tabName' => $curCfg['name'],
-                        'tabIcon' => $curCfg['icon'],
-                        'tabTitle' => $curCfg['title'],
-                        'customClass' => $curCfg['isActive'] == 1 ? 'active':'',
-                    );
+                if(!empty($curCfg) && (int)$curCfg['state'] > 0){
+                    $group_ = explode(',',$curCfg['groupAccessR']);
+                    $groupRW = explode(',',$curCfg['groupAccessRW']);
+                    $role_ = explode(',',$curCfg['userAccessR']);
+                    $roleRW = explode(',',$curCfg['userAccessRW']);
+
+                    if(in_array($group,$group_) || in_array($group,$groupRW) || in_array(3,$groupRW)
+                        || in_array($role,$role_) || in_array($role,$roleRW)){
+                        $tabs[$curCfg['num']] = array(
+                            'tabName' => $curCfg['name'],
+                            'tabIcon' => $curCfg['icon'],
+                            'tabTitle' => $curCfg['title'],
+                            'customClass' => $curCfg['isActive'] == 1 ? 'active':'',
+                        );
+                    }
                 }
             }
         }

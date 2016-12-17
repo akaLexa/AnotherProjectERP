@@ -1,14 +1,1 @@
-<?php
-return array(
-    'name' => 'tabMain',
-    'title' => 'Основные данные',
-    'icon' =>'glyphicon glyphicon-align-justify',
-    'groupAccessR' => '',
-    'userAccessR' => '',
-    'groupAccessRW' => '',
-    'userAccessRW' => '',
-    'isActive' => 1,
-    'num' => 1,
-    'state'=>1,
-);
-
+<?php return array("name"=>"tabMain","title"=>"Основные данные","icon"=>"glyphicon glyphicon-align-justify","groupAccessRW"=>"3","isActive"=>"1","num"=>"1","state"=>"1","groupAccessR"=>"","userAccessR"=>"","userAccessRW"=>"",);
