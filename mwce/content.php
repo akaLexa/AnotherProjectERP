@@ -333,6 +333,22 @@ class content
     }
 
     /**
+     * создать пустое значение
+     * @param string $name
+     * @return content $this
+     */
+    public function setEmpty($name){
+
+        if (!empty($this->curModule)) {
+            $this->vars[$this->curModule][$this->separator . $name . $this->separator] = '';
+        }
+        else {
+            $this->vars[$this->separator . $name . $this->separator] = '';
+        }
+        return $this;
+    }
+
+    /**
      * заменяет название элемента в "словаре" (!в словаре должно присутствовать выражение $where)
      * @param string $what - что вставить
      * @param string $where - за место чего

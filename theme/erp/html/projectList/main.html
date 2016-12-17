@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <table class="table table-hover table-striped table-bordered erpTable ">
+        <thead>
+        <tr id="filterForProjects">
+            <td style="padding:0;border: 0;">
+                <input type="text" style="width: 80px; height: 30px; margin:0" name="projectNum">
+            </td>
+            <td style="padding:0;border: 0;">
+                <input type="text" style="width: 300px; height: 30px; margin:0" name="projectName">
+            </td>
+            <td style="padding:0;border: 0;">
+                <select class="erpSelect" style="width: 300px;" >
+                    <option>Выбрать стадию...</option>
+                </select>
+            </td>
+            <td style="padding:0;border: 0;">|userRespList|</td>
+            <td style="padding:0;border: 0;">|userMngrList|</td>
+            <td style="padding:0;border: 0;"><input type="date" class="erpInput" name="startDate"></td>
+            <td style="padding:0;border: 0;" colspan="2"><input type="date" class="erpInput" name="endDate"></td>
+        </tr>
+        <tr>
+            <th style="width: 80px">№</th>
+            <th style="width: 300px">Название проекта</th>
+            <th style="width: 300px">Стадия</th>
+            <th>Ответственный</th>
+            <th>Менеджер</th>
+            <th>Начало стадии</th>
+            <th colspan="2">Завершение (план)</th>
+        </tr>
+        </thead>
+        <tbody id="projectListContent"></tbody>
+    </table>
+</div>

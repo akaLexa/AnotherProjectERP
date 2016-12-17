@@ -37,3 +37,31 @@
     display: inline-block;
     width: 220px;
 }
+
+/* подсветка статусов стадий*/
+.projectState1{
+    color: #0000ff;
+}
+.projectState2{
+    color: #ff0000;
+}
+.projectState3{
+    color: #008000;
+}
+.projectState4{
+    color: #800080;
+}
+
+.erpTable thead th{
+    background-color: #e9e9e9;
+}
+.erpSelect{
+    width: 100%;
+    height: 30px;
+    margin:0;
+}
+.erpInput{
+    width: 100%;
+    height: 30px;
+    margin:0;
+}

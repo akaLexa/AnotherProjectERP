@@ -138,6 +138,29 @@ AND tu.col_uID = $id")->fetch(static::class);
         return self::$sdata['GropList'];
     }
 
+    /**
+     * список всех пользователей
+     * @param bool $withBlocked включая заблокированных?
+     * @return array
+     */
+    public static function getUserList($withBlocked = false){
+
+        $db = Connect::start();
+        $ar = array();
+        $f = '';
+
+        if($withBlocked)
+            $f =' WHERE tu.col_isBaned = 1';
+
+        $q = $db->query("SELECT CONCAT(tu.col_Sername,' ',COALESCE(LEFT(tu.col_Name,1),'?'),'.',COALESCE(LEFT(tu.col_Lastname,1),'?'),'.') as col_uName, tu.col_uID FROM tbl_user tu $f ORDER by tu.col_Sername");
+
+        while ($r = $q->fetch()){
+            $ar[$r['col_uID']] = $r['col_uName'];
+        }
+
+        return $ar;
+    }
+
     protected function _adding($name, $value)
     {
         switch ($name){
