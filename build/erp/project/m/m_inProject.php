@@ -39,7 +39,7 @@ class m_inProject extends Model
                     $role_ = explode(',',$curCfg['userAccessR']);
                     $roleRW = explode(',',$curCfg['userAccessRW']);
 
-                    if(in_array($group,$group_) || in_array($group,$groupRW) || in_array(3,$groupRW)
+                    if(in_array($group,$group_) || in_array($group,$groupRW) || in_array(3,$groupRW) || in_array(3,$group_)
                         || in_array($role,$role_) || in_array($role,$roleRW)){
                         $tabs[$curCfg['num']] = array(
                             'tabName' => $curCfg['name'],

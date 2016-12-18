@@ -8,6 +8,7 @@
  **/
 namespace build\erp\project;
 use build\erp\inc\eController;
+use build\erp\inc\iProjectTabs;
 use build\erp\inc\Project;
 use build\erp\project\m\m_inProject;
 use mwce\router;
@@ -17,6 +18,13 @@ class inProject extends eController
 {
     protected $getField = array(
         'id' => ['type'=>self::INT],
+        'tab' => ['type'=>self::STR],
+        'act' => ['type'=>self::STR],
+    );
+
+    //как заглушка, чтобы не валидировала пост
+    protected $postField = array(
+        'someValue' => ['type'=>self::STR],
     );
 
     public function actionIndex()
@@ -37,14 +45,18 @@ class inProject extends eController
 
                 $tabs = m_inProject::GetTabList(router::getUserGroup(),router::getUserRole());
 
-                if(empty($tabs))
+                if(empty($tabs)) {
                     $tabs = array(
-                        'customClass'=>'',
-                        'tabName'=>'',
-                        'tabIcon'=>'',
-                        'tabTitle'=>'',
+                        'customClass' => '',
+                        'tabName' => '',
+                        'tabIcon' => '',
+                        'tabTitle' => '',
                     );
-
+                    $this->view->set('defaultTab','');
+                }
+                else{
+                    $this->view->set('defaultTab',current($tabs)['tabName']);
+                }
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
 
                 if(strtotime($project['col_dateEndPlan']) < time())
@@ -59,6 +71,61 @@ class inProject extends eController
                     ->out('main',$this->className);
             }
 
+        }
+    }
+
+    /**
+     * форма на табе по умолсанию
+     */
+    public function actionTabContent(){
+        if(!empty($_GET['tab']) && !empty($_GET['id'])){
+
+            $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
+
+            if(class_exists($cPath)){
+                $tab = new $cPath($this->view, $this->pages);
+                if($tab instanceof iProjectTabs){
+                    $tab->In($_GET['id']);
+                }
+                else{
+                    $this->view
+                        ->set(['errTitle'=>'Ошибка','msg_desc'=>'Модуль "'.$_GET['tab'].'" не соответствует iProjectTabs'])
+                        ->out('error');
+                }
+
+            }
+            else{
+                $this->view
+                    ->set(['errTitle'=>'Ошибка','msg_desc'=>'Вкладка "'.$_GET['tab'].'" не найдена.'])
+                    ->out('error');
+            }
+
+        }
+    }
+
+    public function actionExecAction(){
+        if(!empty($_GET['id']) && !empty($_GET['tab']) && !empty($_GET['act'])){
+
+            $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
+
+            if(class_exists($cPath)){
+                $tab = new $cPath($this->view, $this->pages);
+                if($tab instanceof iProjectTabs){
+                    $action = $_GET['act'];
+                    $tab->$action();
+                }
+                else{
+                    $this->view
+                        ->set(['errTitle'=>'Ошибка','msg_desc'=>'Модуль "'.$_GET['tab'].'" не соответствует iProjectTabs'])
+                        ->out('error');
+                }
+
+            }
+            else{
+                $this->view
+                    ->set(['errTitle'=>'Ошибка','msg_desc'=>'Вкладка "'.$_GET['tab'].'" не найдена.'])
+                    ->out('error');
+            }
         }
     }
 

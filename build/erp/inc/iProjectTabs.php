@@ -17,9 +17,10 @@ interface iProjectTabs
 {
     /**
      * главный вид по умолчанию
+     * @param null $params
      * @return void
      */
-    public function In();
+    public function In($params=null);
 
     /**
      * настройки для модуля
@@ -27,11 +28,4 @@ interface iProjectTabs
      */
     public function getProperties();
 
-    /**
-     * выполнение каких-либо функций
-     * @param string $action название метода
-     * @param array $params параметры
-     * @return mixed
-     */
-    public function exec($action,$params);
 }

@@ -1,3 +1,24 @@
-<div class="container">
-    главная вкладка
+<div class="container-fluid">
+    <form id="tabMainForm">
+    <table class="table">
+        <tr>
+            <th style="width: 300px;vertical-align: middle"><label style="width: auto;" for="_projectNane">Название проекта</label></th>
+            <td><input type="text" maxlength="200" class="form-control inlineBlock" name="projectNane" value="|col_projectName|" id="_projectNane" style="width: 99%;"></td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle"><label for="_projectDesc">Описание</label></th>
+            <td><textarea placeholder="Нет описания" name="projectDesc" id="_projectDesc" style="width:90%;height:120px;">|col_DescLegend|</textarea></td>
+        </tr>
+        <tr>
+            <th>Менеджер</th>
+            <td>|mngrList|</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center; |customVizStyle|">
+                <button class="btn btn-default" type="button" onclick="tabMainSave();">Сохранить</button>
+                <label id="saveMainTabNoticer" style="font-style: italic; width:100px; font-weight: normal;"></label>
+            </td>
+        </tr>
+    </table>
+    </form>
 </div>

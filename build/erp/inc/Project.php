@@ -148,6 +148,9 @@ WHERE
                 parent::_adding($name.'Legend', date_::transDate($value));
                 parent::_adding($name.'LegendDT', date_::transDate($value,true));
                 break;
+            case 'col_Desc' :
+                parent::_adding($name.'Legend', htmlspecialchars_decode($value));
+                break;
         }
         parent::_adding($name, $value);
     }
