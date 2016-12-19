@@ -48,6 +48,7 @@ class Project extends Model
   tps.col_statusID,
   tps.col_respID,
   f_getUserFIO(tps.col_respID) as col_respName,
+  f_getUserFIO(tp.col_founderID) as col_founder,
   tps.col_dateCreate, 
   tps.col_dateStart, 
   tps.col_dateEnd, 
@@ -150,6 +151,13 @@ WHERE
                 break;
             case 'col_Desc' :
                 parent::_adding($name.'Legend', htmlspecialchars_decode($value));
+                break;
+            case 'col_ProjectPlanState':
+                if($value >0)
+                    parent::_adding($name.'Legend', 'Запущен');
+                else
+                    parent::_adding($name.'Legend', 'Не запущен');
+
                 break;
         }
         parent::_adding($name, $value);
