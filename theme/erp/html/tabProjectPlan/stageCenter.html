@@ -1,0 +1,20 @@
+<tr>
+    <td style="vertical-align: middle">|col_seq|</td>
+    <td style="vertical-align: middle">
+        <b class="glyphicon glyphicon-arrow-right" title="Стадия"></b> |col_StageName| <sup class="projectState|col_statusID|">|col_StatusName|</sup>
+    </td>
+    <td style="vertical-align: middle">|col_duration|</td>
+    <td style="vertical-align: middle" nowrap>|dateStart|</td>
+    <td style="vertical-align: middle" nowrap>|dateEnd|</td>
+    <td>
+        <button class="btn btn-default" title="Редактировать" type="button" |isDisable|  onclick="tabProjectPlanEdit(|col_pstageID|)">
+            <b class="glyphicon glyphicon-pencil"></b>
+        </button>
+        <button class="btn btn-default" title="Добавить задачу" type="button" |isDisable| >
+            <b class="glyphicon glyphicon-time"></b>
+        </button>
+        <button class="btn btn-default" title="Удалить" type="button" |isDisable| >
+            <b class="glyphicon glyphicon-remove"></b>
+        </button>
+    </td>
+</tr>

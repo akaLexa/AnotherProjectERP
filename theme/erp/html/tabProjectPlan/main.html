@@ -1,11 +1,36 @@
 <div class="container">
-    <div class="container">Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span></div>
+    <div class="container" style="margin: 15px 0;">
+         Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
+
+
+        <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
+            <b class="glyphicon glyphicon-ok"></b> Проверить план
+        </button>
+        <input type="date" id="newStartPlanDate" class="form-control inlineBlock" style="float: right; margin-right: 15px;">
+
+
+        <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
+            <b class="glyphicon glyphicon-remove"></b> Очистить план
+        </button>
+        <button class="btn btn-default" type="button" onclick="tabProjectPlanAdd();" |isDisable| style="float: right; margin-right: 15px;">
+            <b class="glyphicon glyphicon-plus"></b> Добавить стадию
+        </button>
+
+
+
+    </div>
+
     <table class="table table-hover table-bordered erpTable">
         <thead>
         <tr>
-            <th style="width:90%;">Наименование</th>
-            <th style="text-align: center"><b class="glyphicon glyphicon-wrench"></b></th>
+            <th style="width:2%;vertical-align: middle;">№ пп</th>
+            <th style="width:63%;vertical-align: middle;" >Наименование</th>
+            <th style="width:3%;vertical-align: middle;" title="Длительность, дни">Д</th>
+            <th style="width:9%;vertical-align: middle;">Начало</th>
+            <th style="width:9%;vertical-align: middle;">Окончание</th>
+            <th style="width:14%;vertical-align: middle;text-align: center"><b class="glyphicon glyphicon-wrench"></b></th>
         </tr>
         </thead>
+        <tbody id="projectPlanBody">|projectPlanBody|</tbody>
     </table>
 </div>

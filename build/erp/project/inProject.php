@@ -64,7 +64,17 @@ class inProject extends eController
                 else
                     $this->view->set('customLState','infoGood');
 
-              //  Tools::debug($project);
+                if($project['col_ProjectPlanState'] == 1){
+                    $this->view
+                        ->set('planStoped','')
+                        ->set('planStarted','planStarted');
+                }else{
+                     $this->view
+                        ->set('planStoped','planStopped')
+                        ->set('planStarted','');
+                }
+
+
                 $this->view
                     ->add_dict($project)
                     ->loops('tabsList',$tabs,'main',$this->className)

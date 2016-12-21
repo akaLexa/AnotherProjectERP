@@ -27,7 +27,6 @@ function genTabContent(tab) {
 
                 switch (tab){
                     case 'tabMain':
-
                             tinymce.init({
                                 selector: '#_projectDesc',
                                 height: 300,
@@ -41,11 +40,13 @@ function genTabContent(tab) {
                                 language: 'ru_RU',
                                 browser_spellcheck: true
                             });
-
-
+                        currentTab = tab;
+                        break;
+                    case 'tabProjectPlan':
+                        currentTab = tab;
+                        tabProjectPlanGetPlan();
                         break;
                 }
-                currentTab = tab;
             }
         });
 
@@ -76,5 +77,148 @@ function tabMainSave() {
                 document.querySelector('#saveMainTabNoticer').innerHTML = '';
             }
         }
+    });
+}
+
+var curAddStageSetings;
+function tabProjectPlanGetPlan() {
+    genIn({
+        element:'projectPlanBody',
+        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
+        loadicon:'<tr><td colspan="2" style="color:green;text-align: center">Загружаюсь..</td></tr>',
+        callback:function (r) {
+            try{
+                var receive = JSON.parse(r);
+                if(receive['error'] != undefined){
+                    mwce_alert(receive['error'],'Внимание!');
+                }
+            }
+            catch(e) {
+
+            }
+        }
+    });
+}
+function tabProjectPlanAdd(){
+    $('#forDialogs').dialog({
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
+                loadicon:'Загружаюсь..',
+                callback:function (r) {
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            mwce_alert(receive['error'],'Внимание!');
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Добавить':function () {
+                genIn({
+                    element:'forDialogs',
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
+                    type:'POST',
+                    data:$('#addStageForm').serialize(),
+                    loadicon:'Загружаюсь..',
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['error'] != undefined){
+                                mwce_alert(receive['error'],'Внимание!');
+
+                            }
+                        }
+                        catch(e) {
+                            //console.error(e.message);
+                        }
+                        finally {
+                            tabProjectPlanGetPlan();
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                });
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        title:'Добавить стадию в проект',
+        resizable:false,
+        width:500,
+        modal:true
+    });
+}
+
+function tabProjectPlanEdit(id){
+    $('#forDialogs').dialog({
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+id+'&act=edit',
+                loadicon:'Загружаюсь..',
+                callback:function (r) {
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            mwce_alert(receive['error'],'Внимание!');
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    element:'forDialogs',
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+id+'&act=edit',
+                    type:'POST',
+                    data:$('#editStageForm').serialize(),
+                    loadicon:'Загружаюсь..',
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['error'] != undefined){
+                                mwce_alert(receive['error'],'Внимание!');
+
+                            }
+                        }
+                        catch(e) {
+                            //console.error(e.message);
+                        }
+                        finally {
+                            tabProjectPlanGetPlan();
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                });
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        title:'Добавить стадию в проект',
+        resizable:false,
+        width:500,
+        modal:true
     });
 }
