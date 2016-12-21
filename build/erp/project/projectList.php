@@ -31,10 +31,18 @@ class projectList extends eController
             $ai = new \ArrayIterator($list);
             foreach ($ai as $item) {
 
-                if(strtotime($item['col_dateEndPlan'] < time()))
+                if(strtotime($item['col_dateEndPlan']) < time())
                     $this->view->set('isDeadLine','deadLine');
                 else
                     $this->view->set('isDeadLine','');
+
+
+                if($item['col_ProjectPlanState'] == 1){
+                    $this->view->set('knowProjectPlan','glyphicon glyphicon-play planStarted');
+                }
+                else{
+                    $this->view->set('knowProjectPlan','glyphicon glyphicon-stop planStopped');
+                }
 
                 $this->view
                     ->add_dict($item)
