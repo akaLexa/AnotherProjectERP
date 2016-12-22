@@ -72,6 +72,46 @@ function hbTypeAdd() {
 
 }
 
+function hbTypeEdit(id) {
+    $('#dialogs').dialog({
+        open:function () {
+            genIn({
+                element:'dialogs',
+                address:'|site|page/|currentPage|/Edit?id='+id,
+                loadicon:'Загружаю'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons: {
+            'Сохранить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/Edit?id='+id,
+                    type:'POST',
+                    data:$('#EditHbTypeForm').serialize(),
+                    before:function () {
+                        document.querySelector('#EditHbTypeForm').style.opacity = 0.5;
+                    },
+                    callback:function () {
+                        $('#dialogs').dialog('close');
+                        hbTaskFilter();
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        width:500,
+        modal:true,
+        resizable:false,
+        title:'Редактировать'
+    });
+
+}
+
 $(document).ready(function () {
     hbTaskFilter();
 });
