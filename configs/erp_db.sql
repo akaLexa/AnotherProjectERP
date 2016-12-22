@@ -1,4 +1,4 @@
-﻿-- Script date 15.12.2016 12:26:54
+﻿-- Script date 22.12.2016 15:58:06
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -56,7 +56,7 @@ CREATE TABLE tbl_hb_project_stage (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 5
-  AVG_ROW_LENGTH = 4096
+  AVG_ROW_LENGTH = 5461
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'стадии проекта';
@@ -72,10 +72,27 @@ CREATE TABLE tbl_hb_status (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 6
-  AVG_ROW_LENGTH = 3276
+  AVG_ROW_LENGTH = 4096
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'статусы';
+
+--
+-- Definition for table tbl_hb_task_types
+--
+DROP TABLE IF EXISTS tbl_hb_task_types;
+CREATE TABLE tbl_hb_task_types (
+  col_tttID INT(11) NOT NULL AUTO_INCREMENT,
+  col_tName VARCHAR(255) DEFAULT NULL,
+  col_isDel CHAR(1) DEFAULT '0',
+  PRIMARY KEY (col_tttID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 4
+  AVG_ROW_LENGTH = 5461
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'справочник типовых названий задач';
 
 --
 -- Definition for table tbl_menu
@@ -91,8 +108,8 @@ CREATE TABLE tbl_menu (
   PRIMARY KEY (col_id)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 4096
+  AUTO_INCREMENT = 8
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -127,8 +144,8 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules(col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 12
-  AVG_ROW_LENGTH = 3276
+  AUTO_INCREMENT = 13
+  AVG_ROW_LENGTH = 2730
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -167,8 +184,8 @@ CREATE TABLE tbl_modules (
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 3276
+  AUTO_INCREMENT = 8
+  AVG_ROW_LENGTH = 2730
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
@@ -242,6 +259,8 @@ CREATE TABLE tbl_project (
   col_pnID INT(11) DEFAULT NULL,
   col_founderID INT(11) DEFAULT NULL,
   col_CreateDate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  col_Desc TEXT DEFAULT NULL,
+  col_ProjectPlanState CHAR(1) DEFAULT '0' COMMENT '0/1 не запущен, запущен план проекта',
   PRIMARY KEY (col_projectID),
   CONSTRAINT FK_tbl_project_col_founderID FOREIGN KEY (col_founderID)
   REFERENCES tbl_user(col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
@@ -249,7 +268,7 @@ CREATE TABLE tbl_project (
   REFERENCES tbl_project_num(col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 4
+  AUTO_INCREMENT = 2
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
@@ -264,7 +283,7 @@ CREATE TABLE tbl_project_num (
   PRIMARY KEY (col_pnID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 4
+  AUTO_INCREMENT = 2
   AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -281,12 +300,15 @@ CREATE TABLE tbl_project_stage (
   col_respID INT(11) DEFAULT NULL,
   col_dateCreate TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   col_dateStart DATETIME DEFAULT NULL,
+  col_dateStartPlan DATETIME DEFAULT NULL,
   col_dateEnd DATETIME DEFAULT NULL COMMENT 'дата окончания принятия решения',
   col_dateEndPlan DATETIME DEFAULT NULL,
   col_dateEndFact DATETIME DEFAULT NULL,
   col_comment TEXT DEFAULT NULL,
   col_stageID INT(11) DEFAULT NULL,
   col_prevStageID INT(11) DEFAULT NULL COMMENT 'предыдущий статус (для возврата при отказе)',
+  col_seq INT(11) DEFAULT NULL COMMENT 'очередность',
+  col_duration INT(11) DEFAULT 1,
   PRIMARY KEY (col_pstageID),
   CONSTRAINT FK_tbl_project_stage_col_proje FOREIGN KEY (col_projectID)
   REFERENCES tbl_project(col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
@@ -298,8 +320,8 @@ CREATE TABLE tbl_project_stage (
   REFERENCES tbl_hb_status(col_StatusID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 2
-  AVG_ROW_LENGTH = 16384
+  AUTO_INCREMENT = 5
+  AVG_ROW_LENGTH = 4096
   CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
@@ -323,6 +345,34 @@ CREATE TABLE tbl_roles_in_group (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'к какой группе, какая роль принадлежит';
+
+--
+-- Definition for table tbl_tasks
+--
+DROP TABLE IF EXISTS tbl_tasks;
+CREATE TABLE tbl_tasks (
+  col_taskID INT(11) NOT NULL AUTO_INCREMENT,
+  col_taskName VARCHAR(255) DEFAULT NULL,
+  col_StatusID INT(11) DEFAULT NULL,
+  col_initID INT(11) DEFAULT NULL COMMENT 'кто назначил',
+  col_respID INT(11) DEFAULT NULL COMMENT 'кому назначил',
+  col_curatorID INT(11) DEFAULT NULL COMMENT 'кто курирует',
+  col_pstageID INT(11) DEFAULT NULL,
+  col_taskDesc TEXT DEFAULT NULL,
+  col_createDate DATETIME DEFAULT NULL,
+  col_startPlan DATETIME DEFAULT NULL,
+  col_startFact DATETIME DEFAULT NULL,
+  col_endPlan DATETIME DEFAULT NULL,
+  col_endFact DATETIME DEFAULT NULL,
+  col_autoStart DATETIME DEFAULT NULL COMMENT 'дота, когда задача автоматически будет щапущена (если была в 4 статусе)',
+  col_taskDur INT(11) DEFAULT 0,
+  PRIMARY KEY (col_taskID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 1
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'задачи';
 
 --
 -- Definition for table tbl_user
@@ -384,31 +434,59 @@ CREATE TABLE tbl_user_roles (
   COLLATE utf8_general_ci
   COMMENT = 'роли для пользователя';
 
---
--- Definition for table tbl_users
---
-DROP TABLE IF EXISTS tbl_users;
-CREATE TABLE tbl_users (
-  col_uID INT(11) NOT NULL AUTO_INCREMENT,
-  col_Name VARCHAR(255) DEFAULT NULL COMMENT 'имя',
-  col_Sername VARCHAR(255) DEFAULT NULL COMMENT 'фамилия',
-  col_Lastname VARCHAR(255) DEFAULT NULL COMMENT 'очество',
-  col_RegDate DATETIME DEFAULT NULL COMMENT 'дата регистрации',
-  col_roleID INT(11) DEFAULT NULL COMMENT 'роль',
-  col_isBlock CHAR(1) DEFAULT '0' COMMENT 'блокирован?',
-  col_blockDate DATETIME DEFAULT NULL COMMENT 'когда блокирован?',
-  col_deputy INT(11) DEFAULT NULL COMMENT 'id замещающего',
-  col_DepStartDate DATETIME DEFAULT NULL COMMENT 'когда начато замещение',
-  col_login VARCHAR(255) DEFAULT NULL,
-  col_pwd VARCHAR(128) DEFAULT NULL,
-  PRIMARY KEY (col_uID)
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 1
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci;
-
 DELIMITER $$
+
+--
+-- Definition for procedure sp_CalcProjectPlan
+--
+DROP PROCEDURE IF EXISTS sp_CalcProjectPlan$$
+CREATE PROCEDURE sp_CalcProjectPlan(IN projectID INT, IN dateStart DATE)
+  SQL SECURITY INVOKER
+MODIFIES SQL DATA
+  COMMENT 'расчет плана проекта'
+  BEGIN
+
+    DECLARE currentStage int;
+    DECLARE currentDuration int;
+    DECLARE currentEndDate date;
+    DECLARE i int DEFAULT 0;
+    DECLARE done int DEFAULT FALSE;
+
+    DECLARE cu_Work CURSOR FOR
+
+      SELECT
+        tps.col_pstageID,
+        tps.col_duration
+      FROM
+        tbl_project_stage tps,
+        tbl_hb_project_stage thps,
+        tbl_hb_status ths
+      WHERE
+        tps.col_projectID = projectID
+        AND tps.col_statusID = 5
+        AND thps.col_StageID = tps.col_stageID
+        AND ths.col_StatusID = tps.col_statusID
+      ORDER BY tps.col_seq;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cu_Work;
+
+    read_loop:
+    LOOP
+      FETCH cu_Work INTO currentStage, currentDuration;
+      IF done
+      THEN
+        LEAVE read_loop;
+      END IF;
+
+      set currentEndDate = DATE_ADD(dateStart, INTERVAL currentDuration DAY);
+      UPDATE tbl_project_stage tps set tps.col_dateStartPlan = dateStart, tps.col_dateEndPlan = currentEndDate WHERE tps.col_pstageID = currentStage;
+      set dateStart = currentEndDate;
+
+    END LOOP;
+    CLOSE cu_Work;
+  END
+$$
 
 --
 -- Definition for function f_getUserFIO
@@ -480,6 +558,14 @@ INSERT INTO tbl_hb_status VALUES
   (5, 'План');
 
 --
+-- Dumping data for table tbl_hb_task_types
+--
+INSERT INTO tbl_hb_task_types VALUES
+  (1, 'тестовое название 1', '0'),
+  (2, 'тестовое название 2.1', '0'),
+  (3, 'тестовое название 3', '1');
+
+--
 -- Dumping data for table tbl_menu
 --
 INSERT INTO tbl_menu VALUES
@@ -488,7 +574,8 @@ INSERT INTO tbl_menu VALUES
   (3, 'auto_title4', 2, '', '-1', 1),
   (4, 'auto_title1', 2, 'page/projectList.html', 'projectList', 2),
   (5, 'auto_title5', 2, 'page/addProject.html', 'addProject', 3),
-  (6, 'auto_title7', 1, 'page/ProjectManager.html', 'ProjectManager', 3);
+  (6, 'auto_title7', 1, 'page/ProjectManager.html', 'ProjectManager', 3),
+  (7, 'auto_title8', 1, 'page/hbTaskTypes.html', 'hbTaskTypes', 4);
 
 --
 -- Dumping data for table tbl_menu_type
@@ -506,7 +593,8 @@ INSERT INTO tbl_module_groups VALUES
   (8, 4, 1),
   (9, 5, 1),
   (10, 3, 3),
-  (11, 6, 1);
+  (11, 6, 1),
+  (12, 7, 1);
 
 --
 -- Dumping data for table tbl_module_roles
@@ -523,7 +611,8 @@ INSERT INTO tbl_modules VALUES
   (3, 'auto_title1', 'project/projectList', 0, '1', 'projectList'),
   (4, 'auto_title5', 'project/addProject', 0, '1', 'addProject'),
   (5, 'auto_title6', 'project/inProject', 0, '1', 'inProject'),
-  (6, 'auto_title7', 'adm/ProjectManager', 0, '1', 'ProjectManager');
+  (6, 'auto_title7', 'adm/ProjectManager', 0, '1', 'ProjectManager'),
+  (7, 'auto_title8', 'adm/hbTaskTypes', 0, '1', 'hbTaskTypes');
 
 --
 -- Dumping data for table tbl_plugins
@@ -549,7 +638,7 @@ INSERT INTO tbl_plugins_group VALUES
 -- Dumping data for table tbl_project
 --
 INSERT INTO tbl_project VALUES
-  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09');
+  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09', '&lt;p&gt;asdasd&lt;/p&gt;', '0');
 
 --
 -- Dumping data for table tbl_project_num
@@ -561,13 +650,22 @@ INSERT INTO tbl_project_num VALUES
 -- Dumping data for table tbl_project_stage
 --
 INSERT INTO tbl_project_stage VALUES
-  (1, 1, 1, 1, '2016-12-15 11:18:59', '2016-12-15 11:18:59', '2016-12-15 11:18:59', '2016-12-19 11:18:59', NULL, 'Создан автоматически при заведении проекта', 1, NULL);
+  (1, 1, 1, 1, '2016-12-15 11:18:59', '2016-12-15 11:18:59', NULL, '2016-12-15 11:18:59', '2016-12-19 11:18:59', NULL, 'Создан автоматически при заведении проекта', 1, NULL, 1, 1),
+  (2, 1, 5, 1, '2016-12-21 16:01:04', NULL, '2016-12-19 11:18:59', NULL, '2016-12-24 11:18:59', NULL, NULL, 2, NULL, 2, 5),
+  (3, 1, 5, 1, '2016-12-21 16:03:28', NULL, '2016-12-24 11:18:59', NULL, '2016-12-25 11:18:59', NULL, NULL, 3, NULL, 3, 1),
+  (4, 1, 5, 1, '2016-12-22 13:20:24', NULL, '2016-12-25 11:18:59', NULL, '2016-12-30 11:18:59', NULL, NULL, 4, NULL, 4, 5);
 
 --
 -- Dumping data for table tbl_roles_in_group
 --
 INSERT INTO tbl_roles_in_group VALUES
   (2, 1, 1);
+
+--
+-- Dumping data for table tbl_tasks
+--
+
+-- Table erp_db.tbl_tasks does not contain any data (it is empty)
 
 --
 -- Dumping data for table tbl_user
@@ -595,11 +693,26 @@ INSERT INTO tbl_user_roles VALUES
   (5, 'тестовая роль 4'),
   (6, 'тестовая роль 5');
 
---
--- Dumping data for table tbl_users
---
+DELIMITER $$
 
--- Table erp_db.tbl_users does not contain any data (it is empty)
+--
+-- Definition for trigger t_OnCreateNewStage
+--
+DROP TRIGGER IF EXISTS t_OnCreateNewStage$$
+CREATE
+  DEFINER = 'root'@'localhost'
+TRIGGER t_OnCreateNewStage
+BEFORE INSERT
+  ON tbl_project_stage
+FOR EACH ROW
+  BEGIN
+    DECLARE orderSeq int;
+    SELECT COUNT(*)+1 INTO orderSeq FROM tbl_project_stage WHERE col_projectID = NEW.col_projectID;
+    set new.col_seq = orderSeq;
+  END
+$$
+
+DELIMITER ;
 
 -- 
 -- Restore previous SQL mode

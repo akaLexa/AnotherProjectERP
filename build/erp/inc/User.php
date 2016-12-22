@@ -161,6 +161,40 @@ AND tu.col_uID = $id")->fetch(static::class);
         return $ar;
     }
 
+    /**
+     * список пользователей по id группы
+     * @param int $groupId
+     * @param bool $withBlocked
+     * @return array
+     */
+    public static function getUserGropuList($groupId,$withBlocked = false){
+
+        $db = Connect::start();
+        $ar = array();
+        $f = '';
+
+        if($withBlocked)
+            $f =' AND tu.col_isBaned = 1';
+
+        $q = $db->query("SELECT 
+  CONCAT(tu.col_Sername,' ',COALESCE(LEFT(tu.col_Name,1),'?'),'.',COALESCE(LEFT(tu.col_Lastname,1),'?'),'.') as col_uName, 
+  tu.col_uID 
+FROM 
+  tbl_user tu,
+  tbl_roles_in_group trig
+WHERE
+  trig.col_roleID = tu.col_roleID
+  AND trig.col_gID = $groupId
+$f 
+ORDER by tu.col_Sername");
+
+        while ($r = $q->fetch()){
+            $ar[$r['col_uID']] = $r['col_uName'];
+        }
+
+        return $ar;
+    }
+
     protected function _adding($name, $value)
     {
         switch ($name){

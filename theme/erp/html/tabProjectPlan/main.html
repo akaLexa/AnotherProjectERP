@@ -1,31 +1,27 @@
-<div class="container">
-    <div class="container" style="margin: 15px 0;">
+<div class="container-fluid">
+    <div class="container-fluid" style="margin: 15px 0;">
          Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
 
 
-        <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
+        <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;" onclick="rebuildProjectPlan(|col_projectID|,document.querySelector('#newStartPlanDate').value)">
             <b class="glyphicon glyphicon-ok"></b> Проверить план
         </button>
         <input type="date" id="newStartPlanDate" |isDisable| class="form-control inlineBlock" style="float: right; margin-right: 15px;">
-
-
-        <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
+        <!--<button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
             <b class="glyphicon glyphicon-remove"></b> Очистить план
-        </button>
+        </button>-->
         <button class="btn btn-default" type="button" onclick="tabProjectPlanAdd();" |isDisable| style="float: right; margin-right: 15px;">
             <b class="glyphicon glyphicon-plus"></b> Добавить стадию
         </button>
-
-
-
     </div>
 
     <table class="table table-hover table-bordered erpTable">
         <thead>
         <tr>
             <th style="width:2%;vertical-align: middle;">№ пп</th>
-            <th style="width:63%;vertical-align: middle;" >Наименование</th>
-            <th style="width:3%;vertical-align: middle;" title="Длительность, дни">Д</th>
+            <th style="width:58%;vertical-align: middle;" >Наименование</th>
+            <th style="width:5%;vertical-align: middle;" >Ответственный</th>
+            <th style="width:3%;vertical-align: middle;" title="Длительность, дни">Длит.</th>
             <th style="width:9%;vertical-align: middle;">Начало</th>
             <th style="width:9%;vertical-align: middle;">Окончание</th>
             <th style="width:14%;vertical-align: middle;text-align: center"><b class="glyphicon glyphicon-wrench"></b></th>

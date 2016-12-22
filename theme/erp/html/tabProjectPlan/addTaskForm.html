@@ -1,0 +1,24 @@
+<form id="addTaskForm">
+    <table class="table">
+        <tr>
+            <th>Название задачи</th>
+            <td><input type="text" name="TaskName" id="_TaskName" class="form-control inlineBlock" style="width: 400px;"> или |genTypeTaskList|</td>
+        </tr>
+        <tr>
+            <th>Длительность</th>
+            <td><input type="text" name="taskDur" id="taskDur" class="form-control inlineBlock" style="width: 100px;" value="1"> дн.</td>
+        </tr>
+        <tr>
+            <th>Отдел</th>
+            <td>|groupList|</td>
+        </tr>
+        <tr>
+            <th>Предполагаемый ответственный</th>
+            <td id="tdUserList">|userList|</td>
+        </tr>
+        <tr>
+            <th>Описание</th>
+            <td><textarea style="width: 300px; height: 120px;" name="taskDesc"></textarea></td>
+        </tr>
+    </table>
+</form>

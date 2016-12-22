@@ -80,7 +80,30 @@ function tabMainSave() {
     });
 }
 
+function genUserFromGroup(targetID,groupID) {
+    genIn({
+        element:targetID,
+        address:'|site|page/|currentPage|/UserFromGroup?id=' + groupID,
+        loadicon:'Загружаю...'
+    });
+}
+
+
+
 var curAddStageSetings;
+function rebuildProjectPlan(project,startDate) {
+    genIn({
+        noresponse:true,
+        address:'|site|page/|currentPage|/RebuildPlan?id=' + project +'&dateStart='+startDate,
+        before:function () {
+            document.querySelector('#projectPlanBody').style.opacity = 0.3;
+        },
+        callback:function () {
+            document.querySelector('#projectPlanBody').style.opacity = 1;
+            tabProjectPlanGetPlan();
+        }
+    });
+}
 function tabProjectPlanGetPlan() {
     genIn({
         element:'projectPlanBody',
@@ -125,29 +148,32 @@ function tabProjectPlanAdd(){
         },
         buttons:{
             'Добавить':function () {
-                genIn({
-                    element:'forDialogs',
-                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
-                    type:'POST',
-                    data:$('#addStageForm').serialize(),
-                    loadicon:'Загружаюсь..',
-                    callback:function (r) {
-                        try{
-                            var receive = JSON.parse(r);
-                            if(receive['error'] != undefined){
-                                mwce_alert(receive['error'],'Внимание!');
-
+                if(document.querySelector('#tbUserList') != undefined){
+                    genIn({
+                        element:'forDialogs',
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
+                        type:'POST',
+                        data:$('#addStageForm').serialize(),
+                        loadicon:'Загружаюсь..',
+                        callback:function (r) {
+                            try{
+                                var receive = JSON.parse(r);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Внимание!');
+                                }
+                            }
+                            catch(e) {
+                                //console.error(e.message);
+                            }
+                            finally {
+                                tabProjectPlanGetPlan();
+                                $('#forDialogs').dialog('close');
                             }
                         }
-                        catch(e) {
-                            //console.error(e.message);
-                        }
-                        finally {
-                            tabProjectPlanGetPlan();
-                            $('#forDialogs').dialog('close');
-                        }
-                    }
-                });
+                    });
+                }
+                else
+                    mwce_alert('Не выбран ответственный','Внимание');
 
             },
             'Закрыть':function () {
@@ -160,7 +186,6 @@ function tabProjectPlanAdd(){
         modal:true
     });
 }
-
 function tabProjectPlanEdit(id){
     $('#forDialogs').dialog({
         open:function () {
@@ -187,30 +212,32 @@ function tabProjectPlanEdit(id){
         },
         buttons:{
             'Сохранить':function () {
-                genIn({
-                    element:'forDialogs',
-                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+id+'&act=edit',
-                    type:'POST',
-                    data:$('#editStageForm').serialize(),
-                    loadicon:'Загружаюсь..',
-                    callback:function (r) {
-                        try{
-                            var receive = JSON.parse(r);
-                            if(receive['error'] != undefined){
-                                mwce_alert(receive['error'],'Внимание!');
-
+                if (document.querySelector('#tbUserList') != undefined) {
+                    genIn({
+                        element: 'forDialogs',
+                        address: '|site|page/|currentPage|/ExecAction?tab=' + currentTab + '&id=' + id + '&act=edit',
+                        type: 'POST',
+                        data: $('#editStageForm').serialize(),
+                        loadicon: 'Загружаюсь..',
+                        callback: function (r) {
+                            try {
+                                var receive = JSON.parse(r);
+                                if (receive['error'] != undefined) {
+                                    mwce_alert(receive['error'], 'Внимание!');
+                                }
+                            }
+                            catch (e) {
+                                //console.error(e.message);
+                            }
+                            finally {
+                                tabProjectPlanGetPlan();
+                                $('#forDialogs').dialog('close');
                             }
                         }
-                        catch(e) {
-                            //console.error(e.message);
-                        }
-                        finally {
-                            tabProjectPlanGetPlan();
-                            $('#forDialogs').dialog('close');
-                        }
-                    }
-                });
-
+                    });
+                }
+                else
+                    mwce_alert('Не выбран ответственный', 'Внимание');
             },
             'Закрыть':function () {
                 $(this).dialog('close');
@@ -219,6 +246,70 @@ function tabProjectPlanEdit(id){
         title:'Добавить стадию в проект',
         resizable:false,
         width:500,
+        modal:true
+    });
+}
+function tabProjectPlanAddTask(stageID) {
+    $('#forDialogs').dialog({
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=addStageTask',
+                loadicon:'Загружаюсь..',
+                callback:function (r) {
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            mwce_alert(receive['error'],'Внимание!');
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Добавить':function () {
+                if(document.querySelector('#tbUserList') != undefined){
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=addStageTask',
+                        type:'POST',
+                        data:$('#addTaskForm').serialize(),
+                        callback:function(r) {
+                            try{
+                                var receive = JSON.parse(r);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Внимание!');
+                                }
+                            }
+                            catch(e) {
+                                //console.error(e.message);
+                            }
+                            finally {
+                                tabProjectPlanGetPlan();
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                    });
+                }
+                else
+                    mwce_alert('Не выбран ответственный пользователь','Внимание');
+
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        title:'Добавить задачу',
+        resizable:false,
+        width:600,
         modal:true
     });
 }

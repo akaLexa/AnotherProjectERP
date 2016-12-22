@@ -10,6 +10,7 @@ namespace build\erp\tabs\m;
 use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
+use mwce\Tools;
 
 class mProjectPlan extends Model
 {
@@ -23,7 +24,8 @@ class mProjectPlan extends Model
         return $db->query("SELECT 
   tps.*,
   thps.col_StageName,
-  ths.col_StatusName
+  ths.col_StatusName,
+  f_getUserFIO(col_respID) as col_resp
 FROM 
   tbl_project_stage tps,
   tbl_hb_project_stage thps,
@@ -34,6 +36,16 @@ WHERE
   AND thps.col_StageID = tps.col_stageID
   AND ths.col_StatusID = tps.col_statusID
   ORDER BY tps.col_seq")->fetchAll(static::class);
+    }
+
+    /**
+     * @param int $project
+     * @param $date
+     */
+    public static function rebuildPlan($project,$date){
+        $db = Connect::start();
+        $db->exec("CALL sp_CalcProjectPlan($project,'$date');");
+        $db->closeCursor();
     }
 
     /**
@@ -85,6 +97,8 @@ WHERE
         $curSettings = date('Y-m-d');
 
         foreach ($stageList as $item) {
+            if($item['col_pstageID'] == $stageID)
+                break;
 
             if(empty($item['col_dateEndFact']))
                 $curSettings = $item['col_dateEndPlan'];

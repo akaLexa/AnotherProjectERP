@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\tabs;
+use build\erp\adm\m\mTaskTypes;
 use build\erp\inc\eController;
 use build\erp\inc\iProjectTabs;
 use build\erp\inc\Project;
@@ -26,6 +27,11 @@ class tabProjectPlan extends eController implements iProjectTabs
         'stageDur' =>['type'=>self::INT],
         'tbUserList' =>['type'=>self::INT],
         'stageSeq' =>['type'=>self::INT],
+
+        'TaskName' => ['type'=>self::STR,'maxLength'=>255],
+        'taskDesc' => ['type'=>self::STR],
+        'taskDur' => ['type'=>self::INT],
+        'tbGroupList' => ['type'=>self::INT],
     );
 
     /**
@@ -110,6 +116,9 @@ class tabProjectPlan extends eController implements iProjectTabs
             return [];
     }
 
+    /**
+     * добавление стадии проекта
+     */
     public function add(){
         if(!empty($_GET['id'])){
             $project = Project::getCurModel($_GET['id']);
@@ -138,13 +147,16 @@ class tabProjectPlan extends eController implements iProjectTabs
                             $curSettings['dateStart'] = $item['col_dateEndFact'];
                     }
 
-                    $users = User::getUserList();
+                    $users = User::getGropList();
+                    unset($users[2],$users[3]);
+                    $users[0] = '..';
                     $stages = Project::getStagesList();
 
                     $this->view
                         ->add_dict($project)
                         ->set('stageList',html_::select($stages,'tbStageList',0,'class="form-control inlineBlock"'))
-                        ->set('userList',html_::select($users,'tbUserList',router::getCurUser(),'class="form-control inlineBlock"'))
+                        ->set('userList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                        //->set('userList',html_::select($users,'tbUserList',router::getCurUser(),'class="form-control inlineBlock"'))
                         ->set('curSettings', json_encode($curSettings))
                         ->out('addStageForm',$this->className);
                 }
@@ -184,6 +196,12 @@ class tabProjectPlan extends eController implements iProjectTabs
                         if($item['col_seq'] + 1 > $curSettings['nextSeq']){
                             $curSettings['nextSeq'] = $item['col_seq'] + 1;
                         }
+                    }
+
+                    foreach ($stageList as $item) {
+
+                        if($item['col_pstageID'] == $_GET['id'])
+                            break;
 
                         if(empty($item['col_dateEndFact']))
                             $curSettings['dateStart'] = $item['col_dateEndPlan'];
@@ -191,14 +209,20 @@ class tabProjectPlan extends eController implements iProjectTabs
                             $curSettings['dateStart'] = $item['col_dateEndFact'];
                     }
 
+
                     $users = User::getUserList();
                     $stages = Project::getStagesList();
+                    $groups = User::getGropList();
+                    unset($groups[2],$groups[3]);
+                    $groups[0] = '..';
+
 
                     $this->view
                         ->add_dict($project)
                         ->add_dict($stageInfo)
                         ->set('stageList',html_::select($stages,'tbStageList',$stageInfo['col_stageID'],'class="form-control inlineBlock"'))
                         ->set('userList',html_::select($users,'tbUserList',$stageInfo['col_respID'],'class="form-control inlineBlock"'))
+                        ->set('groupList',html_::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                         ->set('curSettings', json_encode($curSettings))
                         ->out('editStageForm',$this->className);
                 }
@@ -208,6 +232,42 @@ class tabProjectPlan extends eController implements iProjectTabs
                 }
 
             }
+        }
+    }
+
+    public function addStageTask(){
+        if(!empty($_GET['id'])) {
+
+            $stageInfo = mProjectPlan::getCurModel($_GET['id']);
+            $project = Project::getCurModel($stageInfo['col_projectID']);
+
+            if($project['col_ProjectPlanState']>0){
+                echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
+                return;
+            }
+            if($stageInfo['col_statusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно стадии только со статусом "План".']);
+                return;
+            }
+
+            if(empty($_POST)){
+                $types = mTaskTypes::getTypesList();
+                $types[0] = '...';
+
+                $users = User::getGropList();
+                unset($users[2],$users[3]);
+                $users[0] = '..';
+
+
+                $this->view
+                    ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
+                    ->set('groupList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                    ->out('addTaskForm',$this->className);
+            }
+            else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur'])&& !empty($_POST['tbUserList'])){
+                Tools::debug($_POST);
+            }
+
         }
     }
 }

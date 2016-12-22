@@ -10,7 +10,10 @@ namespace build\erp\project;
 use build\erp\inc\eController;
 use build\erp\inc\iProjectTabs;
 use build\erp\inc\Project;
+use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
+use build\erp\tabs\m\mProjectPlan;
+use mwce\html_;
 use mwce\router;
 use mwce\Tools;
 
@@ -20,6 +23,7 @@ class inProject extends eController
         'id' => ['type'=>self::INT],
         'tab' => ['type'=>self::STR],
         'act' => ['type'=>self::STR],
+        'dateStart' => ['type'=>self::DATE],
     );
 
     //как заглушка, чтобы не валидировала пост
@@ -139,4 +143,24 @@ class inProject extends eController
         }
     }
 
+    public function actionUserFromGroup(){
+        if(!empty($_GET['id'])){
+            $userList = User::getUserGropuList($_GET['id']);
+            echo html_::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
+        }
+    }
+
+    /**
+     * перестройка плана
+     */
+    public function actionRebuildPlan(){
+        if(!empty($_GET['id']) && ! empty($_GET['dateStart'])){
+            $project = Project::getCurModel($_GET['id']);
+            if($project['col_ProjectPlanState']>0){
+                echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
+                return;
+            }
+            mProjectPlan::rebuildPlan($_GET['id'],$_GET['dateStart']);
+        }
+    }
 }

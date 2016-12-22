@@ -13,6 +13,25 @@ use mwce\Model;
 class mTaskTypes extends Model
 {
     /**
+     * список стадий
+     * @param bool $nameID
+     * @return array
+     */
+    public static function getTypesList($nameID = true){
+        $db = Connect::start();
+        $q = $db->query("SELECT * FROM tbl_hb_task_types WHERE col_isDel = 0 order by col_tName");
+        $res =  array();
+        while ($r = $q->fetch()){
+            if($nameID)
+                $res[$r['col_tName']] = $r['col_tName'];
+            else
+                $res[$r['col_tttID']] = $r['col_tName'];
+        }
+
+        return $res;
+    }
+
+    /**
      * @param null|array $params
      * @return mixed|mTaskTypes|array
      */
