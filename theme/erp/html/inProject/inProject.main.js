@@ -243,7 +243,7 @@ function tabProjectPlanEdit(id){
                 $(this).dialog('close');
             }
         },
-        title:'Добавить стадию в проект',
+        title:'Отредактировать',
         resizable:false,
         width:500,
         modal:true

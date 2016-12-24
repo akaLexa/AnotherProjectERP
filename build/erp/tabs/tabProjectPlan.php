@@ -11,6 +11,7 @@ use build\erp\adm\m\mTaskTypes;
 use build\erp\inc\eController;
 use build\erp\inc\iProjectTabs;
 use build\erp\inc\Project;
+use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use mwce\html_;
@@ -32,6 +33,8 @@ class tabProjectPlan extends eController implements iProjectTabs
         'taskDesc' => ['type'=>self::STR],
         'taskDur' => ['type'=>self::INT],
         'tbGroupList' => ['type'=>self::INT],
+        'TaskRtype' => ['type'=>self::INT],
+        'TaskRespID' => ['type'=>self::INT],
     );
 
     /**
@@ -78,6 +81,8 @@ class tabProjectPlan extends eController implements iProjectTabs
                 if(!empty($stageList)){
                     $ai = new \ArrayIterator($stageList);
 
+                    $curStage = 0;
+
                     if($project['col_ProjectPlanState']>0)
                         $this->view->set('isDisable',' DISABLED ');
                     else
@@ -88,9 +93,16 @@ class tabProjectPlan extends eController implements iProjectTabs
                         $item['dateStart'] = empty($item['col_dateStart']) ? $item['col_dateStartPlanLegend'] : $item['col_dateStartLegend'];
                         $item['dateEnd'] = empty($item['col_dateEndFact']) ? $item['col_dateEndPlanLegend'] : $item['col_dateEndFactLegend'];
 
-                        $this->view
-                            ->add_dict($item)
-                            ->out('stageCenter',$this->className);
+                        $this->view->add_dict($item);
+                        if($curStage != $item['col_pstageID'])
+                        {
+                            $curStage = $item['col_pstageID'];
+                            $this->view->out('stageCenter',$this->className);
+                        }
+
+                        if(!empty($item['col_taskName'])){
+                            $this->view->out('taskCenter',$this->className);
+                        }
                     }
                 }
                 //Tools::debug($stageList);
@@ -262,10 +274,30 @@ class tabProjectPlan extends eController implements iProjectTabs
                 $this->view
                     ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
                     ->set('groupList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock" onchange="if(this.value > 0){ document.querySelector(\'#TaskRespID\').style.display=\'inline-block\'; } else { document.querySelector(\'#TaskRespID\').style.display=\'none\'; }"'))
+                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['id']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px; display:none;" onchange=""'))
                     ->out('addTaskForm',$this->className);
             }
             else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur'])&& !empty($_POST['tbUserList'])){
-                Tools::debug($_POST);
+
+                $sumDur = Task::getSumDur($_GET['id']) + $_POST['taskDur'];
+                Task::Add([
+                    'col_taskName' => "'{$_POST['TaskName']}'",
+                    'col_StatusID' => 5,
+                    'col_initID'=> router::getCurUser(), // пока в плане, инициатор тот, кто составил план
+                    'col_respID' => $_POST['tbUserList'],
+                    'col_curatorID' =>'Null',
+                    'col_pstageID'=>$_GET['id'],
+                    'col_taskDesc' => !empty($_POST['taskDesc']) ? "'{$_POST['taskDesc']}'" : 'NULL',
+                    'col_createDate' => 'NOW()',
+                    'col_startPlan'=> "'{$stageInfo['col_dateStartPlan']}'",
+                    'col_endPlan' => "DATE_ADD('{$stageInfo['col_dateStartPlan']}', interval {$_POST['taskDur']} DAY)",
+                    'col_autoStart' =>'NULL',
+                    'col_taskDur' => $_POST['taskDur'],
+                    'col_fromPlan' => 1,
+                    'col_nextID' => !empty($_POST['TaskRespID']) ? $_POST['TaskRespID'] : 'NULL',
+                    'col_bonding' => !empty($_POST['TaskRtype']) ? $_POST['TaskRtype'] : 0,
+                ]);
             }
 
         }

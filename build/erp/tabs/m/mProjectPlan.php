@@ -25,9 +25,21 @@ class mProjectPlan extends Model
   tps.*,
   thps.col_StageName,
   ths.col_StatusName,
-  f_getUserFIO(col_respID) as col_resp
+  f_getUserFIO(tps.col_respID) as col_resp,
+  tt.col_taskID,
+  tt.col_taskName,
+  tt.col_respID,
+  f_getUserFIO(tt.col_respID) as col_taskResp,
+  COALESCE(tt.col_startFact,tt.col_startPlan) AS col_taskStart,
+  COALESCE(tt.col_endFact,tt.col_endPlan) AS col_taskEnd,
+  tt.col_seq AS col_taskSeq,
+  tt.col_taskDur,
+  tt.col_StatusID AS col_taskStatusID,
+  tths.col_StatusName AS col_taskStatusName
 FROM 
-  tbl_project_stage tps,
+  tbl_project_stage tps 
+    LEFT JOIN tbl_tasks tt ON tt.col_pstageID = tps.col_pstageID
+    LEFT JOIN tbl_hb_status tths ON tths.col_StatusID = tt.col_StatusID ,
   tbl_hb_project_stage thps,
   tbl_hb_status ths 
 WHERE 
@@ -35,7 +47,7 @@ WHERE
   AND tps.col_statusID IN (1,4,5)
   AND thps.col_StageID = tps.col_stageID
   AND ths.col_StatusID = tps.col_statusID
-  ORDER BY tps.col_seq")->fetchAll(static::class);
+  ORDER BY tps.col_seq, tt.col_seq ASC, tps.col_pstageID ASC, tt.col_taskDur DESC, tt.col_taskID ASC")->fetchAll(static::class);
     }
 
     /**
@@ -118,6 +130,8 @@ WHERE
             case 'col_dateEndFact':
             case 'col_dateCreate':
             case 'col_dateStartPlan':
+            case 'col_taskStart':
+            case 'col_taskEnd':
                 parent::_adding($name.'Legend', date_::transDate($value));
                 parent::_adding($name.'LegendDT', date_::transDate($value,true));
                 break;
