@@ -1,17 +1,18 @@
 <tr>
-    <td style="vertical-align: middle">|col_seq|.|col_taskSeq|</td>
-    <td style="vertical-align: middle">
-        <b class="glyphicon glyphicon-time" title="Задача" style="margin-left: 20px;"></b> |col_taskName| <sup class="projectState|col_taskStatusID|">|col_taskStatusName|</sup>
+    <td style="width:2%;" class="bg-info"></td>
+    <td style="width:2%;vertical-align: middle">|col_seq|.|col_taskSeq|</td>
+    <td style="vertical-align: middle" onclick="tabProjectPlanEditTask(|col_taskID|);">
+        <b class="glyphicon glyphicon-time" title="Задача"></b> |col_taskName| <sup class="projectState|col_taskStatusID|">|col_taskStatusName|</sup>
     </td>
     <td style="vertical-align: middle">|col_taskResp|</td>
     <td style="vertical-align: middle">|col_taskDur|</td>
     <td style="vertical-align: middle" nowrap>|col_taskStartLegend|</td>
     <td style="vertical-align: middle" nowrap>|col_taskEndLegend|</td>
     <td>
-        <button class="btn btn-default" title="Редактировать" type="button" |isDisable|  onclick="">
+        <button class="btn btn-default" title="Редактировать" type="button" |isDisable|  onclick="tabProjectPlanEditTask(|col_taskID|);">
             <b class="glyphicon glyphicon-pencil"></b>
         </button>
-        <button class="btn btn-default" title="Удалить" type="button" |isDisable| >
+        <button class="btn btn-default" title="Удалить" type="button" |isDisable| onclick="DeleteTask(|col_taskID|);">
             <b class="glyphicon glyphicon-remove"></b>
         </button>
     </td>

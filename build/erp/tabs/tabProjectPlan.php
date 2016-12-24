@@ -105,7 +105,6 @@ class tabProjectPlan extends eController implements iProjectTabs
                         }
                     }
                 }
-                //Tools::debug($stageList);
             }
         }
     }
@@ -274,13 +273,16 @@ class tabProjectPlan extends eController implements iProjectTabs
                 $this->view
                     ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
                     ->set('groupList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
-                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock" onchange="if(this.value > 0){ document.querySelector(\'#TaskRespID\').style.display=\'inline-block\'; } else { document.querySelector(\'#TaskRespID\').style.display=\'none\'; }"'))
-                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['id']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px; display:none;" onchange=""'))
+                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock"'))
+                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['id']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px;"'))
                     ->out('addTaskForm',$this->className);
             }
             else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur'])&& !empty($_POST['tbUserList'])){
+                $totalDurs = Task::getSumDur($_GET['id']) + $_POST['taskDur'];
 
-                $sumDur = Task::getSumDur($_GET['id']) + $_POST['taskDur'];
+                if(empty($_POST['TaskRespID']))
+                    $_POST['TaskRtype'] = 0;
+
                 Task::Add([
                     'col_taskName' => "'{$_POST['TaskName']}'",
                     'col_StatusID' => 5,
@@ -291,7 +293,7 @@ class tabProjectPlan extends eController implements iProjectTabs
                     'col_taskDesc' => !empty($_POST['taskDesc']) ? "'{$_POST['taskDesc']}'" : 'NULL',
                     'col_createDate' => 'NOW()',
                     'col_startPlan'=> "'{$stageInfo['col_dateStartPlan']}'",
-                    'col_endPlan' => "DATE_ADD('{$stageInfo['col_dateStartPlan']}', interval {$_POST['taskDur']} DAY)",
+                    'col_endPlan' => "DATE_ADD('{$stageInfo['col_dateStartPlan']}', interval $totalDurs DAY)",
                     'col_autoStart' =>'NULL',
                     'col_taskDur' => $_POST['taskDur'],
                     'col_fromPlan' => 1,
@@ -300,6 +302,99 @@ class tabProjectPlan extends eController implements iProjectTabs
                 ]);
             }
 
+        }
+    }
+
+    public function editStageTask(){
+        if(!empty($_GET['id'])) {
+
+            $curTask = Task::getCurModel($_GET['id']);
+            if(empty($curTask)){
+                echo json_encode(['error'=>'Задача не найдена!']);
+                return;
+            }
+
+            if($curTask['col_StatusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно только задачу со статусом "План"']);
+                return;
+            }
+
+            $stageInfo = mProjectPlan::getCurModel($curTask['col_pstageID']);
+            $project = Project::getCurModel($stageInfo['col_projectID']);
+
+            if($project['col_ProjectPlanState']>0){
+                echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
+                return;
+            }
+            if($stageInfo['col_statusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно стадии только со статусом "План".']);
+                return;
+            }
+
+            if(empty($_POST)){
+                $types = mTaskTypes::getTypesList();
+                $types[0] = '...';
+
+                $groups = User::getGropList();
+                unset($groups[2],$groups[3]);
+                $groups[0] = '..';
+
+                $users = User::getUserList();
+
+                $this->view
+                    ->add_dict($curTask)
+                    ->set('userList',html_::select($users,'tbUserList',$curTask['col_respID'],'class="form-control inlineBlock"'))
+                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($curTask['col_pstageID'],$_GET['id']),'TaskRespID',$curTask['col_bonding'],'class="form-control inlineBlock" style="width:180px;"'))
+                    ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
+                    ->set('groupList',html_::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',$curTask['col_bonding'],'class="form-control inlineBlock"'))
+                    ->out('editTaskForm',$this->className);
+            }
+            else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur']) && !empty($_POST['tbUserList'])){
+
+                if(empty($_POST['TaskRespID']))
+                    $_POST['TaskRtype'] = 0;
+
+                $curTask->edit([
+                    'col_taskName' => $_POST['TaskName'],
+                    'col_initID'=> router::getCurUser(), // пока в плане, инициатор тот, кто составил план
+                    'col_respID' => $_POST['tbUserList'],
+                    'col_curatorID' =>'null',
+                    'col_taskDesc' => !empty($_POST['taskDesc']) ? $_POST['taskDesc'] : 'NULL',
+                    'col_taskDur' => $_POST['taskDur'],
+                    'col_nextID' => !empty($_POST['TaskRespID']) ? $_POST['TaskRespID'] : 'NULL',
+                    'col_bonding' => !empty($_POST['TaskRtype']) ? $_POST['TaskRtype'] : 0,
+                ]);
+            }
+        }
+    }
+
+    public function deleteTask(){
+        if(!empty($_GET['id'])){
+            $curTask = Task::getCurModel($_GET['id']);
+            if(empty($curTask)){
+                echo json_encode(['error'=>'Задача не найдена!']);
+                return;
+            }
+
+            if($curTask['col_StatusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно только задачу со статусом "План"']);
+                return;
+            }
+
+            $stageInfo = mProjectPlan::getCurModel($curTask['col_pstageID']);
+            $project = Project::getCurModel($stageInfo['col_projectID']);
+
+            if($project['col_ProjectPlanState']>0){
+                echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
+                return;
+            }
+            if($stageInfo['col_statusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно стадии только со статусом "План".']);
+                return;
+            }
+
+            $curTask->delete();
         }
     }
 }

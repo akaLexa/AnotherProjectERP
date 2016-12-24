@@ -47,7 +47,7 @@ WHERE
   AND tps.col_statusID IN (1,4,5)
   AND thps.col_StageID = tps.col_stageID
   AND ths.col_StatusID = tps.col_statusID
-  ORDER BY tps.col_seq, tt.col_seq ASC, tps.col_pstageID ASC, tt.col_taskDur DESC, tt.col_taskID ASC")->fetchAll(static::class);
+  ORDER BY tps.col_seq, tt.col_seq ASC, tps.col_pstageID ASC, tt.col_startFact, tt.col_taskDur DESC, tt.col_taskID ASC")->fetchAll(static::class);
     }
 
     /**

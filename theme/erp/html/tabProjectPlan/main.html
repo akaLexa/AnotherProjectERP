@@ -1,4 +1,19 @@
 <div class="container-fluid">
+    <div class="container">
+        <details class="panel panel-info">
+            <summary class="panel-heading">Справка по заполнеию плана</summary>
+            <div class="panel-body">
+                <ul>
+                    <li>План проекта может изменяться долько в момент когда он не запущен.</li>
+                    <li>План проекта делится на стадии и задачи. В 1 момент времени может быть запущена только 1 стадия.</li>
+                    <li>В каждой стадии <strong>обязательно</strong> должна быть <u> 1 и только 1 задача</u> с зависимостью "Первая задача": при запуске плана и стадии именно с этой задачи начнется выполнение задач.</li>
+                    <li>Задачи и стадии из плана могут быть только завершены.</li>
+                    <li>Можно изменять после первого запуска, но для этого следует его остановить</li>
+                    <li>Задачи и стадии, у которых статус отличный от "план" изменениям уже не подлежат.</li>
+                </ul>
+            </div>
+        </details>
+    </div>
     <div class="container-fluid" style="margin: 15px 0;">
          Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
 
@@ -19,7 +34,7 @@
         <thead>
         <tr>
             <th style="width:2%;vertical-align: middle;">№ пп</th>
-            <th style="width:58%;vertical-align: middle;" >Наименование</th>
+            <th style="width:58%;vertical-align: middle;" colspan="2">Наименование</th>
             <th style="width:5%;vertical-align: middle;" >Ответственный</th>
             <th style="width:3%;vertical-align: middle;" title="Длительность, дни">Длит.</th>
             <th style="width:9%;vertical-align: middle;">Начало</th>

@@ -313,3 +313,100 @@ function tabProjectPlanAddTask(stageID) {
         modal:true
     });
 }
+function tabProjectPlanEditTask(taskID) {
+    $('#forDialogs').dialog({
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=editStageTask',
+                loadicon:'Загружаюсь..',
+                callback:function (r) {
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            mwce_alert(receive['error'],'Внимание!');
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Сохранить':function () {
+                if(document.querySelector('#tbUserList') != undefined){
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=editStageTask',
+                        type:'POST',
+                        data:$('#editTaskForm').serialize(),
+                        callback:function(r) {
+                            try{
+                                var receive = JSON.parse(r);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Внимание!');
+                                }
+                            }
+                            catch(e) {
+                                //console.error(e.message);
+                            }
+                            finally {
+                                tabProjectPlanGetPlan();
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                    });
+                }
+                else
+                    mwce_alert('Не выбран ответственный пользователь','Внимание');
+
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        title:'Изменить задачу',
+        resizable:false,
+        width:600,
+        modal:true
+    });
+}
+function DeleteTask(taskID){
+    mwce_confirm({
+        title:'Подтверждение',
+        text:'Вы действительно хотите удалить данную задачу?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=deleteTask',
+                    type:'POST',
+                    callback:function(r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['error'] != undefined){
+                                mwce_alert(receive['error'],'Внимание!');
+                            }
+                        }
+                        catch(e) {
+                            //console.error(e.message);
+                        }
+                        finally {
+                            tabProjectPlanGetPlan();
+                            mwce_confirm.close();
+                        }
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
