@@ -97,6 +97,11 @@ WHERE
   tps.col_pstageID = {$id}")->fetch(static::class);
     }
 
+    public function delete(){
+        $this->db->exec("DELETE FROM tbl_tasks WHERE col_pstageID = {$this['col_pstageID']}");
+        $this->db->exec("DELETE FROM tbl_project_stage WHERE col_pstageID = {$this['col_pstageID']}");
+    }
+
     /**
      * @param int $stageID
      * @param int $durability

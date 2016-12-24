@@ -397,4 +397,21 @@ class tabProjectPlan extends eController implements iProjectTabs
             $curTask->delete();
         }
     }
+
+    public function deleteStage(){
+        if(!empty($_GET['id'])){
+            $stageInfo = mProjectPlan::getCurModel($_GET['id']);
+            $project = Project::getCurModel($stageInfo['col_projectID']);
+
+            if($project['col_ProjectPlanState']>0){
+                echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
+                return;
+            }
+            if($stageInfo['col_statusID']!=5){
+                echo json_encode(['error'=>'Редактировать можно стадии только со статусом "План".']);
+                return;
+            }
+            $stageInfo->delete();
+        }
+    }
 }

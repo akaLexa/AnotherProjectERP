@@ -186,6 +186,39 @@ function tabProjectPlanAdd(){
         modal:true
     });
 }
+function tabProjectPlanDeleteStage(stageID){
+    mwce_confirm({
+        title:'Подтверждение',
+        text:'Вы действительно хотите удалить данную стадию?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=deleteStage',
+                    type:'POST',
+                    callback:function(r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['error'] != undefined){
+                                mwce_alert(receive['error'],'Внимание!');
+                            }
+                        }
+                        catch(e) {
+                            //console.error(e.message);
+                        }
+                        finally {
+                            tabProjectPlanGetPlan();
+                            mwce_confirm.close();
+                        }
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
 function tabProjectPlanEdit(id){
     $('#forDialogs').dialog({
         open:function () {
