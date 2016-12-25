@@ -101,6 +101,12 @@ class tabProjectPlan extends eController implements iProjectTabs
                         }
 
                         if(!empty($item['col_taskName'])){
+
+                            if(!empty(trim($item['col_nextID'])))
+                                $this->view->set('isfirstTask','display:none;');
+                            else
+                                $this->view->set('isfirstTask','');
+
                             $this->view->out('taskCenter',$this->className);
                         }
                     }
