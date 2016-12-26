@@ -93,6 +93,11 @@ class tabProjectPlan extends eController implements iProjectTabs
                         $item['dateStart'] = empty($item['col_dateStart']) ? $item['col_dateStartPlanLegend'] : $item['col_dateStartLegend'];
                         $item['dateEnd'] = empty($item['col_dateEndFact']) ? $item['col_dateEndPlanLegend'] : $item['col_dateEndFactLegend'];
 
+                        if(strtotime($item['dateEnd'])<time())
+                            $this->view->set('oldDateRed','color:red;');
+                        else
+                            $this->view->set('oldDateRed','');
+
                         $this->view->add_dict($item);
                         if($curStage != $item['col_pstageID'])
                         {
@@ -106,6 +111,11 @@ class tabProjectPlan extends eController implements iProjectTabs
                                 $this->view->set('isfirstTask','display:none;');
                             else
                                 $this->view->set('isfirstTask','');
+
+                            if(strtotime($item['col_taskEnd'])<time())
+                                $this->view->set('oldDateRed','color:red;');
+                            else
+                                $this->view->set('oldDateRed','');
 
                             $this->view->out('taskCenter',$this->className);
                         }
