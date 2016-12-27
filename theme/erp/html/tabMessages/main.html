@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="container">
+        <form method="post" id="messageSends">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width: 50%;"><textarea class="form-control inlineBlock" style="height:120px; width: 100%;" name="messageText" id="_messageText" placeholder="Сообщение..."></textarea></td>
+                    <td style="width: 30%;padding:5px;text-align: center;">
+                        <span style="display: inline-block; width:150px;height: 150px; overflow-y: auto;" id="listenersSpanList">
+                            <legend>Оповестить:</legend>
+                            |listenersList|
+                            <label style="display: block; width: auto;font-weight: normal;float: left;"><img src="|site|theme/imgs/users/|curuserImg|.png" style="width: 20px;border:0;"> |fio| <input type="checkbox" value="|fioID|" name="fio_|fioID|"></label>
+                            |/listenersList|
+                        </span>
+                    </td>
+                    <td style="vertical-align: middle; width: 20%;"><button type="button" class="btn btn-default" onclick="SendProjectMessage();" |isDisabled|>Отправить</button></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="container" id="messageTabContent" style="height:390px; padding:5px; overflow-y:auto;">|messageTabContent|</div>
+</div>

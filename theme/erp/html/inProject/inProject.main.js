@@ -46,6 +46,9 @@ function genTabContent(tab) {
                         currentTab = tab;
                         tabProjectPlanGetPlan();
                         break;
+                    default:
+                        currentTab = tab;
+                        break;
                 }
             }
         });
@@ -442,4 +445,58 @@ function DeleteTask(taskID){
             }
         }
     });
+}
+
+function SendProjectMessage(){
+    if(document.querySelector('#_messageText').value.trim().length<1)
+        mwce_alert('Не введен текст сообщения','Внимание');
+    else{
+        //console.log($('#messageSends').serialize(),document.querySelector('#_messageText').value);
+
+        genIn({
+            noresponse:true,
+            address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=addComment',
+            type:'POST',
+            data:$('#messageSends').serialize(),
+            callback:function(r) {
+                try{
+                    var receive = JSON.parse(r);
+                    if(receive['error'] != undefined){
+                        mwce_alert(receive['error'],'Внимание!');
+                    }
+                    else{
+                        $('#listenersSpanList input[type=checkbox]').each(function (id, elem) {
+                            elem.checked = false;
+                        });
+                        document.querySelector('#_messageText').value = '';
+                    }
+                }
+                catch(e) {
+                    //console.error(e.message);
+                }
+                finally {
+                    genIn({
+                        element:'messageTabContent',
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
+                        callback:function(r) {
+                            try{
+                                var receive = JSON.parse(r);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Внимание!');
+                                }
+                            }
+                            catch(e) {
+                                //console.error(e.message);
+                            }
+                            finally {
+
+                            }
+                        },
+                        loadicon:'Загружаюсь...'
+                    });
+                }
+            }
+        });
+    }
+
 }

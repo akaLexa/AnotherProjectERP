@@ -7,16 +7,15 @@
  *
  **/
 namespace build\erp\tabs;
-use build\erp\inc\eController;
-use build\erp\inc\iProjectTabs;
+use build\erp\inc\AprojectTabs;
 use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\tabs\m\mTabMain;
 use mwce\html_;
 use mwce\router;
-use mwce\Tools;
 
-class tabMain extends eController implements iProjectTabs
+
+class tabMain extends AprojectTabs
 {
     protected $postField = array(
         'projectNane' => ['type'=>self::STR,'maxLength'=>200],
@@ -24,11 +23,7 @@ class tabMain extends eController implements iProjectTabs
         'curManager' => ['type'=>self::INT],
     );
 
-    /**
-     * настройки вкладки
-     * @var array
-     */
-    protected $props;
+
 
     /**
      * главный вид по умолчанию
@@ -58,24 +53,6 @@ class tabMain extends eController implements iProjectTabs
                 ->set('mngrList',html_::select($users,'curManager',$project['col_founderID'],'class="form-control inlineBlock"'))
                 ->out('main',$this->className);
         }
-    }
-
-    /**
-     * настройки для модуля
-     * @return array
-     */
-    public function getProperties()
-    {
-        if(!empty($this->props))
-            return $this->props;
-
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this->className.'.php';
-        if(file_exists($path)) {
-            $this->props = require $path;
-            return $this->props;
-        }
-        else
-            return [];
     }
 
     public function save(){

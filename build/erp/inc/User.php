@@ -151,6 +151,8 @@ AND tu.col_uID = $id")->fetch(static::class);
 
         if($withBlocked)
             $f =' WHERE tu.col_isBaned = 1';
+        else
+            $f =' WHERE tu.col_isBaned = 0';
 
         $q = $db->query("SELECT CONCAT(tu.col_Sername,' ',COALESCE(LEFT(tu.col_Name,1),'?'),'.',COALESCE(LEFT(tu.col_Lastname,1),'?'),'.') as col_uName, tu.col_uID FROM tbl_user tu $f ORDER by tu.col_Sername");
 

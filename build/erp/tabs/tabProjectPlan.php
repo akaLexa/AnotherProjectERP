@@ -8,17 +8,16 @@
  **/
 namespace build\erp\tabs;
 use build\erp\adm\m\mTaskTypes;
-use build\erp\inc\eController;
-use build\erp\inc\iProjectTabs;
+use build\erp\inc\AprojectTabs;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use mwce\html_;
 use mwce\router;
-use mwce\Tools;
 
-class tabProjectPlan extends eController implements iProjectTabs
+
+class tabProjectPlan extends AprojectTabs
 {
 
     protected $props;
@@ -125,23 +124,6 @@ class tabProjectPlan extends eController implements iProjectTabs
         }
     }
 
-    /**
-     * настройки для модуля
-     * @return array
-     */
-    public function getProperties()
-    {
-        if(!empty($this->props))
-            return $this->props;
-
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this->className.'.php';
-        if(file_exists($path)) {
-            $this->props = require $path;
-            return $this->props;
-        }
-        else
-            return [];
-    }
 
     /**
      * добавление стадии проекта
