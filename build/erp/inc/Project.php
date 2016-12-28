@@ -39,7 +39,15 @@ class Project extends Model
 
     public static function getModels($params = null)
     {
+        if(empty($params['pageFrom']))
+            $params['pageFrom'] = 0;
+
+        if(empty($params['pageTo']))
+            $params['pageTo'] = 50;
+
         $db = Connect::start();
+        $filter = self::queryBuilder($params);
+
         return $db->query("SELECT 
   tp.*,
   tpn.col_serNum,
@@ -57,7 +65,24 @@ class Project extends Model
   tps.col_comment, 
   tps.col_stageID, 
   tps.col_prevStageID
-FROM 
+$filter
+limit {$params['pageFrom']},{$params['pageTo']}")->fetchAll(static::class);
+    }
+
+    /**
+     * @param null|array $params
+     * @return mixed
+     */
+    public static function getCountProject($params = null){
+        $db = Connect::start();
+        $filter = self::queryBuilder($params);
+        $res = $db->query("SELECT count(*) as cnt $filter")->fetch();
+
+        return $res['cnt'];
+    }
+
+    public static function queryBuilder($params = null){
+        $queryString = 'FROM 
   tbl_project tp,
   tbl_project_num tpn,
   tbl_project_stage tps,
@@ -68,7 +93,8 @@ WHERE
   AND tps.col_projectID = tp.col_projectID
   AND tps.col_statusID IN (1,4)
   AND thps.col_StageID = tps.col_stageID
-  AND ths.col_StatusID = tps.col_statusID")->fetchAll(static::class);
+  AND ths.col_StatusID = tps.col_statusID';
+        return $queryString;
     }
 
     /**

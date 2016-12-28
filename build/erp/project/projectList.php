@@ -9,12 +9,16 @@
 namespace build\erp\project;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
+use build\erp\inc\tPaginate;
 use build\erp\inc\User;
 use mwce\html_;
 use mwce\Tools;
 
 class projectList extends eController
 {
+
+    use tPaginate;
+
     public function actionIndex()
     {
         $usrs = User::getUserList();
@@ -26,7 +30,21 @@ class projectList extends eController
     }
 
     public function actionGetProjects(){
-        $list = Project::getModels();
+
+        $pageCnt = Project::getCountProject();
+
+        $pageData = Tools::paginate($pageCnt,50,1);
+
+        $params = array(
+            'pageFrom' => $pageData['min'],
+            'pageTo' => $pageData['max'],
+            'curPage' => 1,
+        );
+
+        $paginatorHTML = self::paginator($params['curPage'],$pageData['count'],5);
+
+        $list = Project::getModels($params);
+
         if(!empty($list)){
             $ai = new \ArrayIterator($list);
             foreach ($ai as $item) {
@@ -48,6 +66,14 @@ class projectList extends eController
                     ->add_dict($item)
                     ->out('center',$this->className);
             }
+
+            if($pageData['count'] >1){
+                $this->view
+                    ->set('curPaginator',$paginatorHTML)
+                    ->out('paginator',$this->className);
+            }
         }
+
+
     }
 }
