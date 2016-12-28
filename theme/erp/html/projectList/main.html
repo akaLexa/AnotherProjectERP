@@ -3,10 +3,10 @@
         <thead>
         <tr id="filterForProjects">
             <td style="padding:0;border: 0;width: 94px;">
-                <input type="text" style="width: 94px; height: 30px; margin:0" name="projectNum">
+                <input type="text" style="width: 94px; margin:0" class="erpInput" name="projectNum" onclick="this.value =''">
             </td>
             <td style="padding:0;border: 0;">
-                <input type="text" style="width: 300px; height: 30px; margin:0" name="projectName">
+                <input type="text" style="width: 300px; margin:0" class="erpInput" name="projectName" onclick="this.value =''">
             </td>
             <td style="padding:0;border: 0;">
                 <select class="erpSelect" style="width: 300px;" >
@@ -16,7 +16,10 @@
             <td style="padding:0;border: 0;">|userRespList|</td>
             <td style="padding:0;border: 0;">|userMngrList|</td>
             <td style="padding:0;border: 0;"><input type="date" class="erpInput" name="startDate"></td>
-            <td style="padding:0;border: 0;" colspan="2"><input type="date" class="erpInput" name="endDate"></td>
+            <td style="padding:0;border: 0;"><input type="date" class="erpInput" name="endDate"></td>
+            <td style="padding:0;border: 0;width: 30px;">
+                <button class="btn btn-default glyphicon glyphicon-filter" title="Фильтр" style="margin: 0;" onclick="projectFilter();" type="button"></button>
+            </td>
         </tr>
         <tr>
             <th style="width: 94px">№</th>

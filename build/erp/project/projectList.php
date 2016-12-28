@@ -19,6 +19,16 @@ class projectList extends eController
 
     use tPaginate;
 
+    protected $postField = array(
+        'projectNum' => ['type' => self::INT],
+        'projectName' => ['type' => self::STR],
+        'UserResponse' => ['type' => self::INT],
+        'UserManager' => ['type' => self::INT],
+        'curPage' => ['type' => self::INT],
+        'startDate' => ['type' => self::DATE],
+        'endDate' => ['type' => self::DATE],
+    );
+
     public function actionIndex()
     {
         $usrs = User::getUserList();
@@ -31,15 +41,41 @@ class projectList extends eController
 
     public function actionGetProjects(){
 
-        $pageCnt = Project::getCountProject();
+        $params['curPage'] =  empty(($_POST['curPage']) ? 1 : $_POST['curPage']);
+
+        if(!empty($_POST['projectNum'])){
+            $params['projectNum'] = $_POST['projectNum'];
+        }
+
+        if(!empty($_POST['projectName'])){
+            $params['projectName'] = $_POST['projectName'];
+        }
+
+        if(!empty($_POST['UserResponse'])){
+            $params['UserResponse'] = $_POST['UserResponse'];
+        }
+
+        if(!empty($_POST['UserManager'])){
+            $params['UserManager'] = $_POST['UserManager'];
+        }
+
+        if(!empty($_POST['UserManager'])){
+            $params['UserManager'] = $_POST['UserManager'];
+        }
+
+        if(!empty($_POST['startDate'])){
+            $params['startDate'] = $_POST['startDate'];
+        }
+
+        if(!empty($_POST['endDate'])){
+            $params['endDate'] = $_POST['endDate'];
+        }
+
+        $pageCnt = Project::getCountProject($params);
 
         $pageData = Tools::paginate($pageCnt,50,1);
-
-        $params = array(
-            'pageFrom' => $pageData['min'],
-            'pageTo' => $pageData['max'],
-            'curPage' => 1,
-        );
+        $params['pageFrom'] = $pageData['min'];
+        $params['pageTo'] = $pageData['max'];
 
         $paginatorHTML = self::paginator($params['curPage'],$pageData['count'],5);
 

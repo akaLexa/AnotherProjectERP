@@ -82,6 +82,33 @@ limit {$params['pageFrom']},{$params['pageTo']}")->fetchAll(static::class);
     }
 
     public static function queryBuilder($params = null){
+
+        $filter = '';
+
+        if(!empty($params['projectNum'])){
+            $filter.= " AND tp.col_pnID = ".$params['projectNum'];
+        }
+
+        if(!empty($params['projectName'])){
+            $filter.= " AND tp.col_projectName like '%{$params['projectName']}%' ";
+        }
+
+        if(!empty($params['UserResponse'])){
+            $filter.= " AND tps.col_respID = {$params['UserResponse']}";
+        }
+
+        if(!empty($params['UserManager'])){
+            $filter.= " AND tp.col_founderID = {$params['UserManager']}";
+        }
+
+        if(!empty($params['startDate'])){
+            $filter.= " AND tps.col_dateStart BETWEEN '{$params['startDate']} 00:00:00' AND '{$params['startDate']} 23:59:59'";
+        }
+
+        if(!empty($params['endDate'])){
+            $filter.= " AND tps.col_dateEndPlan BETWEEN '{$params['endDate']} 00:00:00' AND '{$params['endDate']} 23:59:59'";
+        }
+
         $queryString = 'FROM 
   tbl_project tp,
   tbl_project_num tpn,
@@ -93,7 +120,7 @@ WHERE
   AND tps.col_projectID = tp.col_projectID
   AND tps.col_statusID IN (1,4)
   AND thps.col_StageID = tps.col_stageID
-  AND ths.col_StatusID = tps.col_statusID';
+  AND ths.col_StatusID = tps.col_statusID '.$filter;
         return $queryString;
     }
 
