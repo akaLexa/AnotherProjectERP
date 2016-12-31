@@ -60,7 +60,7 @@ order by tpm.col_dateCreate DESC")->fetchAll(static::class);
             foreach ($listeners as $listener){
                 if(!empty($q))
                     $q.=',';
-                $q.="(11,$project,$listener, f_getProjectName($project))";
+                $q.="(11,$project,$listener, CONCAT('#',f_GetProjectNum($project),' - ',f_getUserFIO($user),': ',LEFT('$text',50),'...'))";
             }
             if(!empty($q)){
                 $db->exec("INSERT INTO tbl_events (col_etID,col_object,col_userID,col_comment) VALUES $q");

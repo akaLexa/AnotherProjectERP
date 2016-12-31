@@ -291,7 +291,7 @@ class UnitManager extends eController
 
     public function actionDelRole(){
         if(!empty($_POST['id'])){
-            if($_POST['id']<=1){
+            if($_POST['id']<=2){
                 echo json_encode(['error'=>'Удалить основные роли нельзя!']);
             }
             else{

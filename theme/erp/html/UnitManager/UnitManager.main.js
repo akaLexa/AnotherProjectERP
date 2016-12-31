@@ -735,7 +735,7 @@ function addNewMenu(){
                     },
                     callback:function (){
                         $('#forDialogs').dialog('close');
-                        window.location.reload();
+                        genTabContent('Menu');
                     }
                 });
             },
@@ -866,7 +866,7 @@ function DelMenu() {
                     address:'|site|page/|currentPage|/DelMenu?id='+curMenu,
                     callback:function (r){
                         mwce_confirm.close();
-                        window.location.reload();
+                        genTabContent('Menu');
                     }
                 });
             },

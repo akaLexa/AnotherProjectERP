@@ -10,6 +10,7 @@ namespace build\erp\plugins;
 use build\erp\plugins\m\mMainMenu;
 use mwce\content;
 use mwce\PluginController;
+use mwce\router;
 
 
 class mainMenu extends PluginController
@@ -27,7 +28,7 @@ class mainMenu extends PluginController
 
     public function actionIndex()
     {
-        if($this->isCached('mainMenu_'.$_SESSION['mwcGroup'])) //кешик
+        if($this->isCached('mainMenu_'.router::getUserRole())) //кешик
             return;
         $list = mMainMenu::getModels();
 
@@ -37,8 +38,9 @@ class mainMenu extends PluginController
             $curMenu = '';
             foreach ($ai as $menu_name=>$item) {
                 if($menu_name != $curMenu){
-                    if(!empty($this->configs[$menu_name]) && (in_array($_SESSION['mwcGroup'],$this->configs[$menu_name])
-                            || in_array(3,$this->configs[$menu_name]))){
+                    //прокерка ролей. Роль "Пользователь" (№2) является универсальной для всех авториированных польователей.
+                    if(!empty($this->configs[$menu_name]) && (in_array(router::getUserRole(),$this->configs[$menu_name])
+                            || in_array(2,$this->configs[$menu_name]))){
                         $inShow =  $list[$menu_name];
 
                         if(count($inShow)>1){
@@ -61,6 +63,6 @@ class mainMenu extends PluginController
             }
         }
         if($this->cacheNeed()) //если нужен кеш
-            $this->doCache('mainMenu_'.$_SESSION['mwcGroup']);
+            $this->doCache('mainMenu_'.router::getUserRole());
     }
 }
