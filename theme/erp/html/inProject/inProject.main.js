@@ -1,19 +1,22 @@
 var currentTab;
 
 $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
-
     var curID = e.target.id;
-
     genTabContent(curID);
 });
 
 $(document).ready(function () {
-    genTabContent('|defaultTab|')
+    if(window.location.hash.trim().length==0){
+        window.location.hash = '|defaultTab|';
+    }
+
+    $(window.location.hash).tab('show');
 });
 
 function genTabContent(tab) {
     if(tab.length >0){
-
+        console.log(tab);
+        window.location.hash = tab;
         genIn({
             element:'tab_content',
             address:'|site|page/|currentPage|/TabContent?tab='+tab+'&id=|col_projectID|',
@@ -50,6 +53,8 @@ function genTabContent(tab) {
                         currentTab = tab;
                         break;
                 }
+
+
             }
         });
 

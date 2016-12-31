@@ -1,7 +1,30 @@
 <div class="container-fluid">
-    <table class="table table-hover erpTable">
-        <tbody>
-
-        </tbody>
+    <table class="table table-hover table-bordered erpTable">
+        <thead>
+        <tr id="filterEvTr">
+            <td colspan="7" style="vertical-align: middle">
+                c <input type="date" name="dFrom" value="|dFrom|" class="form-control inlineBlock"> по <input value="|dTo|" type="date" name="dTo" class="form-control inlineBlock"> |typeList|
+                <select class="form-control inlineBlock" style="margin-left: 5px" name="shownType" onchange="evFilter()">
+                    <option value="1" selected>Актуальные события</option>
+                    <option value="2">История</option>
+                    <option value="3">Только закрепленные</option>
+                </select>
+                <label style="font-weight: normal;margin-left: 5px;margin-right: 5px;"> Показывать закрепленные <input type="checkbox" name="showPushed" value="1" checked></label>
+                <button class="btn btn-default" type="button" onclick="isReadAllEvent();" style="margin: auto 5px;">Отметить все как прочитанные</button>
+                <button class="btn btn-default glyphicon glyphicon-filter" type="button" onclick="evFilter();" style="position: relative; top:-1px;"></button>
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle;width: 32px;"><b class="glyphicon glyphicon-option-horizontal"></b></th>
+            <th style="width: 160px;">Дата</th>
+            <th style="width: 200px;">Тип</th>
+            <th style="width: 200px;">Действие</th>
+            <th>Подробности</th>
+            <th title="Закрепить/Открепить" style="vertical-align: middle; width: 32px;"><b class="glyphicon glyphicon-pushpin"></b></th>
+            <th title="Удалить" style="vertical-align: middle; width: 32px;"><b class="glyphicon glyphicon-remove"></b></th>
+        </tr>
+        </thead>
+        <tbody id="evBody"></tbody>
     </table>
 </div>
+<form id="redirectForm" style="display: none;" action="" method="post" target="_blank"></form>

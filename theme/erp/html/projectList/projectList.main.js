@@ -29,4 +29,5 @@ function projectFilter() {
 }
 function paginate(id) {
     curPage = id;
+    projectFilter();
 }

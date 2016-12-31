@@ -59,8 +59,15 @@ class inProject extends eController
                     $this->view->set('defaultTab','');
                 }
                 else{
-                    $this->view->set('defaultTab',current($tabs)['tabName']);
+                    foreach ($tabs as $info){
+                        if($info['customClass'] == 'active')
+                        {
+                            $this->view->set('defaultTab',$info['tabName']);
+                            break;
+                        }
+                    }
                 }
+
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
 
                 if(strtotime($project['col_dateEndPlan']) < time())

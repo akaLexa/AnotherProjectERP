@@ -73,7 +73,7 @@ class projectList extends eController
 
         $pageCnt = Project::getCountProject($params);
 
-        $pageData = Tools::paginate($pageCnt,50,1);
+        $pageData = Tools::paginate($pageCnt,50,$params['curPage']);
         $params['pageFrom'] = $pageData['min'];
         $params['pageTo'] = $pageData['max'];
 
