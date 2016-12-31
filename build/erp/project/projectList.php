@@ -41,7 +41,7 @@ class projectList extends eController
 
     public function actionGetProjects(){
 
-        $params['curPage'] =  empty(($_POST['curPage']) ? 1 : $_POST['curPage']);
+        $params['curPage'] =  empty($_POST['curPage']) ? 1 : $_POST['curPage'];
 
         if(!empty($_POST['projectNum'])){
             $params['projectNum'] = $_POST['projectNum'];
@@ -71,9 +71,10 @@ class projectList extends eController
             $params['endDate'] = $_POST['endDate'];
         }
 
-        $pageCnt = Project::getCountProject($params);
 
+        $pageCnt = Project::getCountProject($params);
         $pageData = Tools::paginate($pageCnt,50,$params['curPage']);
+
         $params['pageFrom'] = $pageData['min'];
         $params['pageTo'] = $pageData['max'];
 
