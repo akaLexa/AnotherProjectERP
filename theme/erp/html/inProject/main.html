@@ -6,14 +6,9 @@
 </div>
 <div style="margin-bottom: 8px;margin-top: 8px;padding-left:10px;padding-right:10px;">
     <button class="btn btn-default">Сменить стадию</button>
-    <button class="btn btn-default"><b class="glyphicon glyphicon-plus"></b> Задача</button>
+    <button class="btn btn-default" onclick="addTask();"><b class="glyphicon glyphicon-plus"></b> Задача</button>
     <button class="btn btn-default"><b class="glyphicon glyphicon-play |planStarted|"></b>/<b class="glyphicon glyphicon-stop |planStoped|"></b> План проекта</button>
-    <button class="btn btn-default"><b class="glyphicon glyphicon-pencil"></b> Сообщение</button>
-    <button class="btn btn-default disabled">Кнопка 5</button>
-    <button class="btn btn-default disabled">Кнопка 6</button>
-    <button class="btn btn-default disabled">Кнопка 7</button>
-    <button class="btn btn-default disabled">Кнопка 8</button>
-    <button class="btn btn-default disabled">Кнопка 9</button>
+    <button class="btn btn-default" onclick="$('#tabMessages').tab('show');"><b class="glyphicon glyphicon-pencil"></b> Сообщение</button>
 </div>
 <div>
     <ul class="nav nav-tabs" role="tablist">

@@ -1,0 +1,41 @@
+<form id="addTask">
+<table class="table">
+    <tr>
+        <th>Название задачи</th>
+        <td><input type="text" class="form-control inlineBlock" name="taskName" id="_taskName" style="width: 360px;" maxlength="255"></td>
+    </tr>
+    <tr>
+        <th>Или типовое название</th>
+        <td>|typeTaskList|</td>
+    </tr>
+    <tr>
+        <th>Ответственный</th>
+        <td>
+            <span style="display:inline-block; width:160px;">|groupList|</span>
+            <span style="display:inline-block; width:160px;" id="tdResp"></span>
+        </td>
+    </tr>
+    <tr>
+        <th>Куратор</th>
+        <td>
+            <span style="display:inline-block; width:160px;">|groupList1|</span>
+            <span style="display:inline-block; width:160px;" id="tdResp1"></span>
+        </td>
+    </tr>
+    <tr>
+        <th>Дата заверения</th>
+        <td><input type="date" class="form-control inlineBlock" name="endDate" id="_endDate">
+            <input type="time" value="17:00" class="form-control inlineBlock" name="endTime" id="_endTime">
+        </td>
+    </tr>
+    <tr>
+        <th>Срок принятия решения</th>
+        <td><input type="text" class="form-control inlineBlock" name="duration" id="_duration" value="2" style="width: 50px;"> дн.</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <textarea style="width: 400px;height:120px;" name="taskDesc" id="taskDesc"></textarea>
+        </td>
+    </tr>
+</table>
+</form>

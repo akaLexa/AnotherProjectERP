@@ -15,7 +15,6 @@ $(document).ready(function () {
 
 function genTabContent(tab) {
     if(tab.length >0){
-        console.log(tab);
         window.location.hash = tab;
         genIn({
             element:'tab_content',
@@ -95,8 +94,6 @@ function genUserFromGroup(targetID,groupID) {
         loadicon:'Загружаю...'
     });
 }
-
-
 
 var curAddStageSetings;
 function rebuildProjectPlan(project,startDate) {
@@ -456,7 +453,6 @@ function SendProjectMessage(){
     if(document.querySelector('#_messageText').value.trim().length<1)
         mwce_alert('Не введен текст сообщения','Внимание');
     else{
-        //console.log($('#messageSends').serialize(),document.querySelector('#_messageText').value);
 
         genIn({
             noresponse:true,
@@ -504,4 +500,106 @@ function SendProjectMessage(){
         });
     }
 
+}
+
+function addTask() {
+    $('#forDialogs').dialog({
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab=tabTasks&id=|col_projectID|&act=add',
+                loadicon:'Загружаюсь..',
+                callback:function (r) {
+                    tinymce.init({
+                        selector: '#taskDesc',
+                        height: 200,
+                        menubar: false,
+                        plugins: [
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen',
+                            'insertdatetime media table contextmenu paste code'
+                        ],
+                        toolbar: 'undo redo |  styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                        language: 'ru_RU',
+                        browser_spellcheck: true
+                    });
+
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            mwce_alert(receive['error'],'Внимание!');
+                            $('#forDialogs').dialog('close');
+                        }
+                        else{
+                            $('#tabTasks').tab('show');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            tinymce.remove('#taskDesc');
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Добавить':function () {
+
+                if(document.querySelector('#_taskName').value.trim().length<1){
+                    mwce_alert('Не заполнено название задачи','Внимание');
+                }
+                else if(document.querySelector('#_endDate').value){
+
+                    var now = new Date();
+                    var inF = new Date(document.querySelector('#_endDate').value + ' ' + document.querySelector('#_endTime').value);
+
+                    if(now.getTime() >= inF.getTime()){
+                        mwce_alert('Дата звершения должна быть больше, чем сегодня','Внимание');
+                    }
+                    else if(document.querySelector('#tbUserList1')!= undefined){
+                        tinymce.triggerSave('#taskDesc');
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/ExecAction?tab=tabTasks&id=|col_projectID|&act=add',
+                            type:'POST',
+                            data:$('#addTask').serialize(),
+                            callback:function (r) {
+                                try{
+                                    var receive = JSON.parse(r);
+                                    if(receive['error'] != undefined)
+                                        mwce_alert(receive['error'],'Ошибка');
+                                    else{
+
+                                    }
+                                }
+                                catch (e){
+                                    mwce_alert(e.message,'Ошибка');
+                                }
+                                $('#forDialogs').dialog('close');
+                            }
+                        });
+                    }
+                    else{
+                        mwce_alert('Не указан ответственный','Внимание');
+                    }
+
+                }
+                else{
+                    mwce_alert('Не указана дата звершения','Внимание');
+                }
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        title:'Добавить задачу',
+        resizable:false,
+        width:600,
+        modal:true,
+        position:{
+            at:'top'
+        }
+    });
 }

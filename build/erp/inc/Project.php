@@ -158,6 +158,7 @@ WHERE
   tps.col_dateEndFact, 
   tps.col_comment, 
   tps.col_stageID, 
+  tps.col_pstageID, 
   tps.col_prevStageID
 FROM 
   tbl_project tp,

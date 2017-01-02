@@ -9,11 +9,13 @@
 namespace build\erp\inc;
 use mwce\Connect;
 use mwce\Model;
+use mwce\traits\tInsert;
 use mwce\traits\tUpdate;
 
 class Task extends Model
 {
     use tUpdate;
+    use tInsert;
 
     /**
      * список возможных связей задач

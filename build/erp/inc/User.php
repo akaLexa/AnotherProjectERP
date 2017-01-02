@@ -119,15 +119,16 @@ AND tu.col_uID = $id")->fetch(static::class);
 
     /**
      * Список групп
+     * @param bool $withoutUniv без универсальных групп
      * @return array
      */
-    public static function getGropList(){
+    public static function getGropList($withoutUniv = true){
         if(empty(self::$sdata['GropList'])){
             $db = Connect::start();
             $roles = array();
             $query = $db->query("SELECT * FROM tbl_user_groups ORDER BY col_gName");
             while ($res = $query->fetch()){
-                if($res['col_gID'] == 4)
+                if($withoutUniv && $res['col_gID'] > 1 && $res['col_gID'] <= 4)
                     continue;
                 $roles[$res['col_gID']] = $res['col_gName'];
             }
