@@ -65,6 +65,7 @@ class tabTasks extends AprojectTabs
                 'col_respID' => $_POST['tbUserList1'],
                 'col_pstageID' => $project['col_pstageID'],
                 'col_createDate' => date_::intransDate('now',true),
+                'col_startFact' => date_::intransDate('now',true),
                 'col_autoStart' => date_::intransDate('now + '.$_POST['duration'].' DAY',true),
                 'col_endPlan' => $_POST['endDate'].' '.$_POST['endTime'],
                 'col_taskDur' => $_POST['duration'],

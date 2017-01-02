@@ -33,6 +33,7 @@ class mProjectPlan extends Model
   COALESCE(tt.col_startFact,tt.col_startPlan) AS col_taskStart,
   COALESCE(tt.col_endFact,tt.col_endPlan) AS col_taskEnd,
   tt.col_seq AS col_taskSeq,
+  tt.col_startPlan as col_taskStartPlan,
   tt.col_taskDur,
   tt.col_nextID,
   tt.col_StatusID AS col_taskStatusID,

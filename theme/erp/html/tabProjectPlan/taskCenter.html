@@ -1,8 +1,10 @@
 <tr>
-    <td style="width:2%; vertical-align: middle;" class="bg-info"><b title="Помечена как 'первая задача'" class="glyphicon glyphicon-asterisk" style="|isfirstTask|; color:red;cursor: help;"></b></td>
+    <td style="width:2%; vertical-align: middle;" class="bg-info">
+        <b title="Помечена как 'первая задача'" class="glyphicon glyphicon-asterisk" style="|isfirstTask|; color:red;cursor: help;"></b>
+    </td>
     <td style="width:2%;vertical-align: middle">|col_seq|.|col_taskSeq|</td>
     <td style="vertical-align: middle" onclick="tabProjectPlanEditTask(|col_taskID|);">
-        <b class="glyphicon glyphicon-time" title="Задача"></b> |col_taskName| <sup class="projectState|col_taskStatusID|">|col_taskStatusName|</sup>
+        <b class="glyphicon glyphicon-time" style="|taskStyle|" title="Задача |hintPref|"></b> |col_taskName| <sup class="projectState|col_taskStatusID|">|col_taskStatusName|</sup>
     </td>
     <td style="vertical-align: middle">|col_taskResp|</td>
     <td style="vertical-align: middle">|col_taskDur|</td>

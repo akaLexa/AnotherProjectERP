@@ -15,6 +15,7 @@ use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use mwce\html_;
 use mwce\router;
+use mwce\Tools;
 
 
 class tabProjectPlan extends AprojectTabs
@@ -106,10 +107,26 @@ class tabProjectPlan extends AprojectTabs
 
                         if(!empty($item['col_taskName'])){
 
-                            if(!empty(trim($item['col_nextID'])))
+                            if(!empty($item['col_nextID']))
                                 $this->view->set('isfirstTask','display:none;');
                             else
                                 $this->view->set('isfirstTask','');
+
+                            if(empty($item['col_taskStartPlan'])){
+                                $this->view
+                                    ->set('hintPref', ' не из плана!')
+                                    ->set('taskStyle','color:red;')
+                                    ->set('isfirstTask','display:none;')
+                                ;
+                            }
+                            else{
+                                $this->view
+                                    /*->emptyName('hintPref')
+                                    ->emptyName('taskStyle')*/
+                                    ->set('hintPref', '')
+                                    ->set('taskStyle','')
+                                ;
+                            }
 
                             if(strtotime($item['col_taskEnd'])<time())
                                 $this->view->set('oldDateRed','color:red;');
