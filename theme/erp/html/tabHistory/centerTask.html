@@ -1,4 +1,4 @@
-<tr style="|isNotPlan|">
+<tr>
     <td style="width:2%; vertical-align: middle;" class="bg-info">
         <b title="Помечена как 'первая задача'" class="glyphicon glyphicon-asterisk" style="|isfirstTask|; color:red;cursor: help;"></b>
     </td>
@@ -8,14 +8,8 @@
     </td>
     <td style="vertical-align: middle">|col_taskResp|</td>
     <td style="vertical-align: middle">|col_taskDur|</td>
-    <td style="vertical-align: middle" nowrap>|col_taskStartLegend|</td>
-    <td style="vertical-align: middle;|oldDateRed|" nowrap>|col_taskEndLegend|</td>
-    <td>
-        <button class="btn btn-default" title="Редактировать" type="button" |isDisable|  onclick="tabProjectPlanEditTask(|col_taskID|);">
-            <b class="glyphicon glyphicon-pencil"></b>
-        </button>
-        <button class="btn btn-default" title="Удалить" type="button" |isDisable| onclick="DeleteTask(|col_taskID|);">
-            <b class="glyphicon glyphicon-remove"></b>
-        </button>
-    </td>
+    <td style="vertical-align: middle" nowrap>|col_taskStartPlanLegend|</td>
+    <td style="vertical-align: middle" nowrap>|col_taskstartFactLegend|</td>
+    <td style="vertical-align: middle;" nowrap>|col_taskendPlanLegend|</td>
+    <td style="vertical-align: middle;" nowrap>|col_taskendFactLegend|</td>
 </tr>

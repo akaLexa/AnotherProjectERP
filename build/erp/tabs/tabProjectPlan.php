@@ -101,11 +101,23 @@ class tabProjectPlan extends AprojectTabs
                         $this->view->add_dict($item);
                         if($curStage != $item['col_pstageID'])
                         {
+                            if(empty($item['col_dateStartPlan']))
+                                $this->view->set('isNotPlan','opacity: 0.4');
+                            else
+                                $this->view->set('isNotPlan','');
+
                             $curStage = $item['col_pstageID'];
                             $this->view->out('stageCenter',$this->className);
                         }
 
+
+
                         if(!empty($item['col_taskName'])){
+
+                            if(empty($item['col_taskStartPlan']))
+                                $this->view->set('isNotPlan','opacity: 0.4');
+                            else
+                                $this->view->set('isNotPlan','');
 
                             if(!empty($item['col_nextID']))
                                 $this->view->set('isfirstTask','display:none;');
