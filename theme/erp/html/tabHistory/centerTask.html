@@ -3,8 +3,11 @@
         <b title="Помечена как 'первая задача'" class="glyphicon glyphicon-asterisk" style="|isfirstTask|; color:red;cursor: help;"></b>
     </td>
     <td style="width:2%;vertical-align: middle">|col_seq|.|col_taskSeq|</td>
-    <td style="vertical-align: middle" onclick="tabProjectPlanEditTask(|col_taskID|);">
+    <td style="vertical-align: middle">
         <b class="glyphicon glyphicon-time" style="|taskStyle|" title="Задача |hintPref|"></b> |col_taskName| <sup class="projectState|col_taskStatusID|">|col_taskStatusName|</sup>
+        <p style="font-style: italic; font-size: 12px;">
+            <span style="color: rgba(255,0,0,0.68)">|col_failDes| |col_lateFinishDesc|</span>
+        </p>
     </td>
     <td style="vertical-align: middle">|col_taskResp|</td>
     <td style="vertical-align: middle">|col_taskDur|</td>
