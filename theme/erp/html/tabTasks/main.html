@@ -1,0 +1,30 @@
+<div class="container-fluid">
+    <table class="table table-bordered table-responsive table-hover erpTable">
+        <thead>
+        <tr id="taskFilters">
+            <td style="padding:0;width: 500px;"><input type="text" class="erpInput" name="ftaskName" placeholder="Название..." style="width: 500px;"></td>
+            <td style="padding:0 5px;">
+                    Статус: |stateList|
+            </td>
+            <td style="padding:0;">|initList|</td>
+            <td style="padding:0;">|respList|</td>
+            <td style="padding:0;"><input type="date" name="dbegin" class="erpInput" style="width: 135px;"></td>
+            <td style="padding:0;"><input type="date" name="endPlan" class="erpInput" style="width: 135px;"></td>
+            <td style="padding:0;"><input type="date" name="endFact" class="erpInput" style="width: 135px;"></td>
+            <td style="padding:0;text-align: center">
+                <button class="btn btn-default glyphicon glyphicon-filter" onclick="filterTask()"></button>
+            </td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle;" colspan="2">Название</th>
+            <th style="width:150px;vertical-align: middle;">Инициатор</th>
+            <th style="width:150px;vertical-align: middle;">Исполнитель</th>
+            <th style="width:135px;vertical-align: middle;">Начало</th>
+            <th style="width:135px;vertical-align: middle;">Завершится</th>
+            <th style="width:135px;vertical-align: middle;">Завершено</th>
+            <th style="width:100px;vertical-align: middle;">Дней осталось</th>
+        </tr>
+        </thead>
+        <tbody id="tbTaskBody"></tbody>
+    </table>
+</div>

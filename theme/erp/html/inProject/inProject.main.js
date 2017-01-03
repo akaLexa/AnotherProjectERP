@@ -48,6 +48,10 @@ function genTabContent(tab) {
                         currentTab = tab;
                         tabProjectPlanGetPlan();
                         break;
+                    case 'tabTasks':
+                        currentTab = tab;
+                        filterTask();
+                        break;
                     default:
                         currentTab = tab;
                         break;
@@ -601,5 +605,14 @@ function addTask() {
         position:{
             at:'top'
         }
+    });
+}
+function filterTask(){
+    genIn({
+        element:'tbTaskBody',
+        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
+        loadicon:'<tr><td colspan="7" style="text-align: center; color:green">Загружаюсь</td></tr>',
+        type:'POST',
+        data:$('#taskFilters select,#taskFilters input[type=date],#taskFilters input[type=text]').serialize()
     });
 }

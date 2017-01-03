@@ -125,6 +125,24 @@ WHERE
     }
 
     /**
+     * список статусов
+     * @return array
+     */
+    public static function getStates(){
+        if(!empty(self::$sdata['getStates']))
+            return self::$sdata['getStates'];
+        $db = Connect::start();
+        $ars = array();
+        $q = $db->query("SELECT * FROM tbl_hb_status");
+        while ($r = $q->fetch()){
+            $ars[$r['col_StatusID']] = $r['col_StatusName'];
+        }
+        self::$sdata['getStates'] = $ars;
+
+        return self::$sdata['getStates'];
+    }
+
+    /**
      * настройки для проекта
      * @return array|bool
      */

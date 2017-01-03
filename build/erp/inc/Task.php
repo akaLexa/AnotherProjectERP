@@ -8,6 +8,7 @@
  **/
 namespace build\erp\inc;
 use mwce\Connect;
+use mwce\date_;
 use mwce\Model;
 use mwce\traits\tInsert;
 use mwce\traits\tUpdate;
@@ -105,9 +106,86 @@ WHERE
         return $res['totalDur'];
     }
 
+    /**
+     * @param null $params
+     * @return bool| Task
+     */
     public static function getModels($params = null)
     {
+        $db = Connect::start();
+        $query = self::qBuilder($params);
+        if(empty($query))
+            return false;
 
+        return $db->query("SELECT
+  tt.*,
+  ths.col_StatusName,
+  f_getUserFIO(tt.col_initID) AS col_init,
+  f_getUserFIO(tt.col_respID) AS col_resp,
+  f_getUserFIO(tt.col_curatorID) AS col_curator,
+  COALESCE(tt.col_startFact,tt.col_startPlan) AS col_dateStart,
+  DATEDIFF(COALESCE(tt.col_endFact,tt.col_endPlan),COALESCE(tt.col_startFact,tt.col_startPlan)) AS col_dayDifs,
+  tps.col_pstageID,
+  tp.col_projectName,
+  tp.col_pnID,
+  tp.col_founderID
+$query
+")->fetchAll(static::class);
+    }
+
+    /**
+     * @param null|array $params
+     * @return string
+     */
+    protected static function qBuilder($params = null){
+        $q = 'FROM
+  tbl_tasks tt,
+  tbl_hb_status ths,
+  tbl_project_stage tps,
+  tbl_project tp
+WHERE
+  ths.col_StatusID = tt.col_StatusID
+  AND tps.col_statusID IN (1,4)
+  AND tp.col_projectID = tps.col_projectID';
+
+        if(!empty($params['projectID']))
+            $q.=" AND tps.col_projectID = 1";
+        else
+            $q.=" AND tps.col_pstageID = tt.col_pstageID";
+
+        if(!empty($params['taskName']))
+            $q.= " AND tt.col_taskName like '%{$params['taskName']}%'";
+
+        if(!empty($params['taskStatus']))
+            $q.= " AND tt.col_StatusID =".$params['taskStatus'];
+
+        if(!empty($params['taskInit']))
+            $q.= " AND tt.col_initID =".$params['taskInit'];
+
+        if(!empty($params['taskResp']))
+            $q.= " AND tt.col_respID =".$params['taskResp'];
+
+        if(!empty($params['taskCurator']))
+            $q.= " AND tt.col_curatorID =".$params['taskCurator'];
+
+        if(!empty($params['dbegin'])){
+            if($params['taskStatus'] == 5){
+                $q.= " AND tt.col_startPlan BETWEEN '{$params['dbegin']} 00:00:00' AND '{$params['dbegin']} 23:59:59'";
+            }
+            else{
+                $q.= " AND tt.col_startFact BETWEEN '{$params['dbegin']} 00:00:00' AND '{$params['dbegin']} 23:59:59'";
+            }
+        }
+
+        if(!empty($params['endPlan']))
+            $q.= " AND tt.col_endPlan BETWEEN '{$params['endPlan']} 00:00:00' AND '{$params['endPlan']} 23:59:59'";
+
+        if(!empty($params['endFact']))
+            $q.= " AND tt.col_endFact BETWEEN '{$params['endFact']} 00:00:00' AND '{$params['endFact']} 23:59:59'";
+
+
+
+        return $q;
     }
 
     /**
@@ -129,5 +207,19 @@ FROM
 WHERE
   ths.col_StatusID = tt.col_StatusID
   AND tt.col_taskID = $id")->fetch(static::class);
+    }
+
+    protected function _adding($name, $value)
+    {
+        switch ($name){
+            case 'col_createDate':
+            case 'col_startPlan':
+            case 'col_endPlan':
+            case 'col_dateStart':
+                parent::_adding($name.'Legend', date_::transDate($value));
+                parent::_adding($name.'LegendTD', date_::transDate($value,true));
+                break;
+        }
+        parent::_adding($name, $value);
     }
 }

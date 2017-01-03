@@ -36,6 +36,14 @@ class tabTasks extends AprojectTabs
         'endDate' => ['type'=>self::DATE],
         'endTime' => ['type'=>self::STR,'maxLength'=>5],
         'taskDesc' => ['type'=>self::STR],
+
+        'taskInit' => ['type'=>self::INT],
+        'taskResp' => ['type'=>self::INT],
+        'endPlan' => ['type'=>self::DATE],
+        'dbegin' => ['type'=>self::DATE],
+        'endFact' => ['type'=>self::DATE],
+        'taskStatus' => ['type'=>self::INT],
+        'ftaskName' => ['type'=>self::STR,'maxLength'=>255],
     );
 
     /**
@@ -45,6 +53,64 @@ class tabTasks extends AprojectTabs
      */
     public function In($params = null)
     {
+        $users = User::getUserList();
+        $users[0] = '...';
+
+        $this->view
+            ->set('stateList',html_::select(Project::getStates(),'taskStatus',1,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
+            ->set('initList',html_::select($users,'taskInit',0,'style="width:100%" class="erpInput" onchange="filterTask();"'))
+            ->set('respList',html_::select($users,'taskResp',router::getCurUser(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
+            ->out('main',$this->className);
+    }
+
+    public function getList(){
+        if(!empty($_GET['id'])){
+            $params['projectID'] = $_GET['id'];
+            if(!empty($_POST['ftaskName']))
+                $params['taskName'] = $_POST['ftaskName'];
+
+            if(!empty($_POST['taskStatus']))
+                $params['taskStatus'] = $_POST['taskStatus'];
+            else
+                $params['taskStatus'] = 1;
+
+            if(!empty($_POST['taskInit']))
+                $params['taskInit'] = $_POST['taskInit'];
+
+            if(!empty($_POST['taskResp']))
+                $params['taskResp'] = $_POST['taskResp'];
+
+            if(!empty($_POST['dbegin']))
+                $params['dbegin'] = $_POST['dbegin'];
+
+            if(!empty($_POST['endPlan']))
+                $params['endPlan'] = $_POST['endPlan'];
+
+            if(!empty($_POST['endFact']))
+                $params['endFact'] = $_POST['endFact'];
+
+            $list = Task::getModels($params);
+
+            if(!empty($list)){
+                $ai = new \ArrayIterator($list);
+
+                foreach ($ai as $item) {
+
+                    if($item['col_dayDifs'] <0)
+                        $this->view->set('customLeft','color:red;');
+                    else
+                        $this->view->set('customLeft','');
+
+                    $this->view
+                        ->add_dict($item)
+                        ->out('center', $this->className);
+                }
+            }
+            else
+                $this->view->out('centerEmpty',$this->className);
+
+
+        }
 
     }
 
