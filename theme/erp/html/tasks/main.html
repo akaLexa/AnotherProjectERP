@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <div class="container-fluid" id="taskF2">
+        <label style="width: auto; display: inline-block; margin: 5px 5px; font-weight: normal;"><input type="text" class="form-control inlineBlock" style="width: 100px;" placeholder="# проекта" name="projectNum"></label>
+        <label style="width: auto; display: inline-block; margin: 5px 5px; font-weight: normal;">Где я - куратор <input onclick="if(this.checked) { $('#taskInit').val(0); $('#taskResp').val(0); }" type="checkbox" name="isCurator" value="1"></label>
+        <label style="width: auto; display: inline-block; margin: 5px 5px; font-weight: normal;">Статус: |stateList|</label>
+        <button type="button" class="btn btn-default glyphicon glyphicon-filter" onclick="filterTask()" style="position: relative; top:-1px;"></button>
+    </div>
+    <table class="table table-bordered table-hover erpTable">
+        <thead>
+        <tr id="taskF1">
+            <td style="padding: 0;"><input type="text" name="projectName" class="erpInput inlineBlock"></td>
+            <td style="padding: 0;"><input type="text" name="taskName" class="erpInput inlineBlock"></td>
+            <td style="padding: 0;">|initList|</td>
+            <td style="padding: 0;">|respList|</td>
+            <td style="padding: 0;width: 130px;"><input style="width: 130px;" type="date" name="dBegin" class="erpInput inlineBlock"></td>
+            <td style="padding: 0;width: 130px;"><input style="width: 130px;" type="date" name="dEnd" class="erpInput inlineBlock"></td>
+            <td style="padding: 0;width: 130px;"><input style="width: 130px;" type="date" name="dEndFact" class="erpInput inlineBlock"></td>
+            <td style="padding: 0;"> </td>
+        </tr>
+        <tr>
+            <th style="vertical-align: middle;">Проект</th>
+            <th style="width: 400px;vertical-align: middle;">Задача</th>
+            <th style="width: 120px;vertical-align: middle;">Инициатор</th>
+            <th style="width: 120px;vertical-align: middle;">Исполнитель</th>
+            <th style="width: 130px;vertical-align: middle;">Начало</th>
+            <th style="width: 130px;vertical-align: middle;">Завершено план</th>
+            <th style="width: 130px;vertical-align: middle;">Завершено факт</th>
+            <th style="width: 90px;vertical-align: middle;">Дней осталось</th>
+        </tr>
+        </thead>
+        <thead id="TaskBody"></thead>
+    </table>
+</div>

@@ -117,7 +117,7 @@ WHERE
         if(empty($query))
             return false;
 
-        return $db->query("SELECT
+        $q = "SELECT
   tt.*,
   ths.col_StatusName,
   f_getUserFIO(tt.col_initID) AS col_init,
@@ -130,7 +130,14 @@ WHERE
   tp.col_pnID,
   tp.col_founderID
 $query
-")->fetchAll(static::class);
+";
+        if(isset($params['min'])){
+            $q.=" LIMIT ".$params['min'];
+            if(!empty($params['max']))
+                $q.=" , ".$params['max'];
+        }
+
+        return $db->query($q)->fetchAll(static::class);
     }
 
     /**
@@ -138,6 +145,7 @@ $query
      * @return string
      */
     protected static function qBuilder($params = null){
+        //
         $q = 'FROM
   tbl_tasks tt,
   tbl_hb_status ths,
@@ -145,11 +153,11 @@ $query
   tbl_project tp
 WHERE
   ths.col_StatusID = tt.col_StatusID
-  AND tps.col_statusID IN (1,4)
+  
   AND tp.col_projectID = tps.col_projectID';
 
         if(!empty($params['projectID']))
-            $q.=" AND tps.col_projectID = 1";
+            $q.=" AND tps.col_projectID = ".$params['projectID']." AND tps.col_statusID IN (1,4)";
         else
             $q.=" AND tps.col_pstageID = tt.col_pstageID";
 
@@ -183,7 +191,8 @@ WHERE
         if(!empty($params['endFact']))
             $q.= " AND tt.col_endFact BETWEEN '{$params['endFact']} 00:00:00' AND '{$params['endFact']} 23:59:59'";
 
-
+        if(!empty($params['projectName']))
+            $q.= " AND tp.col_projectName like '%{$params['projectName']}%'";
 
         return $q;
     }
