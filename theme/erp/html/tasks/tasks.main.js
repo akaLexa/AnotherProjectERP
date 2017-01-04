@@ -15,6 +15,12 @@ function paginate(id) {
     curPage = id;
     filterTask();
 }
+
+function taskRedir(id) {
+    document.querySelector('#tGoForm').action='|site|page/|currentPage|/In.html?id='+id;
+    document.querySelector('#tGoForm').submit();
+}
+
 $(document).ready(function () {
     curPage = 1;
     filterTask();

@@ -1,0 +1,57 @@
+<div class="container-fluid">
+    <table class="table">
+        <thead>
+        <tr>
+            <th style="width: 50%; vertical-align: middle;"><h3><small>Задача:</small> |col_taskName| <sup class="projectState|col_StatusID|">|col_StatusName|</sup></h3></th>
+            <th style="width: 50%; vertical-align: middle;"><h3><small>Проект:</small> <a href="|site|page/inProject.html?id=|col_projectID|#tabMain" target="_blank">#|col_pnID|.|col_projectName|</a></h3></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="width: 50%">
+                <table class="table table-bordered table-hover">
+                    <tr>
+                        <th>Инициатор</th>
+                        <td>|col_init|</td>
+                    </tr>
+                   <tr>
+                        <th>Ответственный</th>
+                        <td>|col_resp|</td>
+                    </tr>
+                   <tr>
+                        <th>Куратор</th>
+                        <td>|col_curator|</td>
+                    </tr>
+                   <tr class="info">
+                        <th>Дата запуска (план/факт)</th>
+                        <td>|col_startPlanLegend| / |col_startFactLegend|</td>
+                    </tr>
+                   <tr class="success">
+                        <th>Дата завершения (план/факт)</th>
+                        <td>|col_startPlanLegend| / |col_startFactLegend|</td>
+                    </tr>
+                    <tr>
+                        <th>Возможности</th>
+                        <td></td>
+                    </tr>
+                   <tr>
+                       <td colspan="2">
+                           <blockquote style="font-weight: normal;">
+                               |col_taskDescLegend|
+                           </blockquote>
+                       </td>
+                    </tr>
+                </table>
+            </td>
+            <td style="width: 50%">
+                <div class="container-fluid">
+                    <form>
+                        <textarea name="taskComment" id="_taskComment" style="width: 100%;height: 180px;"></textarea>
+                    </form>
+                </div>
+                <div class="container-fluid"></div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

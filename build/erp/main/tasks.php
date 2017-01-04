@@ -34,6 +34,10 @@ class tasks extends eController
         'dEndFact' => ['type'=>self::DATE],
     );
 
+    protected $getField = array(
+        'id' => ['type'=>self::INT],
+    );
+
     public function actionIndex()
     {
         $users = User::getUserList();
@@ -54,7 +58,7 @@ class tasks extends eController
             $params['projectID'] = $_POST['projectNum'];
 
         if(!empty($_POST['isCurator']))
-            $params['col_curatorID'] = router::getCurUser();
+            $params['taskCurator'] = router::getCurUser();
 
         if(!empty($_POST['taskStatus']))
             $params['taskStatus'] = $_POST['taskStatus'];
@@ -105,7 +109,31 @@ class tasks extends eController
         }
         else
             $this->view->out('centerEmpty',$this->className);
-       // Tools::debug($countPage,$list);
+    }
+
+    public function actionIn(){
+        if(!empty($_GET['id'])){
+            $task = mTasks::getCurModel($_GET['id']);
+            if(empty($task)){
+                $this->view
+                    ->set(['errTitle'=>'Ошибка','msg_desc'=>'Задача не найдена'])
+                    ->out('error');
+            }
+            else{
+                //Tools::debug($task);
+                if(empty($task['col_startFactLegend']))
+                    $task['col_startFactLegend'] = '?';
+                if(empty($task['col_startFactLegend']))
+                    $task['col_startFactLegend'] = '?';
+
+                if(empty($task['col_taskDescLegend']))
+                    $task['col_taskDescLegend'] = '<p>Описания к задаче почему-то нет...</p>';
+                $this->view
+                    ->add_dict($task)
+                    ->out('in',$this->className);
+            }
+
+        }
     }
 
 }

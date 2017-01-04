@@ -616,3 +616,7 @@ function filterTask(){
         data:$('#taskFilters select,#taskFilters input[type=date],#taskFilters input[type=text]').serialize()
     });
 }
+function taskRedir(id) {
+    document.querySelector('#tGoForm').action='|site|page/tasks/In.html?id='+id;
+    document.querySelector('#tGoForm').submit();
+}

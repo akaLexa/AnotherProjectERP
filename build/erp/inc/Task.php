@@ -209,13 +209,29 @@ WHERE
   ths.col_StatusName,
   f_getUserFIO(tt.col_initID) AS col_init,
   f_getUserFIO(tt.col_respID) AS col_resp,
-  f_getUserFIO(tt.col_curatorID) AS col_curator
+  f_getUserFIO(tt.col_curatorID) AS col_curator,
+  tps.col_statusID as col_stageStatusID,
+  (SELECT ths1.col_StatusName FROM tbl_hb_status ths1 WHERE ths1.col_StatusID = tps.col_statusID) AS col_stageStatusName,
+  tps.col_dateCreate AS col_stageDateCreate, 
+  tps.col_dateStart as col_stageDateStart, 
+  tps.col_dateStartPlan AS col_stageDateStartPlan, 
+  tps.col_dateEnd AS col_stageDateEnd, 
+  tps.col_dateEndPlan AS col_stageDateEndPlan, 
+  tps.col_dateEndFact as col_stageDateEndFact, 
+  tp.col_projectName, 
+  tp.col_pnID, 
+  tp.col_CreateDate as col_projectCreateDate,
+  tp.col_projectID
 FROM
   tbl_tasks tt,
-  tbl_hb_status ths
+  tbl_hb_status ths,
+  tbl_project_stage tps,
+  tbl_project tp
 WHERE
   ths.col_StatusID = tt.col_StatusID
-  AND tt.col_taskID = $id")->fetch(static::class);
+  AND tt.col_taskID = $id
+  AND tps.col_pstageID = tt.col_pstageID
+  AND tp.col_projectID = tps.col_projectID")->fetch(static::class);
     }
 
     protected function _adding($name, $value)
@@ -225,8 +241,18 @@ WHERE
             case 'col_startPlan':
             case 'col_endPlan':
             case 'col_dateStart':
+            case 'col_stageDateCreate':
+            case 'col_stageDateStart':
+            case 'col_stageDateStartPlan':
+            case 'col_stageDateEnd':
+            case 'col_stageDateEndPlan':
+            case 'col_stageDateEndFact':
+            case 'col_projectCreateDate':
                 parent::_adding($name.'Legend', date_::transDate($value));
                 parent::_adding($name.'LegendTD', date_::transDate($value,true));
+                break;
+            case 'col_taskDesc':
+                parent::_adding($name.'Legend', htmlspecialchars_decode($value));
                 break;
         }
         parent::_adding($name, $value);
