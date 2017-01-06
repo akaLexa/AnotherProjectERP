@@ -11,7 +11,7 @@
             <td style="width: 50%">
                 <table class="table table-bordered table-hover">
                     <tr>
-                        <th>Инициатор</th>
+                        <th style="width: 40%">Инициатор</th>
                         <td>|col_init|</td>
                     </tr>
                    <tr>
@@ -22,21 +22,30 @@
                         <th>Куратор</th>
                         <td>|col_curator|</td>
                     </tr>
-                   <tr class="info">
-                        <th>Дата запуска (план/факт)</th>
-                        <td>|col_startPlanLegend| / |col_startFactLegend|</td>
-                    </tr>
-                   <tr class="success">
-                        <th>Дата завершения (план/факт)</th>
-                        <td>|col_startPlanLegend| / |col_startFactLegend|</td>
+                    <tr >
+                        <th>Дата запуска план</th>
+                        <td >|col_startPlanLegend|</td>
                     </tr>
                     <tr>
-                        <th>Возможности</th>
-                        <td></td>
+                        <th>Дата запуска факт</th>
+                        <td class="info">|col_startFactLegend|</td>
+                    </tr>
+                    <tr>
+                        <th>Дата завершения план </th>
+                        <td class="|curPlanEndStyle|">|col_endPlanLegend|<input type="hidden" id="endPlanTask" value="|col_endPlan|"></td>
+                    </tr>
+                    <tr >
+                        <th>Дата завершения факт</th>
+                        <td class="success">|col_endFactLegend|</td>
+                    </tr>
+                    <tr>
+                        <th style="vertical-align: middle;">Возможности</th>
+                        <td>|inTaskProperties|</td>
                     </tr>
                    <tr>
-                       <td colspan="2">
-                           <blockquote style="font-weight: normal;">
+                       <td colspan="2" style="height: 405px;">
+                           <legend>Описание</legend>
+                           <blockquote style="font-weight: normal; font-size: 16px;">
                                |col_taskDescLegend|
                            </blockquote>
                        </td>
@@ -45,13 +54,16 @@
             </td>
             <td style="width: 50%">
                 <div class="container-fluid">
-                    <form>
+                    <form id="commentArea">
                         <textarea name="taskComment" id="_taskComment" style="width: 100%;height: 180px;"></textarea>
                     </form>
+                    <button onclick="sendMessage();" style="margin: 5px 0;" class="btn btn-default" type="button"> <b class="glyphicon glyphicon-comment"></b> Написать</button>
                 </div>
-                <div class="container-fluid"></div>
+                <legend>Комментарии</legend>
+                <div class="container-fluid" style="height:350px; overflow-y:auto;" id="commentsList">|commentsList|</div>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
+<div id="taskDiag" style="display: none;"></div>

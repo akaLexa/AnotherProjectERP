@@ -10,6 +10,7 @@ namespace build\erp\inc;
 use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
+use mwce\router;
 use mwce\traits\tInsert;
 use mwce\traits\tUpdate;
 
@@ -44,10 +45,12 @@ class Task extends Model
         $qString = self::genUpdate($params);
         if(!empty($qString)){
             $this->db->exec("UPDATE tbl_tasks SET $qString WHERE col_taskID = {$this['col_taskID']}");
-            $this->db->exec("CALL sp_setTaskPlanQuenue({$this['col_pstageID']},null,{$params['col_nextID']});");
-            $this->db->closeCursor();
-        }
 
+            if(!empty($this['col_endPlan']) && !empty($this['col_nextID'])){
+                $this->db->exec("CALL sp_setTaskPlanQuenue({$this['col_pstageID']},null,{$params['col_nextID']});");
+                $this->db->closeCursor();
+            }
+        }
     }
 
     public function delete(){
@@ -234,6 +237,55 @@ WHERE
   AND tp.col_projectID = tps.col_projectID")->fetch(static::class);
     }
 
+    /**
+     * согласие с задачей
+     */
+    public function accept(){
+        $this->db->exec("UPDATE tbl_tasks SET col_startFact = NOW(), col_StatusID = 1 WHERE col_taskID = ".$this['col_taskID']);
+    }
+
+    /**
+     * @param string $text
+     * @param bool $isNotice
+     */
+    public function newComment($text,$isNotice = true){
+        $params = [
+            'col_taskID'=>$this['col_taskID'],
+            'col_UserID'=>router::getCurUser(),
+            'col_text'=>$text,
+        ];
+
+        if($isNotice)
+            $params['col_trigger'] = 1;
+        else
+            $params['col_trigger'] = 0;
+
+        TaskComments::Add($params);
+    }
+
+    /**
+     * отказ от задачи
+     * @param string $reason
+     */
+    public function decent($reason){
+        $this->db->exec("UPDATE tbl_tasks SET col_startFact = NOW(),col_endFact = NOW(), col_failDes='$reason', col_StatusID = 2 WHERE col_taskID = ".$this['col_taskID']);
+        self::newComment(htmlspecialchars('<b style="color: red;">Отклонено по причине:</b> ',ENT_QUOTES).$reason,false);
+    }
+
+    public function fail($reason){
+        $this->db->exec("UPDATE tbl_tasks SET col_endFact = NOW(), col_failDes='$reason', col_StatusID = 2 WHERE col_taskID = ".$this['col_taskID']);
+        self::newComment(htmlspecialchars('<b style="color: red;">Отклонено по причине:</b> ',ENT_QUOTES).$reason,false);
+    }
+
+    public function finish($reason = null){
+        if(!is_null($reason))
+            $reason = "col_lateFinishDesc='$reason',";
+        else
+            $reason = '';
+
+        $this->db->exec("UPDATE tbl_tasks SET col_endFact = NOW(), $reason col_StatusID = 3 WHERE col_taskID = ".$this['col_taskID']);
+    }
+
     protected function _adding($name, $value)
     {
         switch ($name){
@@ -241,6 +293,8 @@ WHERE
             case 'col_startPlan':
             case 'col_endPlan':
             case 'col_dateStart':
+            case 'col_endFact':
+            case 'col_startFact':
             case 'col_stageDateCreate':
             case 'col_stageDateStart':
             case 'col_stageDateStartPlan':
