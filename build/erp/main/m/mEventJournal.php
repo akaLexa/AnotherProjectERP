@@ -99,7 +99,9 @@ class mEventJournal extends Events
                 //перезапуск курируемой задачи
             case 15 :
             case 16 :
-                return '';
+            case 18 :
+            case 19 :
+                return 'page/tasks/In.html?id='.$objectID;
                 break;
             // новость
             case 8 :
