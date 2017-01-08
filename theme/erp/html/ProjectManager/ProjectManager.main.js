@@ -214,6 +214,50 @@ function saveTabCfg() {
     });
 }
 
+function addNewDocGroup(){
+    $('#forDialogs').dialog({
+        title: 'Добавить новую группу документов',
+        modal: true,
+        resizable: false,
+        width: 350,
+        buttons: {
+            'Добавить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/AddDocGroup',
+                    type:'POST',
+                    data:$('#addDocsForm').serialize(),
+                    callback:function () {
+                        $('#forDialogs').dialog('close');
+                        getDocGroups();
+                    }
+                })
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/AddDocGroup',
+                loadicon:'Загружаюсь...'
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function getDocGroups() {
+    genIn({
+        element:'docGroupLists',
+        address:'|site|page/|currentPage|/GetDocGroups',
+        loadicon:'<tr><td colspan="2">Загружаюсь...</td></tr>'
+    })
+}
+
 $(document).ready(function(){
     genTabContent('GetStageForm');
 });

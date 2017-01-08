@@ -7,10 +7,12 @@
  * управление проектами
  **/
 namespace build\erp\adm;
+use build\erp\adm\m\mDocumentGroups;
 use build\erp\adm\m\mStages;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\User;
+use build\erp\project\addProject;
 use build\erp\project\m\m_inProject;
 use build\erp\project\m\m_TabsCfgs;
 use mwce\Configs;
@@ -32,6 +34,7 @@ class ProjectManager extends eController
         // настройки проекта
         'startStageID' => ['type'=>self::INT],
         'countDefStartDays' => ['type'=>self::INT],
+        'documentsFolder' => ['type'=>self::STR],
         'endStagesID' => ['type'=>self::STR],
 
         //настройки вкладок проекта
@@ -42,6 +45,8 @@ class ProjectManager extends eController
         'isActive' => ['type'=>self::INT],
         'num' => ['type'=>self::INT],
         'state' => ['type'=>self::INT],
+
+        'dgName' => ['type'=>self::STR],
     );
 
     /**
@@ -52,6 +57,7 @@ class ProjectManager extends eController
         'startStageID' =>['select','stages'],
         'endStagesID' =>['checkGroup','stagesGroup'],
         'countDefStartDays' =>['text','text'],
+        'documentsFolder' =>['text','text'],
     );
 
     public function actionIndex()
@@ -173,32 +179,38 @@ class ProjectManager extends eController
 
             $pa = new \ArrayIterator($_POST);
             foreach ($pa as $pId => $pValue) {
-                if(empty ($this->types[$pId])){
-                    $c = explode('_',$pId);
-                    if(!empty ($this->types[$c[0]])){
-                        $curID = $this->paramsControl($pValue,$c[0]);
+                $c = explode('_',$pId);
+
+                if(empty ($this->types[$c[0]])){
+
+                    if(isset($this->types[$c[0]])){
+                        $curID = $this->paramsControl($pValue,$this->types[$c[0]][1]);
                     }
                     else{
                         continue;
                     }
                 }
                 else{
-                    $curID = $pId;
+                    $curID = $c[0];
                 }
 
-                switch ($this->types[$curID][0]){
-                    case 'select':
-                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
-                        break;
-                    case 'checkGroup':
-                        if(!empty($cfg[$curID]))
-                            $cfg[$curID].=','.$this->paramsControl($pValue,self::STR);
-                        else
-                            $cfg[$curID] = $this->paramsControl($pValue,self::STR);
-                        break;
-                    default:
-                        $cfg[$curID] = $this->paramsControl($pValue,self::STR);
-                        break;
+                if(!empty($this->types[$curID]) && !empty($this->types[$curID][0])) {
+                    switch ($this->types[$curID][0]) {
+                        case 'select':
+                            $cfg[$curID] = $this->paramsControl($pValue, self::STR);
+                            break;
+                        case 'checkGroup':
+                            if (!empty($cfg[$curID])) {
+                                $cfg[$curID] .= ',' . $this->paramsControl($pValue, self::STR);
+                            } else {
+                                $cfg[$curID] = $this->paramsControl($pValue, self::STR);
+                            }
+
+                            break;
+                        default:
+                            $cfg[$curID] = $this->paramsControl($pValue, self::STR);
+                            break;
+                    }
                 }
             }
 
@@ -343,6 +355,39 @@ class ProjectManager extends eController
 
             $curTab->save($cfg);
 
+        }
+    }
+    //endregion
+
+    //region документы и доступ к ним
+    public function actionProjectDocuments(){
+        if(empty($_POST)){
+            self::actionGetDocGroups();
+            $this->view
+                ->setFContainer('docGroupLists',true)
+                ->out('ProjectDocsMain',$this->className);
+        }
+    }
+
+    public function actionGetDocGroups(){
+        $list = mDocumentGroups::getModels();
+        if(!empty($list)){
+            $ai = new \ArrayIterator($list);
+            foreach ($ai as $item){
+                $this->view
+                    ->add_dict($item)
+                    ->out('ProjectDocsCenter',$this->className);
+            }
+        }
+    }
+
+    public function actionAddDocGroup(){
+        if(!empty($_POST['dgName'])){
+            mDocumentGroups::Add($_POST['dgName']);
+        }
+        else{
+            $this->view
+                ->out('ProjectDocsAdd',$this->className);
         }
     }
     //endregion
