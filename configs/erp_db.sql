@@ -1,4 +1,4 @@
-﻿-- Script date 06.01.2017 16:52:41
+﻿-- Script date 14.01.2017 14:41:52
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -31,6 +31,27 @@ SET NAMES 'utf8';
 -- Set default database
 --
 USE erp_db;
+
+--
+-- Definition for table tbl_doc_group_access
+--
+CREATE TABLE tbl_doc_group_access (
+  col_dga int(11) NOT NULL AUTO_INCREMENT,
+  col_dgID int(11) DEFAULT NULL,
+  col_roleID int(11) DEFAULT NULL,
+  col_access char(1) DEFAULT '0' COMMENT '1 - чтение, 2 - полный доступ',
+  PRIMARY KEY (col_dga),
+  CONSTRAINT FK_tbl_doc_group_access_col_dg FOREIGN KEY (col_dgID)
+  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_doc_group_access_col_ro FOREIGN KEY (col_roleID)
+  REFERENCES tbl_user_roles (col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 7
+  AVG_ROW_LENGTH = 2730
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'доступы к группам документов';
 
 --
 -- Definition for table tbl_events
@@ -76,6 +97,21 @@ CREATE TABLE tbl_group_roles (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'какие роли к какой группе относятся';
+
+--
+-- Definition for table tbl_hb_doc_group
+--
+CREATE TABLE tbl_hb_doc_group (
+  col_dgID int(11) NOT NULL AUTO_INCREMENT,
+  col_docGroupName varchar(255) DEFAULT NULL,
+  col_isDel char(1) DEFAULT '0',
+  PRIMARY KEY (col_dgID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 2
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'справочник групп документов';
 
 --
 -- Definition for table tbl_hb_event_state
@@ -468,7 +504,7 @@ CREATE TABLE tbl_tasks (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 10
-  AVG_ROW_LENGTH = 4096
+  AVG_ROW_LENGTH = 5461
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'задачи';
@@ -541,6 +577,7 @@ CREATE TABLE tbl_user_groups (
 CREATE TABLE tbl_user_roles (
   col_roleID int(11) NOT NULL AUTO_INCREMENT,
   col_roleName varchar(250) DEFAULT NULL,
+  col_isDel char(1) DEFAULT '0',
   PRIMARY KEY (col_roleID),
   UNIQUE INDEX UK_tbl_user_roles_col_roleName (col_roleName)
 )
@@ -846,6 +883,17 @@ $$
 DELIMITER ;
 
 --
+-- Dumping data for table tbl_doc_group_access
+--
+INSERT INTO tbl_doc_group_access VALUES
+  (1, 1, 1, '2'),
+  (2, 1, 2, '1'),
+  (3, 1, 3, '0'),
+  (4, 1, 4, '0'),
+  (5, 1, 5, '0'),
+  (6, 1, 6, '0');
+
+--
 -- Dumping data for table tbl_events
 --
 INSERT INTO tbl_events VALUES
@@ -856,13 +904,13 @@ INSERT INTO tbl_events VALUES
   (5, '2016-12-31 10:59:20', 11, 1, 1, '0', '1', '0', 'Проект 1, написал тестовый т.т.: ы...'),
   (6, '2016-12-31 11:00:14', 11, 1, 1, '0', '1', '0', 'Проект [1], написал [тестовый т.т.]: ы х2...'),
   (7, '2017-01-02 16:24:28', 6, 8, 3, '0', '0', '0', 'тест'),
-  (8, '2017-01-06 16:18:56', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (9, '2017-01-06 16:21:12', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (10, '2017-01-06 16:23:54', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (11, '2017-01-06 16:26:32', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (12, '2017-01-06 16:28:14', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (13, '2017-01-06 16:31:27', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
-  (14, '2017-01-06 16:33:43', 16, 9, 1, '0', '0', '0', 'тестовая задача1'),
+  (8, '2017-01-06 16:18:56', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (9, '2017-01-06 16:21:12', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (10, '2017-01-06 16:23:54', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (11, '2017-01-06 16:26:32', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (12, '2017-01-06 16:28:14', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (13, '2017-01-06 16:31:27', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (14, '2017-01-06 16:33:43', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
   (15, '2017-01-06 16:51:06', 18, 9, 3, '0', '0', '0', '&lt;p&gt;ыфвфы&lt;/p&gt;...');
 
 --
@@ -870,6 +918,12 @@ INSERT INTO tbl_events VALUES
 --
 
 -- Table erp_db.tbl_group_roles does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_hb_doc_group
+--
+INSERT INTO tbl_hb_doc_group VALUES
+  (1, 'Остальное', '0');
 
 --
 -- Dumping data for table tbl_hb_event_state
@@ -1104,12 +1158,12 @@ INSERT INTO tbl_user_groups VALUES
 -- Dumping data for table tbl_user_roles
 --
 INSERT INTO tbl_user_roles VALUES
-  (1, 'Администратор системы'),
-  (2, 'Пользователь'),
-  (3, 'тестовая роль 2'),
-  (4, 'тестовая роль 3'),
-  (5, 'тестовая роль 4'),
-  (6, 'тестовая роль 5');
+  (1, 'Администратор системы', '0'),
+  (2, 'Пользователь', '0'),
+  (3, 'тестовая роль 2', '0'),
+  (4, 'тестовая роль 3', '0'),
+  (5, 'тестовая роль 4', '0'),
+  (6, 'тестовая роль 5', '0');
 
 DELIMITER $$
 
