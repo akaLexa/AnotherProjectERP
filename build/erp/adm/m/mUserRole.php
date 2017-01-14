@@ -51,7 +51,7 @@ ORDER BY ur.col_roleName")->fetchAll(static::class);
 
         $db = Connect::start();
         $ar = array();
-        $q = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName");
+        $q = $db->query("SELECT * FROM tbl_user_roles WHERE col_isDel != 1 ORDER BY col_roleName");
         while ($r = $q->fetch()){
             $ar[$r['col_roleID']] = $r['col_roleName'];
         }

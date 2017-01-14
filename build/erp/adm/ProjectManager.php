@@ -9,6 +9,7 @@
 namespace build\erp\adm;
 use build\erp\adm\m\mDocumentGroups;
 use build\erp\adm\m\mStages;
+use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\User;
@@ -17,6 +18,7 @@ use build\erp\project\m\m_inProject;
 use build\erp\project\m\m_TabsCfgs;
 use mwce\Configs;
 use mwce\DicBuilder;
+use mwce\Exceptions\ModException;
 use mwce\html_;
 use mwce\Tools;
 
@@ -381,6 +383,13 @@ class ProjectManager extends eController
         }
     }
 
+    public function actionDelDocGroup(){
+        if(!empty($_GET['id'])){
+            $group = mDocumentGroups::getCurModel($_GET['id']);
+            $group->delete();
+        }
+    }
+
     public function actionAddDocGroup(){
         if(!empty($_POST['dgName'])){
             mDocumentGroups::Add($_POST['dgName']);
@@ -388,6 +397,61 @@ class ProjectManager extends eController
         else{
             $this->view
                 ->out('ProjectDocsAdd',$this->className);
+        }
+    }
+
+    public function actionEditDocGroup(){
+        if(!empty($_GET['id'])){
+            $curGroup = mDocumentGroups::getCurModel($_GET['id']);
+            if(empty($curGroup))
+                throw new ModException('Группа документов не существует!');
+
+            if(empty($_POST)){
+                $roles = mUserRole::getRoleList();
+                if(!empty($roles)){
+                    $accesses = mDocumentGroups::getRolesAccess();
+                    $list = array(0=>'Нет доступа','Только чтение','Полный доступ');
+
+                    $r1 = array();
+                    foreach ($roles as $id=>$roleName){
+                        $r1[] = array(
+                            'roleName' => $roleName,
+                            'roleId' => $id,
+                            'accsList' => html_::select(
+                                $list,
+                                'roleAccss_'.$id,
+                                (!empty($accesses[$id]) && $accesses[$id][0] == $_GET['id']) ? $accesses[$id][1] : 0,
+                                'class="form-control inlineBlock" style="width:130px;"'
+                            ),
+                        );
+                    }
+
+                    $this->view
+                        ->loops('groupsAccesses',$r1,'ProjectDocsEdit',$this->className)
+                        ->add_dict($curGroup)
+                        ->out('ProjectDocsEdit',$this->className);
+                }
+            }
+            else{
+                if(!empty($_POST['dgName'])){
+                    if($curGroup['col_docGroupName'] != $_POST['dgName']){
+                        $curGroup->edit($_POST['dgName']);
+                    }
+
+                    $acs = array();
+                    $ai = new \ArrayIterator($_POST);
+                    foreach ($ai as $pId=>$pVal){
+                        if(stristr($pId,'roleAccss_') != false){
+                            $id_ = explode("_",$pId);
+                            $acs[(int)$id_[1]] = (int)$pVal;
+                        }
+                    }
+
+                    if(!empty($acs)){
+                        $curGroup->editAccess($acs);
+                    }
+                }
+            }
         }
     }
     //endregion

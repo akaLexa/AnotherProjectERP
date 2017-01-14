@@ -258,6 +258,63 @@ function getDocGroups() {
     })
 }
 
+function delDocGroup(id) {
+    mwce_confirm({
+        title:'Удаление группы',
+        text:'Вы действительно хотите удалить группу документов?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelDocGroup?id='+id,
+                    callback:function () {
+                        document.querySelector('#docGIdPos_'+id).remove();
+                        mwce_confirm.close();
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    })
+}
+function editDocGroup(id) {
+    $('#forDialogs').dialog({
+        title:'Изменить доступы',
+        width:500,
+        modal:true,
+        resizable:false,
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                loadicon:'Загружаю...',
+                address:'|site|page/|currentPage|/EditDocGroup?id='+id
+            });
+        },
+        close: function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Применить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/EditDocGroup?id='+id,
+                    type:'POST',
+                    data: $('#PrDocsEdit').serialize(),
+                    callback:function () {
+                        $('#forDialogs').dialog('close');
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+
+        }
+    });
+}
+
 $(document).ready(function(){
     genTabContent('GetStageForm');
 });
