@@ -21,7 +21,7 @@ class Files extends Model
             if(!empty($cfg['documentsFolder']))
                 self::$docPath = $cfg['documentsFolder'];
             else
-                throw new ModException('Не указан адрес, где храняться файлы проекта!');
+                throw new ModException('Не указан адрес, где хранятся файлы проекта!');
         }
     }
 
