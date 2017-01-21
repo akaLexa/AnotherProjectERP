@@ -2,15 +2,42 @@
     <table class="table">
         <thead>
         <tr>
-            <td style="width: 250px;">Выбранная группа файлов:</td>
-            <td style="width: 300px;">|fileGroupList|</td>
-            <td style="text-align: left;">
-                <button disabled type="button" class="btn btn-default" id="toUploadFile"><b class="glyphicon glyphicon-upload"></b> Загрузить файлы</button>
-                <button disabled type="button" class="btn btn-default" id="addFolder"><b class="glyphicon glyphicon-folder-close"></b> Добавить папку</button>
+            <td colspan="4">
+                <details class="panel panel-info">
+                    <summary class="panel-heading">Справка к модулю</summary>
+                    <div class="panel-body">
+                        <ul>
+                            <li>Чтобы загрузить файлы нужно <mark>выбрать группу файлов</mark>, в которую Вы ходите загрузить файл</li>
+                            <li>Чтобы добавить папку в группу файлов, сначала нужно выбрать группу файлов</li>
+                        </ul>
+                    </div>
+                </details>
             </td>
         </tr>
-        </thead>
-        <tbody id="tabDocsContent">
-        </tbody>
+        <tr id="filterDocsz">
+            <input type="hidden" name="chosenFolder" id="_chosenFolder" value="0">
+            <td style="width: 250px;vertical-align: middle;">Выбранная группа файлов:</td>
+            <td style="width: 300px;">|fileGroupList|</td>
+            <td style="text-align: left;" colspan="2">
+                <button disabled type="button" class="btn btn-default" id="toUploadFile" onclick="downloadDocs();"><b class="glyphicon glyphicon-upload"></b> Загрузить файлы</button>
+                <button disabled type="button" class="btn btn-default" id="addFolder" onclick="addNewDocFolder();"><b class="glyphicon glyphicon-folder-close"></b> Добавить папку</button>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <table class="table table-hover erpTable">
+                    <thead>
+                    <tr>
+                        <th style="width: 50%">Название</th>
+                        <th style="width: 10%;">Размер</th>
+                        <th style="width: 15%">Загружено</th>
+                        <th style="width: 15%">Загрузил</th>
+                        <th style="vertical-align: middle;width: 10%;"><b class="glyphicon glyphicon-wrench"></b></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tabDocsContent"></tbody>
+                </table>
+            </td>
+        </tr>
     </table>
 </div>

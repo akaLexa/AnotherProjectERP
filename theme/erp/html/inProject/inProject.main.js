@@ -52,6 +52,10 @@ function genTabContent(tab) {
                         currentTab = tab;
                         filterTask();
                         break;
+                    case 'tabDocs':
+                        currentTab = tab;
+                        filterDocs();
+                        break;
                     default:
                         currentTab = tab;
                         break;
@@ -619,4 +623,85 @@ function filterTask(){
 function taskRedir(id) {
     document.querySelector('#tGoForm').action='|site|page/tasks/In.html?id='+id;
     document.querySelector('#tGoForm').submit();
+}
+
+var currentTDU;
+function filterDocs(){
+    var docG = document.querySelector('#curChosenDg').value;
+    if(docG>0){
+        document.querySelector('#toUploadFile').disabled = false;
+        document.querySelector('#addFolder').disabled = false;
+    }
+    else{
+        document.querySelector('#toUploadFile').disabled = true;
+        document.querySelector('#addFolder').disabled = true;
+    }
+    genIn({
+        element:'tabDocsContent',
+        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getFiles',
+        loadicon:'<tr><td colspan="5" style="text-align: center; color:green">Загружаюсь</td></tr>',
+        type:'POST',
+        data:$('#filterDocsz select,#filterDocsz input[type=text],#filterDocsz input[type=hidden]').serialize()
+    });
+}
+function downloadDocs() {
+    console.log('-> open upload window');
+    var newWin = window.open('|site|page/Docs/ProjectUpload?p=|col_projectID|&gr=' + document.querySelector('#curChosenDg').value + '&f='+document.querySelector('#_chosenFolder').value, 'fUpload', 'width=650,height=300,left=400,top=100,menubar=no,toolbar=no,resizable=no,location=no,status=no,personalbar=no');
+    currentTDU = setInterval(function(){
+        if(newWin.closed)
+        {
+            console.log('-> close upload window');
+            filterDocs();
+            clearInterval(currentTDU);
+        }},700);
+}
+function addNewDocFolder() {
+    $('#forDialogs').dialog({
+        open:function () {
+            document.querySelector('#forDialogs').innerHTML = '<form id="addNewFolderForm">' +
+                '<div class="form-group"><input type="text" name="newFname" class="form-control inlineBlock" maxlength="254" style="width: 450px;" placeholder="Название папки"></div>' +
+                '</form>';
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        title:'Добавить папку в документы',
+        resizable:false,
+        width:500,
+        modal:true,
+        buttons:{
+            'Добавить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=addFolder',
+                    type:'POST',
+                    data:$('#filterDocsz select,#filterDocsz input[type=text],#filterDocsz input[type=hidden]').serialize()+'&'+$('#addNewFolderForm').serialize(),
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['folder'] != undefined)
+                                SetInFolder(receive['folder'],$('#curChosenDg').val());
+                            else
+                                filterDocs();
+                        }
+                        catch(e) {
+                            filterDocs();
+                        }
+                        finally {
+
+                            $('#forDialogs').dialog('close');
+                        }
+                    }
+                });
+            }
+            ,'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        }
+    });
+}
+function SetInFolder(id,group) {
+    $('#curChosenDg').val(group);
+    document.querySelector('#_chosenFolder').value = id;
+    filterDocs();
 }

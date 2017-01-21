@@ -15,10 +15,12 @@ function genTabContent(tab) {
         address:'|site|page/|currentPage|/'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
         callback:function () {
-            if(currentTab == 'TabsManagement'){
-                showTabsCfg(document.querySelector('#TabChosen').value);
-            }
+            switch (currentTab){
+                case 'TabsManagement':
+                    showTabsCfg(document.querySelector('#TabChosen').value);
+                    break;
 
+            }
         }
     });
 }

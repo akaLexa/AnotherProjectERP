@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Загрузка файлов</title>
+    <link href="|site|theme/imgs/favicon.ico" rel="icon" type="image/x-icon">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+    <link rel="stylesheet" href="|site|theme/scripts/bst/css/bootstrap.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div class="container">
+    <form action="|site|page/Docs/ProjectUpload?p=|col_projectID|&gr=|groupNum|&f=|folderNum|" method="POST" target="goindownload" id='dwfrm' name="dwfrm" enctype="multipart/form-data">
+        <input type="hidden" name="MAX_FILE_SIZE" value="104857600" /> <!-- 100 mb -->
+        <div class="input-group">
+            <label style="width: auto;font-weight: normal;">Пожалуйста, выберите файлы, которые хотите загрузить: <input style="border:0;" class="form-control" type="file" name="dFile[]" multiple> </label>
+        </div>
+        <div class="input-group">
+            <button type="submit" class="btn btn-default" onclick="startUploadRD();"><b class="glyphicon glyphicon-upload"></b> Загрузить</button>
+        </div>
+
+    </form>
+    <div style="margin-top: 15px;" id="uplItenntificator"  class="alert alert-info">
+        <p>Загружать можно сразу по несколько файлов.</p>
+        <p>Если загрузка будет удачной, то окно закроется само, в противном случае, тут будет написана причина неудачной загрузки.</p>
+    </div>
+</div>
+
+<iframe id="goindownload" name="goindownload" style="display: none;"></iframe>
+
+<script src="|site|theme/scripts/jquery-3.1.js"></script>
+<script src="|site|theme/scripts/mwcapi.js"></script>
+<script src="|site|theme/scripts/bst/js/bootstrap.js"></script>
+
+
+<script type="text/javascript">
+
+    var rdInteevalID;
+
+    function waitRDdownload() {
+        console.log(document.querySelector('#goindownload').contentDocument.body.innerHTML);
+        if(document.querySelector('#goindownload').contentDocument.body.innerHTML.trim().length>0){
+
+            data = JSON.parse(document.querySelector('#goindownload').contentDocument.body.innerHTML.trim());
+
+            if(data.success != undefined && data.success == 1){
+                clearInterval(rdInteevalID);
+                window.close();
+            }
+            else if(data.error != undefined){
+                document.querySelector('#uplItenntificator').style.font.color = 'red';
+                document.querySelector('#uplItenntificator').innerHTML = data.error;
+            }
+        }
+    }
+
+    function startUploadRD() {
+        document.getElementById('dwfrm').submit();
+        document.querySelector('#uplItenntificator').style.font.color = 'green';
+        document.querySelector('#uplItenntificator').innerHTML = 'Загружаю... Пожалуйста, подождите';
+
+        rdInteevalID = setInterval(function () {
+            waitRDdownload();
+        },800);
+    }
+</script>
+</body>
+</html>

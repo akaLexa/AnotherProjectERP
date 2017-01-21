@@ -11,9 +11,16 @@ use build\erp\inc\AprojectTabs;
 use build\erp\tabs\m\mDocs;
 use mwce\html_;
 use mwce\router;
+use mwce\Tools;
 
 class tabDocs extends AprojectTabs
 {
+    protected $postField = array(
+        'curChosenDg'=>['type'=>self::INT],
+        'chosenFolder'=>['type'=>self::INT],
+        'newFname'=>['type'=>self::STR,'maxLength'=>254],
+    );
+
 
     /**
      * главный вид по умолчанию
@@ -25,7 +32,76 @@ class tabDocs extends AprojectTabs
         $docs = mDocs::getDocGroups(router::getUserRole());
         $docs[0] ='Все';
         $this->view
-            ->set('fileGroupList',html_::select($docs,'curChosenDg',0,'class="form-control inlineBlock"'))
+            ->set('fileGroupList',html_::select($docs,'curChosenDg',0,'class="form-control inlineBlock" onchange="filterDocs();"'))
             ->out('main',$this->className);
+    }
+
+    public function getFiles(){
+
+        $params = array(
+            'role' => router::getUserRole()
+        );
+
+        if(!empty($_POST['curChosenDg']))
+            $params['group'] = $_POST['curChosenDg'];
+        if(!empty($_POST['chosenFolder'])){
+            $params['subId'] = $_POST['chosenFolder'];
+        }
+
+        $files = \build\erp\main\m\mDocs::getModels($params);
+        if(!empty($files)){
+            $isShow = false;
+            $curGroup ='';
+            foreach ($files as $file){
+                if (empty($params['group']) && (empty($curGroup) || $curGroup != $file['col_docGroupName'])) {
+                    $curGroup = $file['col_docGroupName'];
+                    $this->view
+                        ->set('groupName', $file['col_docGroupName'])
+                        ->out('centerGroup', $this->className);
+                }
+
+                if(!empty($params['subId']) && !$isShow){
+                    $this->view
+                        ->set('col_parentLegend',\build\erp\main\m\mDocs::getUpperParent($params['subId']))
+                        ->set('col_groupID',$params['group'])
+                        ->out('centerFolderOut',$this->className);
+                    $isShow = true;
+                }
+
+                $this->view->add_dict($file);
+
+                if($file['col_isFolder'] == 1){
+                    $this->view->out('centerFolder',$this->className);
+                }
+                else{
+                    $this->view->out('center',$this->className);
+                }
+
+            }
+        }
+        else{
+            if(!empty($params['subId'])){
+
+                $this->view
+                    ->set('col_parentLegend',\build\erp\main\m\mDocs::getUpperParent($params['subId']))
+                    ->set('col_groupID',$params['group'])
+                    ->out('centerFolderOut',$this->className);
+
+            }
+            $this->view->out('centerEmpty',$this->className);
+        }
+
+    }
+
+    public function addFolder(){
+        if(!empty($_POST['newFname']) && !empty($_POST['curChosenDg'])){
+            echo json_encode(['folder'=>
+                \build\erp\main\m\mDocs::addFolder($_POST['newFname'],
+                    !empty($_POST['chosenFolder'])? $_POST['chosenFolder'] : 0,
+                    router::getCurUser(),
+                    $_POST['curChosenDg'],
+                    $_GET['id']
+                    )]);
+        }
     }
 }
