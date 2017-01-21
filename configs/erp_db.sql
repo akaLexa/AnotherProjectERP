@@ -1,4 +1,5 @@
-﻿-- Script date 14.01.2017 14:41:52
+﻿--
+-- Script date 21.01.2017 19:37:50
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -78,6 +79,40 @@ CREATE TABLE tbl_events (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'эыенты';
+
+--
+-- Definition for table tbl_files
+--
+CREATE TABLE tbl_files (
+  col_fID int(11) NOT NULL AUTO_INCREMENT,
+  col_fName varchar(255) DEFAULT NULL,
+  col_ext varchar(50) DEFAULT NULL COMMENT 'расширение',
+  col_isFolder char(1) DEFAULT '0',
+  col_parentID int(11) DEFAULT NULL,
+  col_size decimal(10, 2) DEFAULT NULL COMMENT 'размер',
+  col_cDate datetime DEFAULT CURRENT_TIMESTAMP,
+  col_isDel char(1) DEFAULT '0',
+  col_dDate datetime DEFAULT NULL,
+  col_uploaderID int(11) DEFAULT NULL,
+  col_deleterID int(11) DEFAULT NULL,
+  col_groupID int(11) DEFAULT NULL,
+  col_projectID int(11) DEFAULT NULL,
+  PRIMARY KEY (col_fID),
+  CONSTRAINT FK_tbl_files_col_deleterID FOREIGN KEY (col_deleterID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_groupID FOREIGN KEY (col_groupID)
+  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_projectID FOREIGN KEY (col_projectID)
+  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_uploaderID FOREIGN KEY (col_uploaderID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 9
+  AVG_ROW_LENGTH = 2730
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'файлы';
 
 --
 -- Definition for table tbl_group_roles
@@ -258,8 +293,8 @@ CREATE TABLE tbl_module_groups (
   REFERENCES tbl_modules (col_modID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 15
-  AVG_ROW_LENGTH = 3276
+  AUTO_INCREMENT = 16
+  AVG_ROW_LENGTH = 2730
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -296,8 +331,8 @@ CREATE TABLE tbl_modules (
   PRIMARY KEY (col_modID)
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 10
-  AVG_ROW_LENGTH = 3276
+  AUTO_INCREMENT = 11
+  AVG_ROW_LENGTH = 2730
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'модули системы';
@@ -914,6 +949,17 @@ INSERT INTO tbl_events VALUES
   (15, '2017-01-06 16:51:06', 18, 9, 3, '0', '0', '0', '&lt;p&gt;ыфвфы&lt;/p&gt;...');
 
 --
+-- Dumping data for table tbl_files
+--
+INSERT INTO tbl_files VALUES
+  (3, 'DriverPack-17-Online.exe', 'exe', '0', NULL, 0.28, '2017-01-21 15:32:38', '0', NULL, 1, NULL, 1, 1),
+  (4, 'DriverPack-17-Online.exe', 'exe', '0', NULL, 0.28, '2017-01-21 15:34:44', '0', NULL, 1, NULL, 1, 1),
+  (5, 'тест', NULL, '1', NULL, NULL, '2017-01-21 16:55:38', '0', NULL, 1, NULL, 1, 1),
+  (6, 'download.torrent', 'torrent', '0', 5, 0.01, '2017-01-21 19:27:09', '0', NULL, 1, NULL, 1, 1),
+  (7, 'еще 1 папка, на всякий случай', NULL, '1', 5, NULL, '2017-01-21 19:33:03', '0', NULL, 1, NULL, 1, 1),
+  (8, 'ну и на всякий... мало ли', NULL, '1', 5, NULL, '2017-01-21 19:34:19', '0', NULL, 1, NULL, 1, 1);
+
+--
 -- Dumping data for table tbl_group_roles
 --
 
@@ -1037,7 +1083,8 @@ INSERT INTO tbl_module_groups VALUES
   (11, 6, 1),
   (12, 7, 1),
   (13, 8, 3),
-  (14, 9, 3);
+  (14, 9, 3),
+  (15, 10, 3);
 
 --
 -- Dumping data for table tbl_module_roles
@@ -1057,7 +1104,8 @@ INSERT INTO tbl_modules VALUES
   (6, 'auto_title7', 'adm/ProjectManager', 0, '1', 'ProjectManager'),
   (7, 'auto_title8', 'adm/hbTaskTypes', 0, '1', 'hbTaskTypes'),
   (8, 'auto_title9', 'main/EventJournal', 0, '1', 'EventJournal'),
-  (9, 'auto_title10', 'main/tasks', 0, '1', 'tasks');
+  (9, 'auto_title10', 'main/tasks', 0, '1', 'tasks'),
+  (10, 'auto_title11', 'main/Docs', 0, '1', 'Docs');
 
 --
 -- Dumping data for table tbl_plugins
