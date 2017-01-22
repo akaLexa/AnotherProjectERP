@@ -1,5 +1,5 @@
 ﻿--
--- Script date 21.01.2017 19:37:50
+-- Script date 22.01.2017 15:29:08
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -32,106 +32,6 @@ SET NAMES 'utf8';
 -- Set default database
 --
 USE erp_db;
-
---
--- Definition for table tbl_doc_group_access
---
-CREATE TABLE tbl_doc_group_access (
-  col_dga int(11) NOT NULL AUTO_INCREMENT,
-  col_dgID int(11) DEFAULT NULL,
-  col_roleID int(11) DEFAULT NULL,
-  col_access char(1) DEFAULT '0' COMMENT '1 - чтение, 2 - полный доступ',
-  PRIMARY KEY (col_dga),
-  CONSTRAINT FK_tbl_doc_group_access_col_dg FOREIGN KEY (col_dgID)
-  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_doc_group_access_col_ro FOREIGN KEY (col_roleID)
-  REFERENCES tbl_user_roles (col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 2730
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'доступы к группам документов';
-
---
--- Definition for table tbl_events
---
-CREATE TABLE tbl_events (
-  col_evID int(11) NOT NULL AUTO_INCREMENT,
-  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  col_etID int(11) DEFAULT NULL COMMENT 'id эвента',
-  col_object int(11) DEFAULT NULL COMMENT 'id объекта, на который идет ссылка',
-  col_userID int(11) DEFAULT NULL,
-  col_isTop char(1) DEFAULT '0' COMMENT 'закреплен в топе',
-  col_isNoticed char(1) DEFAULT '0' COMMENT 'ознакомлен',
-  col_isMailed char(1) DEFAULT '0' COMMENT 'отправлен по почте',
-  col_comment text DEFAULT NULL,
-  PRIMARY KEY (col_evID),
-  CONSTRAINT FK_tbl_events_col_etID FOREIGN KEY (col_etID)
-  REFERENCES tbl_hb_events_relation (col_erID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_events_col_userID FOREIGN KEY (col_userID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 16
-  AVG_ROW_LENGTH = 1092
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'эыенты';
-
---
--- Definition for table tbl_files
---
-CREATE TABLE tbl_files (
-  col_fID int(11) NOT NULL AUTO_INCREMENT,
-  col_fName varchar(255) DEFAULT NULL,
-  col_ext varchar(50) DEFAULT NULL COMMENT 'расширение',
-  col_isFolder char(1) DEFAULT '0',
-  col_parentID int(11) DEFAULT NULL,
-  col_size decimal(10, 2) DEFAULT NULL COMMENT 'размер',
-  col_cDate datetime DEFAULT CURRENT_TIMESTAMP,
-  col_isDel char(1) DEFAULT '0',
-  col_dDate datetime DEFAULT NULL,
-  col_uploaderID int(11) DEFAULT NULL,
-  col_deleterID int(11) DEFAULT NULL,
-  col_groupID int(11) DEFAULT NULL,
-  col_projectID int(11) DEFAULT NULL,
-  PRIMARY KEY (col_fID),
-  CONSTRAINT FK_tbl_files_col_deleterID FOREIGN KEY (col_deleterID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_files_col_groupID FOREIGN KEY (col_groupID)
-  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_files_col_projectID FOREIGN KEY (col_projectID)
-  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_files_col_uploaderID FOREIGN KEY (col_uploaderID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 9
-  AVG_ROW_LENGTH = 2730
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'файлы';
-
---
--- Definition for table tbl_group_roles
---
-CREATE TABLE tbl_group_roles (
-  col_grID int(11) NOT NULL AUTO_INCREMENT,
-  col_gID int(11) DEFAULT NULL,
-  col_roleID int(11) DEFAULT NULL,
-  PRIMARY KEY (col_grID),
-  CONSTRAINT FK_tbl_group_roles_tbl_user_groups_col_gID FOREIGN KEY (col_gID)
-  REFERENCES tbl_user_groups (col_gID) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_group_roles_tbl_user_roles_col_roleID FOREIGN KEY (col_roleID)
-  REFERENCES tbl_user_roles (col_roleID) ON DELETE RESTRICT ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 1
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'какие роли к какой группе относятся';
 
 --
 -- Definition for table tbl_hb_doc_group
@@ -177,27 +77,6 @@ CREATE TABLE tbl_hb_event_type (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'типы событий';
-
---
--- Definition for table tbl_hb_events_relation
---
-CREATE TABLE tbl_hb_events_relation (
-  col_erID int(11) NOT NULL AUTO_INCREMENT,
-  col_etID int(11) DEFAULT NULL,
-  col_esID int(11) DEFAULT NULL,
-  col_message text DEFAULT NULL,
-  PRIMARY KEY (col_erID),
-  CONSTRAINT FK_tbl_hb_events_relation_col_ FOREIGN KEY (col_etID)
-  REFERENCES tbl_hb_event_type (col_etID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_hb_events_relation_col2 FOREIGN KEY (col_esID)
-  REFERENCES tbl_hb_event_state (col_esID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 20
-  AVG_ROW_LENGTH = 862
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'готовые эвенты';
 
 --
 -- Definition for table tbl_hb_project_stage
@@ -280,6 +159,185 @@ CREATE TABLE tbl_menu_type (
   COLLATE utf8_general_ci;
 
 --
+-- Definition for table tbl_modules
+--
+CREATE TABLE tbl_modules (
+  col_modID int(11) NOT NULL AUTO_INCREMENT,
+  col_title varchar(255) DEFAULT NULL COMMENT 'идентификатор названия страницы',
+  col_path varchar(255) DEFAULT NULL COMMENT 'местонахождения скрипта',
+  col_cache int(11) DEFAULT 0 COMMENT 'кеширование в секундах',
+  col_isClass char(1) DEFAULT '1' COMMENT 'mvc или обычный скрипт',
+  col_moduleName varchar(255) DEFAULT NULL,
+  PRIMARY KEY (col_modID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 11
+  AVG_ROW_LENGTH = 3276
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'модули системы';
+
+--
+-- Definition for table tbl_plugins
+--
+CREATE TABLE tbl_plugins (
+  col_pID int(11) NOT NULL AUTO_INCREMENT,
+  col_pluginName varchar(255) DEFAULT NULL,
+  col_seq int(11) DEFAULT 0 COMMENT 'очередь загрузки',
+  col_isClass char(1) DEFAULT '0',
+  col_pluginState char(1) DEFAULT '0' COMMENT '0 - выключен 1- включен',
+  col_cache int(11) DEFAULT 0,
+  PRIMARY KEY (col_pID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 4
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
+
+--
+-- Definition for table tbl_project_num
+--
+CREATE TABLE tbl_project_num (
+  col_pnID int(11) NOT NULL AUTO_INCREMENT,
+  col_serNum int(11) DEFAULT 1,
+  PRIMARY KEY (col_pnID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'серийные номера';
+
+--
+-- Definition for table tbl_tasks
+--
+CREATE TABLE tbl_tasks (
+  col_taskID int(11) NOT NULL AUTO_INCREMENT,
+  col_taskName varchar(255) DEFAULT NULL,
+  col_StatusID int(11) DEFAULT NULL,
+  col_initID int(11) DEFAULT NULL COMMENT 'кто назначил',
+  col_respID int(11) DEFAULT NULL COMMENT 'кому назначил',
+  col_curatorID int(11) DEFAULT NULL COMMENT 'кто курирует',
+  col_pstageID int(11) DEFAULT NULL,
+  col_taskDesc text DEFAULT NULL,
+  col_createDate datetime DEFAULT NULL,
+  col_startPlan datetime DEFAULT NULL,
+  col_startFact datetime DEFAULT NULL,
+  col_endPlan datetime DEFAULT NULL,
+  col_endFact datetime DEFAULT NULL,
+  col_autoStart datetime DEFAULT NULL COMMENT 'дата, когда задача автоматически будет запущена (если была в 4 статусе) ',
+  col_taskDur int(11) DEFAULT 0,
+  col_seq int(11) DEFAULT 1,
+  col_nextID int(11) DEFAULT NULL,
+  col_bonding char(1) DEFAULT '0' COMMENT '0 - нет связи  1 - после окончания с nextID 2 - запуск параллельно с nextID 3 - завершение одновременно с nextID(?)',
+  col_fromPlan char(1) DEFAULT '0',
+  col_continueDes text DEFAULT NULL COMMENT 'причина последнего запроса на продление',
+  col_failDes text DEFAULT NULL COMMENT 'причина отказа от задачи',
+  col_lateFinishDesc text DEFAULT NULL COMMENT 'причина просрочки выполнения задачи',
+  PRIMARY KEY (col_taskID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 10
+  AVG_ROW_LENGTH = 5461
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'задачи';
+
+--
+-- Definition for table tbl_user_groups
+--
+CREATE TABLE tbl_user_groups (
+  col_gID int(11) NOT NULL AUTO_INCREMENT,
+  col_gName varchar(250) DEFAULT NULL,
+  PRIMARY KEY (col_gID)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 5
+  AVG_ROW_LENGTH = 4096
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'группы пользователей';
+
+--
+-- Definition for table tbl_user_roles
+--
+CREATE TABLE tbl_user_roles (
+  col_roleID int(11) NOT NULL AUTO_INCREMENT,
+  col_roleName varchar(250) DEFAULT NULL,
+  col_isDel char(1) DEFAULT '0',
+  PRIMARY KEY (col_roleID),
+  UNIQUE INDEX UK_tbl_user_roles_col_roleName (col_roleName)
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 7
+  AVG_ROW_LENGTH = 2730
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'роли для пользователя';
+
+--
+-- Definition for table tbl_doc_group_access
+--
+CREATE TABLE tbl_doc_group_access (
+  col_dga int(11) NOT NULL AUTO_INCREMENT,
+  col_dgID int(11) DEFAULT NULL,
+  col_roleID int(11) DEFAULT NULL,
+  col_access char(1) DEFAULT '0' COMMENT '1 - чтение, 2 - полный доступ',
+  PRIMARY KEY (col_dga),
+  CONSTRAINT FK_tbl_doc_group_access_col_dg FOREIGN KEY (col_dgID)
+  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_doc_group_access_col_ro FOREIGN KEY (col_roleID)
+  REFERENCES tbl_user_roles (col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 19
+  AVG_ROW_LENGTH = 2730
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'доступы к группам документов';
+
+--
+-- Definition for table tbl_group_roles
+--
+CREATE TABLE tbl_group_roles (
+  col_grID int(11) NOT NULL AUTO_INCREMENT,
+  col_gID int(11) DEFAULT NULL,
+  col_roleID int(11) DEFAULT NULL,
+  PRIMARY KEY (col_grID),
+  CONSTRAINT FK_tbl_group_roles_tbl_user_groups_col_gID FOREIGN KEY (col_gID)
+  REFERENCES tbl_user_groups (col_gID) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_group_roles_tbl_user_roles_col_roleID FOREIGN KEY (col_roleID)
+  REFERENCES tbl_user_roles (col_roleID) ON DELETE RESTRICT ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 1
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'какие роли к какой группе относятся';
+
+--
+-- Definition for table tbl_hb_events_relation
+--
+CREATE TABLE tbl_hb_events_relation (
+  col_erID int(11) NOT NULL AUTO_INCREMENT,
+  col_etID int(11) DEFAULT NULL,
+  col_esID int(11) DEFAULT NULL,
+  col_message text DEFAULT NULL,
+  PRIMARY KEY (col_erID),
+  CONSTRAINT FK_tbl_hb_events_relation_col_ FOREIGN KEY (col_etID)
+  REFERENCES tbl_hb_event_type (col_etID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_hb_events_relation_col2 FOREIGN KEY (col_esID)
+  REFERENCES tbl_hb_event_state (col_esID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 20
+  AVG_ROW_LENGTH = 862
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'готовые эвенты';
+
+--
 -- Definition for table tbl_module_groups
 --
 CREATE TABLE tbl_module_groups (
@@ -294,7 +352,7 @@ CREATE TABLE tbl_module_groups (
 )
   ENGINE = INNODB
   AUTO_INCREMENT = 16
-  AVG_ROW_LENGTH = 2730
+  AVG_ROW_LENGTH = 3276
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'разрешения групп к модулям';
@@ -317,42 +375,6 @@ CREATE TABLE tbl_module_roles (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'указание ролей с правами доступа';
-
---
--- Definition for table tbl_modules
---
-CREATE TABLE tbl_modules (
-  col_modID int(11) NOT NULL AUTO_INCREMENT,
-  col_title varchar(255) DEFAULT NULL COMMENT 'идентификатор названия страницы',
-  col_path varchar(255) DEFAULT NULL COMMENT 'местонахождения скрипта',
-  col_cache int(11) DEFAULT 0 COMMENT 'кеширование в секундах',
-  col_isClass char(1) DEFAULT '1' COMMENT 'mvc или обычный скрипт',
-  col_moduleName varchar(255) DEFAULT NULL,
-  PRIMARY KEY (col_modID)
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 11
-  AVG_ROW_LENGTH = 2730
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'модули системы';
-
---
--- Definition for table tbl_plugins
---
-CREATE TABLE tbl_plugins (
-  col_pID int(11) NOT NULL AUTO_INCREMENT,
-  col_pluginName varchar(255) DEFAULT NULL,
-  col_seq int(11) DEFAULT 0 COMMENT 'очередь загрузки',
-  col_isClass char(1) DEFAULT '0',
-  col_pluginState char(1) DEFAULT '0' COMMENT '0 - выключен 1- включен',
-  col_cache int(11) DEFAULT 0,
-  PRIMARY KEY (col_pID)
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 4
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci;
 
 --
 -- Definition for table tbl_plugins_group
@@ -394,102 +416,6 @@ CREATE TABLE tbl_plugins_roles (
   COLLATE utf8_general_ci;
 
 --
--- Definition for table tbl_project
---
-CREATE TABLE tbl_project (
-  col_projectID int(11) NOT NULL AUTO_INCREMENT,
-  col_projectName varchar(200) DEFAULT NULL,
-  col_pnID int(11) DEFAULT NULL,
-  col_founderID int(11) DEFAULT NULL,
-  col_CreateDate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  col_Desc text DEFAULT NULL,
-  col_ProjectPlanState char(1) DEFAULT '0' COMMENT '0/1 не запущен, запущен план проекта',
-  PRIMARY KEY (col_projectID),
-  CONSTRAINT FK_tbl_project_col_founderID FOREIGN KEY (col_founderID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_project_col_pnID FOREIGN KEY (col_pnID)
-  REFERENCES tbl_project_num (col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 2
-  AVG_ROW_LENGTH = 16384
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci;
-
---
--- Definition for table tbl_project_messages
---
-CREATE TABLE tbl_project_messages (
-  col_pmID int(11) NOT NULL AUTO_INCREMENT,
-  col_AuthorID int(11) DEFAULT NULL,
-  col_text text DEFAULT NULL,
-  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  col_projectID int(11) DEFAULT NULL,
-  col_system char(1) DEFAULT '0',
-  PRIMARY KEY (col_pmID),
-  CONSTRAINT FK_tbl_project_messages_col_Au FOREIGN KEY (col_AuthorID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_project_messages_col_pr FOREIGN KEY (col_projectID)
-  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 11
-  AVG_ROW_LENGTH = 1820
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'вкладка переписок и событий в проекте';
-
---
--- Definition for table tbl_project_num
---
-CREATE TABLE tbl_project_num (
-  col_pnID int(11) NOT NULL AUTO_INCREMENT,
-  col_serNum int(11) DEFAULT 1,
-  PRIMARY KEY (col_pnID)
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 2
-  AVG_ROW_LENGTH = 16384
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'серийные номера';
-
---
--- Definition for table tbl_project_stage
---
-CREATE TABLE tbl_project_stage (
-  col_pstageID int(11) NOT NULL AUTO_INCREMENT,
-  col_projectID int(11) DEFAULT NULL,
-  col_statusID int(11) DEFAULT NULL,
-  col_respID int(11) DEFAULT NULL,
-  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  col_dateStart datetime DEFAULT NULL,
-  col_dateStartPlan datetime DEFAULT NULL,
-  col_dateEnd datetime DEFAULT NULL COMMENT 'дата окончания принятия решения',
-  col_dateEndPlan datetime DEFAULT NULL,
-  col_dateEndFact datetime DEFAULT NULL,
-  col_comment text DEFAULT NULL,
-  col_stageID int(11) DEFAULT NULL,
-  col_prevStageID int(11) DEFAULT NULL COMMENT 'предыдущий статус (для возврата при отказе)',
-  col_seq int(11) DEFAULT NULL COMMENT 'очередность',
-  col_duration int(11) DEFAULT 1,
-  PRIMARY KEY (col_pstageID),
-  CONSTRAINT FK_tbl_project_stage_col_proje FOREIGN KEY (col_projectID)
-  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_project_stage_col_respI FOREIGN KEY (col_respID)
-  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_project_stage_col_stage FOREIGN KEY (col_stageID)
-  REFERENCES tbl_hb_project_stage (col_StageID) ON DELETE NO ACTION ON UPDATE RESTRICT,
-  CONSTRAINT FK_tbl_project_stage_col_statu FOREIGN KEY (col_statusID)
-  REFERENCES tbl_hb_status (col_StatusID) ON DELETE NO ACTION ON UPDATE RESTRICT
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 4
-  AVG_ROW_LENGTH = 4096
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci;
-
---
 -- Definition for table tbl_roles_in_group
 --
 CREATE TABLE tbl_roles_in_group (
@@ -508,41 +434,6 @@ CREATE TABLE tbl_roles_in_group (
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'к какой группе, какая роль принадлежит';
-
---
--- Definition for table tbl_tasks
---
-CREATE TABLE tbl_tasks (
-  col_taskID int(11) NOT NULL AUTO_INCREMENT,
-  col_taskName varchar(255) DEFAULT NULL,
-  col_StatusID int(11) DEFAULT NULL,
-  col_initID int(11) DEFAULT NULL COMMENT 'кто назначил',
-  col_respID int(11) DEFAULT NULL COMMENT 'кому назначил',
-  col_curatorID int(11) DEFAULT NULL COMMENT 'кто курирует',
-  col_pstageID int(11) DEFAULT NULL,
-  col_taskDesc text DEFAULT NULL,
-  col_createDate datetime DEFAULT NULL,
-  col_startPlan datetime DEFAULT NULL,
-  col_startFact datetime DEFAULT NULL,
-  col_endPlan datetime DEFAULT NULL,
-  col_endFact datetime DEFAULT NULL,
-  col_autoStart datetime DEFAULT NULL COMMENT 'дата, когда задача автоматически будет запущена (если была в 4 статусе) ',
-  col_taskDur int(11) DEFAULT 0,
-  col_seq int(11) DEFAULT 1,
-  col_nextID int(11) DEFAULT NULL,
-  col_bonding char(1) DEFAULT '0' COMMENT '0 - нет связи  1 - после окончания с nextID 2 - запуск параллельно с nextID 3 - завершение одновременно с nextID(?)',
-  col_fromPlan char(1) DEFAULT '0',
-  col_continueDes text DEFAULT NULL COMMENT 'причина последнего запроса на продление',
-  col_failDes text DEFAULT NULL COMMENT 'причина отказа от задачи',
-  col_lateFinishDesc text DEFAULT NULL COMMENT 'причина просрочки выполнения задачи',
-  PRIMARY KEY (col_taskID)
-)
-  ENGINE = INNODB
-  AUTO_INCREMENT = 10
-  AVG_ROW_LENGTH = 5461
-  CHARACTER SET utf8
-  COLLATE utf8_general_ci
-  COMMENT = 'задачи';
 
 --
 -- Definition for table tbl_tasks_comments
@@ -592,36 +483,144 @@ CREATE TABLE tbl_user (
   COMMENT = 'пользователи';
 
 --
--- Definition for table tbl_user_groups
+-- Definition for table tbl_events
 --
-CREATE TABLE tbl_user_groups (
-  col_gID int(11) NOT NULL AUTO_INCREMENT,
-  col_gName varchar(250) DEFAULT NULL,
-  PRIMARY KEY (col_gID)
+CREATE TABLE tbl_events (
+  col_evID int(11) NOT NULL AUTO_INCREMENT,
+  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  col_etID int(11) DEFAULT NULL COMMENT 'id эвента',
+  col_object int(11) DEFAULT NULL COMMENT 'id объекта, на который идет ссылка',
+  col_userID int(11) DEFAULT NULL,
+  col_isTop char(1) DEFAULT '0' COMMENT 'закреплен в топе',
+  col_isNoticed char(1) DEFAULT '0' COMMENT 'ознакомлен',
+  col_isMailed char(1) DEFAULT '0' COMMENT 'отправлен по почте',
+  col_comment text DEFAULT NULL,
+  PRIMARY KEY (col_evID),
+  CONSTRAINT FK_tbl_events_col_etID FOREIGN KEY (col_etID)
+  REFERENCES tbl_hb_events_relation (col_erID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_events_col_userID FOREIGN KEY (col_userID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 5
-  AVG_ROW_LENGTH = 4096
+  AUTO_INCREMENT = 16
+  AVG_ROW_LENGTH = 1092
   CHARACTER SET utf8
   COLLATE utf8_general_ci
-  COMMENT = 'группы пользователей';
+  COMMENT = 'эыенты';
 
 --
--- Definition for table tbl_user_roles
+-- Definition for table tbl_project
 --
-CREATE TABLE tbl_user_roles (
-  col_roleID int(11) NOT NULL AUTO_INCREMENT,
-  col_roleName varchar(250) DEFAULT NULL,
-  col_isDel char(1) DEFAULT '0',
-  PRIMARY KEY (col_roleID),
-  UNIQUE INDEX UK_tbl_user_roles_col_roleName (col_roleName)
+CREATE TABLE tbl_project (
+  col_projectID int(11) NOT NULL AUTO_INCREMENT,
+  col_projectName varchar(200) DEFAULT NULL,
+  col_pnID int(11) DEFAULT NULL,
+  col_founderID int(11) DEFAULT NULL,
+  col_CreateDate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  col_Desc text DEFAULT NULL,
+  col_ProjectPlanState char(1) DEFAULT '0' COMMENT '0/1 не запущен, запущен план проекта',
+  PRIMARY KEY (col_projectID),
+  CONSTRAINT FK_tbl_project_col_founderID FOREIGN KEY (col_founderID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_col_pnID FOREIGN KEY (col_pnID)
+  REFERENCES tbl_project_num (col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 7
-  AVG_ROW_LENGTH = 2730
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
+
+--
+-- Definition for table tbl_files
+--
+CREATE TABLE tbl_files (
+  col_fID int(11) NOT NULL AUTO_INCREMENT,
+  col_fName varchar(255) DEFAULT NULL,
+  col_ext varchar(50) DEFAULT NULL COMMENT 'расширение',
+  col_isFolder char(1) DEFAULT '0',
+  col_parentID int(11) DEFAULT NULL,
+  col_size decimal(10, 2) DEFAULT NULL COMMENT 'размер',
+  col_cDate datetime DEFAULT CURRENT_TIMESTAMP,
+  col_isDel char(1) DEFAULT '0',
+  col_dDate datetime DEFAULT NULL,
+  col_uploaderID int(11) DEFAULT NULL,
+  col_deleterID int(11) DEFAULT NULL,
+  col_groupID int(11) DEFAULT NULL,
+  col_projectID int(11) DEFAULT NULL,
+  PRIMARY KEY (col_fID),
+  CONSTRAINT FK_tbl_files_col_deleterID FOREIGN KEY (col_deleterID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_groupID FOREIGN KEY (col_groupID)
+  REFERENCES tbl_hb_doc_group (col_dgID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_projectID FOREIGN KEY (col_projectID)
+  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_files_col_uploaderID FOREIGN KEY (col_uploaderID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 10
   CHARACTER SET utf8
   COLLATE utf8_general_ci
-  COMMENT = 'роли для пользователя';
+  COMMENT = 'файлы';
+
+--
+-- Definition for table tbl_project_messages
+--
+CREATE TABLE tbl_project_messages (
+  col_pmID int(11) NOT NULL AUTO_INCREMENT,
+  col_AuthorID int(11) DEFAULT NULL,
+  col_text text DEFAULT NULL,
+  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  col_projectID int(11) DEFAULT NULL,
+  col_system char(1) DEFAULT '0',
+  PRIMARY KEY (col_pmID),
+  CONSTRAINT FK_tbl_project_messages_col_Au FOREIGN KEY (col_AuthorID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_messages_col_pr FOREIGN KEY (col_projectID)
+  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 11
+  AVG_ROW_LENGTH = 1820
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci
+  COMMENT = 'вкладка переписок и событий в проекте';
+
+--
+-- Definition for table tbl_project_stage
+--
+CREATE TABLE tbl_project_stage (
+  col_pstageID int(11) NOT NULL AUTO_INCREMENT,
+  col_projectID int(11) DEFAULT NULL,
+  col_statusID int(11) DEFAULT NULL,
+  col_respID int(11) DEFAULT NULL,
+  col_dateCreate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  col_dateStart datetime DEFAULT NULL,
+  col_dateStartPlan datetime DEFAULT NULL,
+  col_dateEnd datetime DEFAULT NULL COMMENT 'дата окончания принятия решения',
+  col_dateEndPlan datetime DEFAULT NULL,
+  col_dateEndFact datetime DEFAULT NULL,
+  col_comment text DEFAULT NULL,
+  col_stageID int(11) DEFAULT NULL,
+  col_prevStageID int(11) DEFAULT NULL COMMENT 'предыдущий статус (для возврата при отказе)',
+  col_seq int(11) DEFAULT NULL COMMENT 'очередность',
+  col_duration int(11) DEFAULT 1,
+  PRIMARY KEY (col_pstageID),
+  CONSTRAINT FK_tbl_project_stage_col_proje FOREIGN KEY (col_projectID)
+  REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_stage_col_respI FOREIGN KEY (col_respID)
+  REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_stage_col_stage FOREIGN KEY (col_stageID)
+  REFERENCES tbl_hb_project_stage (col_StageID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_stage_col_statu FOREIGN KEY (col_statusID)
+  REFERENCES tbl_hb_status (col_StatusID) ON DELETE NO ACTION ON UPDATE RESTRICT
+)
+  ENGINE = INNODB
+  AUTO_INCREMENT = 4
+  AVG_ROW_LENGTH = 4096
+  CHARACTER SET utf8
+  COLLATE utf8_general_ci;
 
 DELIMITER $$
 
@@ -918,54 +917,6 @@ $$
 DELIMITER ;
 
 --
--- Dumping data for table tbl_doc_group_access
---
-INSERT INTO tbl_doc_group_access VALUES
-  (1, 1, 1, '2'),
-  (2, 1, 2, '1'),
-  (3, 1, 3, '0'),
-  (4, 1, 4, '0'),
-  (5, 1, 5, '0'),
-  (6, 1, 6, '0');
-
---
--- Dumping data for table tbl_events
---
-INSERT INTO tbl_events VALUES
-  (1, '2016-12-31 09:43:27', 11, 1, 1, '0', '1', '0', 'Тестовый проект'),
-  (2, '2016-12-31 10:00:35', 11, 1, 1, '0', '1', '0', '1:тестовое снова соовбщение...'),
-  (3, '2016-12-31 10:01:21', 11, 1, 1, '0', '1', '0', '#1: еще разочек...'),
-  (4, '2016-12-31 10:02:50', 11, 1, 1, '0', '1', '0', '#1 - тестовый т.т.: добавляем недобавленное...'),
-  (5, '2016-12-31 10:59:20', 11, 1, 1, '0', '1', '0', 'Проект 1, написал тестовый т.т.: ы...'),
-  (6, '2016-12-31 11:00:14', 11, 1, 1, '0', '1', '0', 'Проект [1], написал [тестовый т.т.]: ы х2...'),
-  (7, '2017-01-02 16:24:28', 6, 8, 3, '0', '0', '0', 'тест'),
-  (8, '2017-01-06 16:18:56', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (9, '2017-01-06 16:21:12', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (10, '2017-01-06 16:23:54', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (11, '2017-01-06 16:26:32', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (12, '2017-01-06 16:28:14', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (13, '2017-01-06 16:31:27', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (14, '2017-01-06 16:33:43', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
-  (15, '2017-01-06 16:51:06', 18, 9, 3, '0', '0', '0', '&lt;p&gt;ыфвфы&lt;/p&gt;...');
-
---
--- Dumping data for table tbl_files
---
-INSERT INTO tbl_files VALUES
-  (3, 'DriverPack-17-Online.exe', 'exe', '0', NULL, 0.28, '2017-01-21 15:32:38', '0', NULL, 1, NULL, 1, 1),
-  (4, 'DriverPack-17-Online.exe', 'exe', '0', NULL, 0.28, '2017-01-21 15:34:44', '0', NULL, 1, NULL, 1, 1),
-  (5, 'тест', NULL, '1', NULL, NULL, '2017-01-21 16:55:38', '0', NULL, 1, NULL, 1, 1),
-  (6, 'download.torrent', 'torrent', '0', 5, 0.01, '2017-01-21 19:27:09', '0', NULL, 1, NULL, 1, 1),
-  (7, 'еще 1 папка, на всякий случай', NULL, '1', 5, NULL, '2017-01-21 19:33:03', '0', NULL, 1, NULL, 1, 1),
-  (8, 'ну и на всякий... мало ли', NULL, '1', 5, NULL, '2017-01-21 19:34:19', '0', NULL, 1, NULL, 1, 1);
-
---
--- Dumping data for table tbl_group_roles
---
-
--- Table erp_db.tbl_group_roles does not contain any data (it is empty)
-
---
 -- Dumping data for table tbl_hb_doc_group
 --
 INSERT INTO tbl_hb_doc_group VALUES
@@ -996,30 +947,6 @@ INSERT INTO tbl_hb_event_type VALUES
   (5, 'План проекта'),
   (6, 'Задача из плана проекта'),
   (7, 'Стадия из плана проекта');
-
---
--- Dumping data for table tbl_hb_events_relation
---
-INSERT INTO tbl_hb_events_relation VALUES
-  (1, 1, 6, 'Проект перешел на новую стадию'),
-  (2, 7, 1, 'Запущена стадия из плана проекта '),
-  (3, 2, 1, 'Было принято решение о запуске задачи'),
-  (4, 2, 2, 'Задача завершена'),
-  (5, 4, 1, 'Была запущена курируемая задача'),
-  (6, 2, 8, 'Получена новая задача, требуется принять решение'),
-  (7, 6, 1, 'Была запущена задача из плана проекта'),
-  (8, 3, 3, 'Была получена новость'),
-  (9, 5, 1, 'План проекта был запущен'),
-  (10, 5, 5, 'План проекта был остановлен'),
-  (11, 1, 9, 'В переписке по проекту появилось новое сообщение'),
-  (12, 4, 2, 'Курируемая задача была завершена'),
-  (13, 4, 4, 'Отказ от курируемой задачи'),
-  (14, 2, 4, 'Поставленная задача была отклонена'),
-  (15, 4, 10, 'Перезапущена курируемая задача'),
-  (16, 2, 10, 'Задача была перезапущена'),
-  (17, 5, 10, 'План проекта был снова запущен'),
-  (18, 2, 9, ' '),
-  (19, 4, 9, '  ');
 
 --
 -- Dumping data for table tbl_hb_project_stage
@@ -1072,27 +999,6 @@ INSERT INTO tbl_menu_type VALUES
   (4, 'menuTask', 3);
 
 --
--- Dumping data for table tbl_module_groups
---
-INSERT INTO tbl_module_groups VALUES
-  (5, 2, 4),
-  (6, 1, 1),
-  (8, 4, 1),
-  (9, 5, 1),
-  (10, 3, 3),
-  (11, 6, 1),
-  (12, 7, 1),
-  (13, 8, 3),
-  (14, 9, 3),
-  (15, 10, 3);
-
---
--- Dumping data for table tbl_module_roles
---
-
--- Table erp_db.tbl_module_roles does not contain any data (it is empty)
-
---
 -- Dumping data for table tbl_modules
 --
 INSERT INTO tbl_modules VALUES
@@ -1115,58 +1021,10 @@ INSERT INTO tbl_plugins VALUES
   (3, 'mainMenu', 0, '1', '1', 3600);
 
 --
--- Dumping data for table tbl_plugins_group
---
-INSERT INTO tbl_plugins_group VALUES
-  (8, 2, 4),
-  (17, 3, 3);
-
---
--- Dumping data for table tbl_plugins_roles
---
-
--- Table erp_db.tbl_plugins_roles does not contain any data (it is empty)
-
---
--- Dumping data for table tbl_project
---
-INSERT INTO tbl_project VALUES
-  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09', '&lt;p&gt;asdasd&lt;/p&gt;', '0');
-
---
--- Dumping data for table tbl_project_messages
---
-INSERT INTO tbl_project_messages VALUES
-  (1, 1, 'тестовый заход', '2016-12-27 12:28:14', 1, '0'),
-  (2, 1, 'еще одно тестовое сообщение...\r\nну... на всякий случай...', '2016-12-27 12:46:56', 1, '0'),
-  (3, 2, 'тестовое системное сообщение', '2016-12-27 13:18:00', 1, '1'),
-  (4, 3, 'рас рас двас двас', '2016-12-31 09:43:27', 1, '0'),
-  (5, 3, 'тестовое снова соовбщение', '2016-12-31 09:59:29', 1, '0'),
-  (6, 3, 'тестовое снова соовбщение', '2016-12-31 10:00:35', 1, '0'),
-  (7, 3, 'еще разочек', '2016-12-31 10:01:21', 1, '0'),
-  (8, 3, 'добавляем недобавленное', '2016-12-31 10:02:49', 1, '0'),
-  (9, 3, 'ы', '2016-12-31 10:59:20', 1, '0'),
-  (10, 3, 'ы х2', '2016-12-31 11:00:13', 1, '0');
-
---
 -- Dumping data for table tbl_project_num
 --
 INSERT INTO tbl_project_num VALUES
   (1, 1);
-
---
--- Dumping data for table tbl_project_stage
---
-INSERT INTO tbl_project_stage VALUES
-  (1, 1, 1, 1, '2016-12-15 11:18:59', '2016-12-15 11:18:59', NULL, '2016-12-15 11:18:59', '2016-12-19 11:18:59', NULL, 'Создан автоматически при заведении проекта', 1, NULL, 1, 1),
-  (2, 1, 5, 1, '2016-12-21 16:01:04', NULL, '2017-01-03 00:00:00', NULL, '2017-01-08 00:00:00', NULL, NULL, 2, NULL, 2, 5),
-  (3, 1, 5, 1, '2016-12-21 16:03:28', NULL, '2017-01-08 00:00:00', NULL, '2017-01-09 00:00:00', NULL, NULL, 3, NULL, 3, 1);
-
---
--- Dumping data for table tbl_roles_in_group
---
-INSERT INTO tbl_roles_in_group VALUES
-  (2, 1, 1);
 
 --
 -- Dumping data for table tbl_tasks
@@ -1177,21 +1035,6 @@ INSERT INTO tbl_tasks VALUES
   (6, 'тест', 5, 1, 1, NULL, 2, NULL, '2016-12-24 17:41:13', '2017-01-08 00:00:00', NULL, '2017-01-09 00:00:00', NULL, NULL, 1, 3, 3, '1', '1', NULL, NULL, NULL),
   (8, 'тест', 4, 1, 3, NULL, 1, '&lt;p&gt;тестовая&lt;/p&gt;', '2017-01-02 16:24:28', NULL, '2017-01-02 16:51:04', '2017-01-08 17:00:00', NULL, '2017-01-04 16:24:28', 2, 1, NULL, '0', '0', NULL, NULL, NULL),
   (9, 'тестовая задача1', 2, 3, 1, NULL, 1, '&lt;p&gt;какое-то описание&lt;/p&gt;', '2017-01-05 11:13:44', NULL, '2017-01-06 16:33:50', '2017-01-09 17:00:00', '2017-01-06 16:33:50', '2017-01-07 11:13:44', 2, 1, NULL, '0', '0', NULL, '!!!&quot;№;', NULL);
-
---
--- Dumping data for table tbl_tasks_comments
---
-INSERT INTO tbl_tasks_comments VALUES
-  (13, 9, 1, '&lt;p&gt;цв&lt;/p&gt;', '2017-01-06 16:49:47', '1'),
-  (14, 9, 1, '&lt;p&gt;ыфвфы&lt;/p&gt;', '2017-01-06 16:51:06', '1');
-
---
--- Dumping data for table tbl_user
---
-INSERT INTO tbl_user VALUES
-  (1, 'Админ', 'Админов', 'Админович', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, '0', NULL, NULL, '2016-12-03 16:12:32', '2016-12-03 11:56:42'),
-  (2, 'О', 'РОБ', 'Т', 'erpBot', 'somePasswordMaybeHere...', NULL, '1', NULL, NULL, '2016-12-27 12:44:09', '2016-12-27 12:43:51'),
-  (3, 'тест', 'тестовый', 'тестович', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 1, '0', NULL, NULL, NULL, '2016-12-31 09:27:10');
 
 --
 -- Dumping data for table tbl_user_groups
@@ -1212,6 +1055,157 @@ INSERT INTO tbl_user_roles VALUES
   (4, 'тестовая роль 3', '0'),
   (5, 'тестовая роль 4', '0'),
   (6, 'тестовая роль 5', '0');
+
+--
+-- Dumping data for table tbl_doc_group_access
+--
+INSERT INTO tbl_doc_group_access VALUES
+  (13, 1, 1, '2'),
+  (14, 1, 2, '2'),
+  (15, 1, 3, '0'),
+  (16, 1, 4, '0'),
+  (17, 1, 5, '0'),
+  (18, 1, 6, '0');
+
+--
+-- Dumping data for table tbl_group_roles
+--
+
+-- Table erp_db.tbl_group_roles does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_hb_events_relation
+--
+INSERT INTO tbl_hb_events_relation VALUES
+  (1, 1, 6, 'Проект перешел на новую стадию'),
+  (2, 7, 1, 'Запущена стадия из плана проекта '),
+  (3, 2, 1, 'Было принято решение о запуске задачи'),
+  (4, 2, 2, 'Задача завершена'),
+  (5, 4, 1, 'Была запущена курируемая задача'),
+  (6, 2, 8, 'Получена новая задача, требуется принять решение'),
+  (7, 6, 1, 'Была запущена задача из плана проекта'),
+  (8, 3, 3, 'Была получена новость'),
+  (9, 5, 1, 'План проекта был запущен'),
+  (10, 5, 5, 'План проекта был остановлен'),
+  (11, 1, 9, 'В переписке по проекту появилось новое сообщение'),
+  (12, 4, 2, 'Курируемая задача была завершена'),
+  (13, 4, 4, 'Отказ от курируемой задачи'),
+  (14, 2, 4, 'Поставленная задача была отклонена'),
+  (15, 4, 10, 'Перезапущена курируемая задача'),
+  (16, 2, 10, 'Задача была перезапущена'),
+  (17, 5, 10, 'План проекта был снова запущен'),
+  (18, 2, 9, ' '),
+  (19, 4, 9, '  ');
+
+--
+-- Dumping data for table tbl_module_groups
+--
+INSERT INTO tbl_module_groups VALUES
+  (5, 2, 4),
+  (6, 1, 1),
+  (8, 4, 1),
+  (9, 5, 1),
+  (10, 3, 3),
+  (11, 6, 1),
+  (12, 7, 1),
+  (13, 8, 3),
+  (14, 9, 3),
+  (15, 10, 3);
+
+--
+-- Dumping data for table tbl_module_roles
+--
+
+-- Table erp_db.tbl_module_roles does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_plugins_group
+--
+INSERT INTO tbl_plugins_group VALUES
+  (8, 2, 4),
+  (17, 3, 3);
+
+--
+-- Dumping data for table tbl_plugins_roles
+--
+
+-- Table erp_db.tbl_plugins_roles does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_roles_in_group
+--
+INSERT INTO tbl_roles_in_group VALUES
+  (2, 1, 1);
+
+--
+-- Dumping data for table tbl_tasks_comments
+--
+INSERT INTO tbl_tasks_comments VALUES
+  (13, 9, 1, '&lt;p&gt;цв&lt;/p&gt;', '2017-01-06 16:49:47', '1'),
+  (14, 9, 1, '&lt;p&gt;ыфвфы&lt;/p&gt;', '2017-01-06 16:51:06', '1');
+
+--
+-- Dumping data for table tbl_user
+--
+INSERT INTO tbl_user VALUES
+  (1, 'Админ', 'Админов', 'Админович', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, '0', NULL, NULL, '2016-12-03 16:12:32', '2016-12-03 11:56:42'),
+  (2, 'О', 'РОБ', 'Т', 'erpBot', 'somePasswordMaybeHere...', NULL, '1', NULL, NULL, '2016-12-27 12:44:09', '2016-12-27 12:43:51'),
+  (3, 'тест', 'тестовый', 'тестович', 'test', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', 1, '0', NULL, NULL, NULL, '2016-12-31 09:27:10');
+
+--
+-- Dumping data for table tbl_events
+--
+INSERT INTO tbl_events VALUES
+  (1, '2016-12-31 09:43:27', 11, 1, 1, '0', '1', '0', 'Тестовый проект'),
+  (2, '2016-12-31 10:00:35', 11, 1, 1, '0', '1', '0', '1:тестовое снова соовбщение...'),
+  (3, '2016-12-31 10:01:21', 11, 1, 1, '0', '1', '0', '#1: еще разочек...'),
+  (4, '2016-12-31 10:02:50', 11, 1, 1, '0', '1', '0', '#1 - тестовый т.т.: добавляем недобавленное...'),
+  (5, '2016-12-31 10:59:20', 11, 1, 1, '0', '1', '0', 'Проект 1, написал тестовый т.т.: ы...'),
+  (6, '2016-12-31 11:00:14', 11, 1, 1, '0', '1', '0', 'Проект [1], написал [тестовый т.т.]: ы х2...'),
+  (7, '2017-01-02 16:24:28', 6, 8, 3, '0', '0', '0', 'тест'),
+  (8, '2017-01-06 16:18:56', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (9, '2017-01-06 16:21:12', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (10, '2017-01-06 16:23:54', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (11, '2017-01-06 16:26:32', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (12, '2017-01-06 16:28:14', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (13, '2017-01-06 16:31:27', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (14, '2017-01-06 16:33:43', 16, 9, 1, '0', '1', '0', 'тестовая задача1'),
+  (15, '2017-01-06 16:51:06', 18, 9, 3, '0', '0', '0', '&lt;p&gt;ыфвфы&lt;/p&gt;...');
+
+--
+-- Dumping data for table tbl_project
+--
+INSERT INTO tbl_project VALUES
+  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09', '&lt;p&gt;asdasd&lt;/p&gt;', '0');
+
+--
+-- Dumping data for table tbl_files
+--
+
+-- Table erp_db.tbl_files does not contain any data (it is empty)
+
+--
+-- Dumping data for table tbl_project_messages
+--
+INSERT INTO tbl_project_messages VALUES
+  (1, 1, 'тестовый заход', '2016-12-27 12:28:14', 1, '0'),
+  (2, 1, 'еще одно тестовое сообщение...\r\nну... на всякий случай...', '2016-12-27 12:46:56', 1, '0'),
+  (3, 2, 'тестовое системное сообщение', '2016-12-27 13:18:00', 1, '1'),
+  (4, 3, 'рас рас двас двас', '2016-12-31 09:43:27', 1, '0'),
+  (5, 3, 'тестовое снова соовбщение', '2016-12-31 09:59:29', 1, '0'),
+  (6, 3, 'тестовое снова соовбщение', '2016-12-31 10:00:35', 1, '0'),
+  (7, 3, 'еще разочек', '2016-12-31 10:01:21', 1, '0'),
+  (8, 3, 'добавляем недобавленное', '2016-12-31 10:02:49', 1, '0'),
+  (9, 3, 'ы', '2016-12-31 10:59:20', 1, '0'),
+  (10, 3, 'ы х2', '2016-12-31 11:00:13', 1, '0');
+
+--
+-- Dumping data for table tbl_project_stage
+--
+INSERT INTO tbl_project_stage VALUES
+  (1, 1, 1, 1, '2016-12-15 11:18:59', '2016-12-15 11:18:59', NULL, '2016-12-15 11:18:59', '2016-12-19 11:18:59', NULL, 'Создан автоматически при заведении проекта', 1, NULL, 1, 1),
+  (2, 1, 5, 1, '2016-12-21 16:01:04', NULL, '2017-01-03 00:00:00', NULL, '2017-01-08 00:00:00', NULL, NULL, 2, NULL, 2, 5),
+  (3, 1, 5, 1, '2016-12-21 16:03:28', NULL, '2017-01-08 00:00:00', NULL, '2017-01-09 00:00:00', NULL, NULL, 3, NULL, 3, 1);
 
 DELIMITER $$
 

@@ -8,10 +8,9 @@
  **/
 namespace build\erp\tabs;
 use build\erp\inc\AprojectTabs;
-use build\erp\tabs\m\mDocs;
 use mwce\html_;
 use mwce\router;
-use mwce\Tools;
+
 
 class tabDocs extends AprojectTabs
 {
@@ -19,6 +18,12 @@ class tabDocs extends AprojectTabs
         'curChosenDg'=>['type'=>self::INT],
         'chosenFolder'=>['type'=>self::INT],
         'newFname'=>['type'=>self::STR,'maxLength'=>254],
+        'queue' =>['type'=>self::STR],
+    );
+
+    protected $getField = array(
+        'folder' => ['type'=>self::INT],
+        'file' => ['type'=>self::INT],
     );
 
 
@@ -29,7 +34,7 @@ class tabDocs extends AprojectTabs
      */
     public function In($params = null)
     {
-        $docs = mDocs::getDocGroups(router::getUserRole());
+        $docs = \build\erp\main\m\mDocs::getDocGroups(router::getUserRole());
         $docs[0] ='Все';
         $this->view
             ->set('fileGroupList',html_::select($docs,'curChosenDg',0,'class="form-control inlineBlock" onchange="filterDocs();"'))
@@ -70,6 +75,13 @@ class tabDocs extends AprojectTabs
 
                 $this->view->add_dict($file);
 
+                if ($file['col_access']>1){
+                    $this->view->set('customVisDelDoc','');
+                }
+                else{
+                    $this->view->set('customVisDelDoc','display:none;');
+                }
+
                 if($file['col_isFolder'] == 1){
                     $this->view->out('centerFolder',$this->className);
                 }
@@ -104,4 +116,21 @@ class tabDocs extends AprojectTabs
                     )]);
         }
     }
+
+    public function delFolder(){
+        if(!empty($_GET['folder'])){
+            \build\erp\main\m\mDocs::delFolder($_GET['folder'],router::getUserRole(),router::getCurUser());
+        }
+    }
+    public function delFile(){
+        if(!empty($_GET['file'])){
+            \build\erp\main\m\mDocs::delFolder($_GET['file'],router::getUserRole(),router::getCurUser());
+        }
+    }
+    public function delFiles(){
+        if(!empty($_POST['queue'])){
+            \build\erp\main\m\mDocs::delFiles($_POST['queue'],router::getUserRole(),router::getCurUser());
+        }
+    }
+
 }

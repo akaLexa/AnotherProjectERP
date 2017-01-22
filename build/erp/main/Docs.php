@@ -20,6 +20,7 @@ class Docs extends eController
         'p' => ['type'=>self::INT], //проект
         'f' => ['type'=>self::INT], //папка
         'gr' => ['type'=>self::INT], //группа файлов
+        'queue' =>['type'=>self::STR],
     );
 
     /**
@@ -52,6 +53,26 @@ class Docs extends eController
                 }
             }
         }
+    }
 
+    public function actionProjectDownload(){
+        if(!empty($_GET['f'])){
+            $f = Files::start();
+            $f->projectDownloadFile($_GET['f'],router::getUserRole());
+        }
+    }
+
+    public function actionProjectFolderDownload(){
+        if(!empty($_GET['f'])){
+            $f = Files::start();
+            $f->projectFolderDownload($_GET['f'],router::getUserRole());
+        }
+    }
+
+    public function actionProjectFilesDownload(){
+        if(!empty($_GET['queue'])){
+            $f = Files::start();
+            $f->projectFilesDownload($_GET['queue'],router::getUserRole());
+        }
     }
 }

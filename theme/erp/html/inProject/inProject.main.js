@@ -625,6 +625,7 @@ function taskRedir(id) {
     document.querySelector('#tGoForm').submit();
 }
 
+var checkedFiles = [];
 var currentTDU;
 function filterDocs(){
     var docG = document.querySelector('#curChosenDg').value;
@@ -704,4 +705,153 @@ function SetInFolder(id,group) {
     $('#curChosenDg').val(group);
     document.querySelector('#_chosenFolder').value = id;
     filterDocs();
+}
+function delFolder(id) {
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы дейстивтельно хотите удалить <mark>папку вместе с файлами</mark>?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFolder&folder='+id,
+                    callback:function () {
+                        filterDocs();
+                        mwce_confirm.close();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
+function delFile(id) {
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы дейстивтельно хотите удалить файл?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFile&file='+id,
+                    callback:function () {
+                        filterDocs();
+                        mwce_confirm.close();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
+function docCheckeds(obj) {
+    var viz;
+    var state = document.querySelector('#_mainCheckerDocs').checked;
+
+    $('#tabDocsContent input[type=checkbox]').each(function () {
+
+        if(state == true) {
+            viz = 1;
+            this.checked = true;
+            checkedFiles[this.value] = 1;
+        }
+        else {
+            this.checked = false;
+            delete checkedFiles[this.value];
+            viz = 0;
+        }
+    });
+
+    if(viz>0)
+        document.querySelector('#docFoot').style.display = 'table-cell';
+    else
+        document.querySelector('#docFoot').style.display = 'none';
+}
+function fileChecked(obj) {
+    if(obj.checked)
+        checkedFiles[obj.value] = 1;
+    else
+        delete checkedFiles[obj.value];
+
+    var i =0;
+
+    for (var j in checkedFiles)
+        i++;
+
+    if(i>0)
+        document.querySelector('#docFoot').style.display = 'table-cell';
+    else
+    {
+        document.querySelector('#_mainCheckerDocs').checked = false;
+        document.querySelector('#docFoot').style.display = 'none';
+    }
+}
+function folderDownload(id) {
+    document.querySelector('#docForm').action = '|site|page/Docs/ProjectFolderDownload?f='+id;
+    document.querySelector('#docForm').submit();
+}
+function fileAccept() {
+    var choosen = $('#_actionFileType').val();
+    if(choosen == 1){
+        FilesDownload();
+    }
+    else{
+        FilesDelete();
+    }
+}
+function FilesDownload() {
+    var queue = '';
+
+    $('#tabDocsContent input[type=checkbox]').each(function () {
+        if(this.checked){
+            if(queue.length>0)
+                queue+=',';
+            queue+=this.value;
+            this.checked = false;
+        }
+    });
+
+    document.querySelector('#docForm').action = '|site|page/Docs/ProjectFilesDownload?queue='+queue;
+    document.querySelector('#docForm').submit();
+}
+function FilesDelete() {
+
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы дейстивтельно хотите удалить выбранные файлы?',
+        buttons:{
+            'Да':function () {
+                var queue = '';
+
+                $('#tabDocsContent input[type=checkbox]').each(function () {
+                    if(this.checked){
+                        if(queue.length>0)
+                            queue+=',';
+                        queue+=this.value;
+                        this.checked = false;
+                    }
+                });
+
+                if(queue.length>0){
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFiles',
+                        type:'POST',
+                        data:'queue='+queue,
+                        callback:function () {
+                            mwce_confirm.close();
+                            filterDocs();
+                        }
+                    });
+                }
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
 }

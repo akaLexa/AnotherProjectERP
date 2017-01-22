@@ -10,6 +10,7 @@ namespace build\erp\main\m;
 use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
+use mwce\Tools;
 
 class mDocs extends Model
 {
@@ -26,6 +27,8 @@ class mDocs extends Model
 
         if(!empty($params['isDel']))
             $filter.= ' AND tf.col_isDel = 1';
+        else
+            $filter.= ' AND tf.col_isDel = 0';
 
         if(!empty($params['isFolder']))
             $filter.= ' AND tf.col_isFolder = 1';
@@ -36,15 +39,19 @@ class mDocs extends Model
         if(!empty($params['deleter']))
             $filter.= ' AND tf.col_deleterID = '.$params['deleter'];
 
-        if(!empty($params['subId']))
-            $filter.= ' AND tf.col_parentID = '.$params['subId'];
-        else
-            $filter.= ' AND tf.col_parentID is null';
-
         if(!empty($params['group']))
             $filter.= ' AND tf.col_groupID = '.$params['group'];
 
+        if(!empty($params['files']))
+            $filter.= ' AND tf.col_fID IN ('.$params['files'].')';
+        else{
+            if(!empty($params['subId']))
+                $filter.= ' AND tf.col_parentID = '.$params['subId'];
+            else
+                $filter.= ' AND tf.col_parentID is null';
+        }
         $db = Connect::start();
+
         return $db->query("SELECT
   tf.*,
   tdga.col_access,
@@ -74,6 +81,28 @@ ORDER BY tf.col_isFolder DESC, thdg.col_docGroupName ASC")->fetchAll(static::cla
         $db = Connect::start();
         return $db->query("SELECT
   tf.*,
+  thdg.col_docGroupName,
+  f_getUserFIO(tf.col_uploaderID) AS col_uploader,
+  f_getUserFIO(tf.col_deleterID) AS col_deleter,
+  IF(tf.col_parentID IS NOT NULL,NULL,(SELECT col_parentID FROM tbl_files WHERE col_fID = tf.col_parentID)) AS col_parent
+FROM 
+  tbl_hb_doc_group thdg,
+  tbl_files tf
+WHERE
+  tf.col_fID = $id
+  AND thdg.col_dgID = tf.col_groupID")->fetch(static::class);
+    }
+
+    /**
+     * пометить на удаление папку/файл
+     * @param int $fID
+     * @param int $role
+     * @param int $user
+     */
+    public static function delFolder($fID,$role,$user){
+        $db = Connect::start();
+        $info = $db->query("SELECT
+  tf.*,
   tdga.col_access,
   thdg.col_docGroupName,
   f_getUserFIO(tf.col_uploaderID) AS col_uploader,
@@ -84,9 +113,99 @@ FROM
   tbl_hb_doc_group thdg,
   tbl_files tf
 WHERE
-  tf.col_fID = $id
-  AND tdga.col_dgID = tf.col_groupID 
-  AND thdg.col_dgID = tdga.col_dgID")->fetch(static::class);
+   tdga.col_access > 0
+  AND tdga.col_roleID = $role
+  AND tf.col_groupID = tdga.col_dgID
+  AND thdg.col_dgID = tdga.col_dgID
+  AND tf.col_fID = $fID")->fetch();
+
+        if(!empty($info)){
+            $db->exec("UPDATE tbl_files SET col_isDel = 1,col_deleterID=$user,col_dDate = NOW() WHERE col_fID = $fID");
+            $db->exec("UPDATE tbl_files SET col_isDel = 1,col_deleterID=$user,col_dDate = NOW() WHERE col_parentID = $fID");
+        }
+    }
+
+    public static function delFiles($fIDs,$role,$user){
+        $db = Connect::start();
+        $info = $db->query("SELECT
+  tf.*,
+  tdga.col_access,
+  thdg.col_docGroupName,
+  f_getUserFIO(tf.col_uploaderID) AS col_uploader,
+  f_getUserFIO(tf.col_deleterID) AS col_deleter,
+  IF(tf.col_parentID IS NOT NULL,NULL,(SELECT col_parentID FROM tbl_files WHERE col_fID = tf.col_parentID)) AS col_parent
+FROM 
+  tbl_doc_group_access tdga,
+  tbl_hb_doc_group thdg,
+  tbl_files tf
+WHERE
+   tdga.col_access > 0
+  AND tdga.col_roleID = $role
+  AND tf.col_groupID = tdga.col_dgID
+  AND thdg.col_dgID = tdga.col_dgID
+  AND tf.col_fID in ($fIDs)")->fetchAll();
+
+
+        if(!empty($info)){
+            $q = '';
+            foreach ($info as $inf){
+                if(!empty($q))
+                    $q.=';';
+                $q.="UPDATE tbl_files SET col_isDel = 1,col_deleterID=$user,col_dDate = NOW() WHERE col_fID = {$inf['col_fID']}; UPDATE tbl_files SET col_isDel = 1,col_deleterID=$user,col_dDate = NOW() WHERE col_parentID = {$inf['col_fID']}";
+            }
+            if(!empty($q))
+                $db->exec($q);
+        }
+    }
+
+    public static function getDocGroups($roleID){
+        if(empty(self::$sdata['DocGroups'.$roleID])) {
+            $db = Connect::start();
+            $q = $db->query("SELECT
+  thdg.col_dgID,
+  thdg.col_docGroupName
+FROM 
+  tbl_hb_doc_group thdg,
+  tbl_doc_group_access tdga
+WHERE
+  thdg.col_isDel != 1
+  AND tdga.col_dgID = thdg.col_dgID
+  AND tdga.col_access > 0
+  AND tdga.col_roleID = $roleID");
+            $list = array();
+            while ($r = $q->fetch()) {
+                $list[$r['col_dgID']] = $r['col_docGroupName'];
+            }
+            self::$sdata['DocGroups'.$roleID] = $list;
+        }
+        return self::$sdata['DocGroups'.$roleID];
+
+    }
+
+    /**
+     * @param int $id
+     * @param int $role
+     * @return mDocs
+     */
+    public static function getFileByRole($id,$role){
+        $db = Connect::start();
+        return $db->query("SELECT
+  tf.*,
+  tdga.col_access,
+  thdg.col_docGroupName,
+  f_getUserFIO(tf.col_uploaderID) AS col_uploader,
+  f_getUserFIO(tf.col_deleterID) AS col_deleter,
+  IF(tf.col_parentID IS NOT NULL,NULL,(SELECT col_parentID FROM tbl_files WHERE col_fID = tf.col_parentID)) AS col_parent
+FROM 
+  tbl_doc_group_access tdga,
+  tbl_hb_doc_group thdg,
+  tbl_files tf
+WHERE
+   tdga.col_access > 0
+  AND tdga.col_roleID = $role
+  AND tf.col_groupID = tdga.col_dgID
+  AND thdg.col_dgID = tdga.col_dgID
+  AND tf.col_fID = $id")->fetch(static::class);
     }
 
     /**

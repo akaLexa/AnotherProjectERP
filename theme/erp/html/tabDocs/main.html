@@ -28,16 +28,33 @@
                 <table class="table table-hover erpTable">
                     <thead>
                     <tr>
-                        <th style="width: 50%">Название</th>
+                        <th style="width: 55%">Название</th>
                         <th style="width: 10%;">Размер</th>
                         <th style="width: 15%">Загружено</th>
                         <th style="width: 15%">Загрузил</th>
-                        <th style="vertical-align: middle;width: 10%;"><b class="glyphicon glyphicon-wrench"></b></th>
+                        <th style="vertical-align: middle;width: 5%;"><input type="checkbox" onchange="docCheckeds(this);" id="_mainCheckerDocs"></th>
                     </tr>
                     </thead>
                     <tbody id="tabDocsContent"></tbody>
+                    <tfoot>
+                    <tr >
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td colspan="2" style="text-align: right;display:none;" id="docFoot">
+                            <select class="form-control inlineBlock" id = '_actionFileType' style="width:120px;">
+                                <option value="1">Скачать</option>
+                                <option value="2">Удалить</option>
+                            </select>
+                            <button class="btn btn-default" type="button" onclick="fileAccept();">
+                                <b class="glyphicon glyphicon-ok"></b>
+                            </button>
+                        </td>
+                    </tr>
+                    </tfoot>
                 </table>
             </td>
         </tr>
     </table>
+    <form id="docForm" method="post" style="display: none;" target="_blank"></form>
 </div>

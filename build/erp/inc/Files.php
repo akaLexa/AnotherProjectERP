@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\inc;
+use build\erp\main\m\mDocs;
 use mwce\Configs;
 use mwce\Connect;
 use mwce\Exceptions\ModException;
@@ -116,21 +117,22 @@ class Files
     /**
      * выгрузка файлов
      * @param string $name
+     * @param string $ext
      * @param string $destination
      * @throws ModException
      */
-    protected function startDownload($name, $destination)
+    protected function startDownload($name, $ext, $destination)
     {
         if (ob_get_level()) {
             ob_end_clean();
         }
+
+        $ext = strtolower($ext);
         $name = self::filterName($name);
         if (file_exists($destination)) {
-            $m = explode(".", $name);
-            $exe = strtolower(end($m));
 
-            if (isset($this->mimes[$exe])) {
-                $appl = $this->mimes[$exe];
+            if (isset($this->mimes[$ext])) {
+                $appl = $this->mimes[$ext];
             }
             else {
                 $appl = "application/octet-stream";
@@ -151,7 +153,7 @@ class Files
     }
 
 
-    //region project Upload
+    //region project
     /**
      * @param int $project
      * @param int $group
@@ -208,17 +210,110 @@ class Files
         else
             throw new ModException('Нет выбранных файлов!');
     }
+
+    public function projectDownloadFile($id,$role){
+        $fInfo = mDocs::getFileByRole($id,$role);
+        if(!empty($fInfo)){
+            $path = self::$docPath . DIRECTORY_SEPARATOR . 'projects' . DIRECTORY_SEPARATOR . $fInfo['col_projectID'] . DIRECTORY_SEPARATOR . $fInfo['col_groupID']. DIRECTORY_SEPARATOR.$id;
+            if(file_exists($path)){
+                self::startDownload($fInfo['col_fName'],$fInfo['col_ext'],$path);
+            }
+            else
+                throw new ModException('Файл #'.$id.' не найден.');
+        }
+        else{
+            throw new ModException('Файл #'.$id.' не найден или у Вас нет к нему доступа.');
+        }
+    }
+
+    public function projectFolderDownload($id,$role){
+        $files = mDocs::getModels(['role'=>$role,'subId'=>$id]);
+        if(!empty($files)){
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+
+            $inputedN = array();
+
+            $tmpName = self::$docPath . DIRECTORY_SEPARATOR .sha1(time());
+
+            $zip = new \ZipArchive();
+            $zip->open($tmpName, \ZipArchive::CREATE);
+            foreach ($files as $file) {
+                //todo: не забыть дописать
+                if($file['col_isFolder'] == 1)
+                    continue;
+                if(!in_array($file['col_fName'],$inputedN)){
+                    $inputedN[] = $file['col_fName'];
+                }
+                else{
+                    $i = 0;
+                    $fn = $file['col_fName'];
+                    while (in_array($fn,$inputedN)){
+                        $i++;
+                        $fn .='_'.$i;
+                    }
+
+                    $file['col_fName'] = $fn;
+                }
+                $zip->addFile(self::$docPath . DIRECTORY_SEPARATOR . 'projects' . DIRECTORY_SEPARATOR . $file['col_projectID'] . DIRECTORY_SEPARATOR . $file['col_groupID']. DIRECTORY_SEPARATOR.$file['col_fID'],$file['col_fName']);
+            }
+            $zip->close();
+
+            header('Content-Type: application/zip');
+            header('Content-disposition: attachment; filename=archive.zip');
+            header('Content-Length: ' . filesize($tmpName));
+            readfile($tmpName);
+
+            unlink($tmpName);
+            exit;
+        }
+        throw new ModException('Пустая папка');
+    }
+
+    public function projectFilesDownload($ids,$role){
+        $files = mDocs::getModels(['role'=>$role,'files'=>$ids]);
+        if(!empty($files)){
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+
+            $inputedN = array();
+
+            $tmpName = self::$docPath . DIRECTORY_SEPARATOR .sha1(time());
+
+            $zip = new \ZipArchive();
+            $zip->open($tmpName, \ZipArchive::CREATE);
+            foreach ($files as $file) {
+                //todo: не забыть дописать
+                if($file['col_isFolder'] == 1)
+                    continue;
+                if(!in_array($file['col_fName'],$inputedN)){
+                    $inputedN[] = $file['col_fName'];
+                }
+                else{
+                    $i = 0;
+                    $fn = $file['col_fName'];
+                    while (in_array($fn,$inputedN)){
+                        $i++;
+                        $fn .='_'.$i;
+                    }
+
+                    $file['col_fName'] = $fn;
+                }
+                $zip->addFile(self::$docPath . DIRECTORY_SEPARATOR . 'projects' . DIRECTORY_SEPARATOR . $file['col_projectID'] . DIRECTORY_SEPARATOR . $file['col_groupID']. DIRECTORY_SEPARATOR.$file['col_fID'],$file['col_fName']);
+            }
+            $zip->close();
+
+            header('Content-Type: application/zip');
+            header('Content-disposition: attachment; filename=archive.zip');
+            header('Content-Length: ' . filesize($tmpName));
+            readfile($tmpName);
+
+            unlink($tmpName);
+            exit;
+        }
+        throw new ModException('Пустая папка');
+    }
     //endregion
-
-    /**
-     * ini_set('implicit_flush', true);
-    // ini_set("upload_max_filesize", "600M");
-    // ini_set("memory_limit", "656M");
-    //ini_set("post_max_size", "300M");
-
-    ob_implicit_flush(true);
-
-
-
-     */
 }
