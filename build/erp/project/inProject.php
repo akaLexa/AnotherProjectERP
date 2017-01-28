@@ -85,6 +85,22 @@ class inProject extends eController
                         ->set('planStarted','');
                 }
 
+                //разрешить кнопку останова/запуска плана проекта
+                if($project['col_founderID'] == router::getCurUser()){
+                    $this->view->set('btPlanStageDis','');
+                }
+                else{
+                    $this->view->set('btPlanStageDis','DISABLED');
+                }
+
+                //разрешить ручное переключение стадии в случае, если человек является ответственным
+                if($project['col_ProjectPlanState'] == 0  && $project['col_respID'] == router::getCurUser()){
+                    $this->view->set('btChangeStageDis','');
+                }
+                else{
+                    $this->view->set('btChangeStageDis','DISABLED');
+                }
+
 
                 $this->view
                     ->add_dict($project)

@@ -5,9 +5,9 @@
     <div style="margin-left: 10px; display: inline-block"><h4><small>Ответственный:</small> |col_respName|</h4></div>
 </div>
 <div style="margin-bottom: 8px;margin-top: 8px;padding-left:10px;padding-right:10px;">
-    <button class="btn btn-default">Сменить стадию</button>
+    <button class="btn btn-default" |btChangeStageDis| >Сменить стадию</button>
     <button class="btn btn-default" onclick="addTask();"><b class="glyphicon glyphicon-plus"></b> Задача</button>
-    <button class="btn btn-default"><b class="glyphicon glyphicon-play |planStarted|"></b>/<b class="glyphicon glyphicon-stop |planStoped|"></b> План проекта</button>
+    <button class="btn btn-default" |btPlanStageDis| onclick="changeStageTask()"><b id="glyphPlanIconStart" class="glyphicon glyphicon-play |planStarted|"></b>/<b id="glyphPlanIconStop" class="glyphicon glyphicon-stop |planStoped|"></b> План проекта</button>
     <button class="btn btn-default" onclick="$('#tabMessages').tab('show');"><b class="glyphicon glyphicon-pencil"></b> Сообщение</button>
 </div>
 <div>

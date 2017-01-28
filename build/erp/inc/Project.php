@@ -37,6 +37,10 @@ class Project extends Model
         return self::getCurModel($prId);
     }
 
+    /**
+     * @param null|array $params
+     * @return mixed|Project
+     */
     public static function getModels($params = null)
     {
         if(empty($params['pageFrom']))
@@ -70,6 +74,48 @@ limit {$params['pageFrom']},{$params['pageTo']}")->fetchAll(static::class);
     }
 
     /**
+     * получить конткретынй проект по его id
+     * @param int $id
+     * @return Project
+     */
+    public static function getCurModel($id)
+    {
+        $db = Connect::start();
+        return $db->query("SELECT 
+  tp.*,
+  tpn.col_serNum,
+  ths.col_StatusName,
+  thps.col_StageName,
+  tps.col_statusID,
+  tps.col_respID,
+  f_getUserFIO(tps.col_respID) as col_respName,
+  f_getUserFIO(tp.col_founderID) as col_founder,
+  tps.col_dateCreate, 
+  tps.col_dateStart, 
+  tps.col_dateEnd, 
+  tps.col_dateEndPlan, 
+  tps.col_dateEndFact, 
+  tps.col_comment, 
+  tps.col_stageID, 
+  tps.col_pstageID, 
+  tps.col_prevStageID
+FROM 
+  tbl_project tp,
+  tbl_project_num tpn,
+  tbl_project_stage tps,
+  tbl_hb_project_stage thps,
+  tbl_hb_status ths
+WHERE 
+  tpn.col_pnID = tp.col_pnID 
+  AND tps.col_projectID = tp.col_projectID
+  AND tps.col_statusID IN (1,4)
+  AND thps.col_StageID = tps.col_stageID
+  AND ths.col_StatusID = tps.col_statusID
+  AND tp.col_projectID =".$id)->fetch(static::class);
+    }
+
+    /**
+     * кол-во проектов согласно фильтру
      * @param null|array $params
      * @return mixed
      */
@@ -151,46 +197,6 @@ WHERE
             self::$projectCfg = Configs::readCfg('project',tbuild);
         }
         return self::$projectCfg;
-    }
-
-    /**
-     * получить конткретынй проект по его id
-     * @param int $id
-     * @return Project
-     */
-    public static function getCurModel($id)
-    {
-        $db = Connect::start();
-        return $db->query("SELECT 
-  tp.*,
-  tpn.col_serNum,
-  ths.col_StatusName,
-  thps.col_StageName,
-  tps.col_statusID,
-  tps.col_respID,
-  f_getUserFIO(tps.col_respID) as col_respName,
-  tps.col_dateCreate, 
-  tps.col_dateStart, 
-  tps.col_dateEnd, 
-  tps.col_dateEndPlan, 
-  tps.col_dateEndFact, 
-  tps.col_comment, 
-  tps.col_stageID, 
-  tps.col_pstageID, 
-  tps.col_prevStageID
-FROM 
-  tbl_project tp,
-  tbl_project_num tpn,
-  tbl_project_stage tps,
-  tbl_hb_project_stage thps,
-  tbl_hb_status ths
-WHERE 
-  tpn.col_pnID = tp.col_pnID 
-  AND tps.col_projectID = tp.col_projectID
-  AND tps.col_statusID IN (1,4)
-  AND thps.col_StageID = tps.col_stageID
-  AND ths.col_StatusID = tps.col_statusID
-  AND tp.col_projectID =".$id)->fetch(static::class);
     }
 
     /**

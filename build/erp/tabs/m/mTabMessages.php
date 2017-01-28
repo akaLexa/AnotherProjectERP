@@ -42,7 +42,7 @@ order by tpm.col_dateCreate DESC")->fetchAll(static::class);
 
     public static function getCurModel($id)
     {
-        // TODO: Implement getCurModel() method.
+
     }
 
     /**
@@ -69,6 +69,7 @@ order by tpm.col_dateCreate DESC")->fetchAll(static::class);
     }
 
     /**
+     * добавить запись на вкладку событий в проекте
      * @param int $project
      * @param string $text
      */

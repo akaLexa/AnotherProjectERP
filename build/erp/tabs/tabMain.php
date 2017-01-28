@@ -76,9 +76,7 @@ class tabMain extends AprojectTabs
                 $params['col_founderID'] = $_POST['curManager'];
                 $project->save($params);
             }
-
         }
-
     }
 
     /**

@@ -1,4 +1,5 @@
 var currentTab;
+var curState = |col_ProjectPlanState|;
 
 $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     var curID = e.target.id;
@@ -12,6 +13,57 @@ $(document).ready(function () {
 
     $(window.location.hash).tab('show');
 });
+
+function agreeStage(state) {
+    if (state == 1){
+
+    }
+    else{
+        if(document.querySelector('#disagreeDesc').value.trim().length>0){
+
+        }
+        else
+            mwce_alert('Чтобы отказаться от стадии, необходимо указать причину отказа.','Внимание!');
+    }
+}
+
+function changeStageTask() {
+
+    if(curState == 1){
+        mwce_confirm({
+            title:'Внимание',
+            text:'Вы уверены, что хотите отключить выполнение плана?',
+            buttons:{
+                'Да':function () {
+                    $('#glyphPlanIconStart').removeClass('planStarted');
+                    $('#glyphPlanIconStop').addClass('planStopped');
+                    curState = 0;
+                    mwce_confirm.close();
+                },
+                'Нет':function () {
+                    mwce_confirm.close();
+                }
+            }
+        });
+    }
+    else{
+        mwce_confirm({
+            title:'Внимание',
+            text:'Вы уверены, что хотите включить выполнение плана? Вы не сможете редактировать план, пока он запущен!',
+            buttons:{
+                'Да':function () {
+                    $('#glyphPlanIconStart').addClass('planStarted');
+                    $('#glyphPlanIconStop').removeClass('planStopped');
+                    curState = 1;
+                    mwce_confirm.close();
+                },
+                'Нет':function () {
+                    mwce_confirm.close();
+                }
+            }
+        });
+    }
+}
 
 function genTabContent(tab) {
     if(tab.length >0){
@@ -76,7 +128,9 @@ function tabMainSave() {
         type:'POST',
         data:$('#tabMainForm').serialize(),
         before:function () {
-            document.querySelector('#saveMainTabNoticer').innerHTML='Сохраняю...';
+            $('#saveMainTabNoticer').empty();
+            $('#saveMainTabNoticer').show();
+            $('#saveMainTabNoticer').append('Сохраняю...');
         },
         callback:function (r) {
             try{
@@ -89,7 +143,8 @@ function tabMainSave() {
 
             }
             finally {
-                document.querySelector('#saveMainTabNoticer').innerHTML = '';
+                $('#saveMainTabNoticer').empty();
+                $('#saveMainTabNoticer').append('Сохранено').fadeOut(800);
             }
         }
     });
