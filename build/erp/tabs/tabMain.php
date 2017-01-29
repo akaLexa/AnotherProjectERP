@@ -13,6 +13,7 @@ use build\erp\inc\User;
 use build\erp\tabs\m\mTabMain;
 use mwce\html_;
 use mwce\router;
+use mwce\Tools;
 
 
 class tabMain extends AprojectTabs
@@ -23,6 +24,10 @@ class tabMain extends AprojectTabs
         'curManager' => ['type'=>self::INT],
     );
 
+    protected $getField = array(
+        'type' => ['type'=>self::INT],
+        'desc' => ['type'=>self::STR],
+    );
 
 
     /**
@@ -48,10 +53,47 @@ class tabMain extends AprojectTabs
                 $this->view->set('customVizStyle','display:none');
             }
 
+            if($project['col_statusID'] == 4 && $project['col_respID'] == router::getCurUser()){
+                $this->view->set('chooseStageStyle','');
+            }
+            else{
+                $this->view->set('chooseStageStyle','display:none;');
+            }
+
             $this->view
                 ->add_dict($project)
                 ->set('mngrList',html_::select($users,'curManager',$project['col_founderID'],'class="form-control inlineBlock"'))
                 ->out('main',$this->className);
+        }
+    }
+
+    public function stageAction(){
+        if(!empty($_GET['type'])){
+            $project = mTabMain::getCurModel($_GET['id']);
+            if($project['col_statusID'] == 4 && $project['col_respID'] == router::getCurUser()){
+                switch ($_GET['type']){
+                    case 1:
+                        $project->stageAgree();
+                        echo json_encode(['success'=>1]);
+                        break;
+                    case 2:
+                        if(!empty($_GET['desc'])){
+                            $project->stageDisagree($_GET['desc']);
+                            echo json_encode(['success'=>1]);
+                        }
+                        else{
+                            echo json_encode(['error'=>'Не указана причина отказа']);
+                            exit;
+                        }
+                        break;
+                    default:
+                        echo json_encode(['error'=>'Ошибка данных!']);
+                        exit;
+                        break;
+                }
+            }
+            else
+                echo json_encode(['error'=>'Только ответственный за стадию может принимать решение!']);
         }
     }
 

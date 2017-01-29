@@ -15,16 +15,31 @@ $(document).ready(function () {
 });
 
 function agreeStage(state) {
-    if (state == 1){
 
+    var desc = document.querySelector('#disagreeDesc').value.trim();
+
+    if(state == 2 && desc.length<1){
+        mwce_alert('Чтобы отказаться от стадии, необходимо указать причину отказа.','Внимание!');
+        return;
     }
-    else{
-        if(document.querySelector('#disagreeDesc').value.trim().length>0){
 
+    genIn({
+        noresponse:true,
+        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=stageAction&type='+state+'&desc='+desc,
+        callback:function (r) {
+            try{
+                var receive = JSON.parse(r);
+                if(receive['error'] != undefined)
+                    mwce_alert(receive['error'],'Внимание!');
+                else{
+                    window.location.reload();
+                }
+            }
+            catch (e){
+                console.error(e.message);
+            }
         }
-        else
-            mwce_alert('Чтобы отказаться от стадии, необходимо указать причину отказа.','Внимание!');
-    }
+    });
 }
 
 function changeStageTask() {
