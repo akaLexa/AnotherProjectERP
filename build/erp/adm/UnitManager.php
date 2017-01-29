@@ -135,7 +135,7 @@ class UnitManager extends eController
 
                 if($_GET['id'] != 2 && $_GET['id'] != 4) // у гостей и у группы "Все" не может быть ролей
                 {
-                    $list = mUserRole::getModels();
+                    $list = mUserRole::getEditModels($_GET['id']);
 
                     if(!empty($list)){ //отображение доступных ролей для привязки
                         $ai = new \ArrayIterator($list);

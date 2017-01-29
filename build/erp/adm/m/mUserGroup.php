@@ -94,8 +94,8 @@ WHERE
      */
     public function edit($name,$roles = null){
         $this->db->exec("UPDATE tbl_user_groups SET col_gName = '$name' WHERE col_gID =".$this['col_gID']);
+        $this->db->exec("DELETE FROM tbl_roles_in_group  WHERE col_gID =".$this['col_gID']);
         if(is_array($roles)){
-            $this->db->exec("DELETE FROM tbl_roles_in_group  WHERE col_gID =".$this['col_gID']);
             self::addRoles($roles);
         }
     }

@@ -41,6 +41,19 @@ WHERE
 ORDER BY ur.col_roleName")->fetchAll(static::class);
     }
 
+    public static function getEditModels($group){
+        $db = Connect::start();
+
+        return $db->query("SELECT 
+  ur.* 
+FROM 
+ tbl_user_roles ur 
+WHERE 
+  ur.col_roleID  IN (SELECT col_roleID FROM tbl_roles_in_group WHERE col_gID = $group)
+  OR ur.col_roleID NOT IN (SELECT col_roleID FROM tbl_roles_in_group)
+ORDER BY ur.col_roleName")->fetchAll(static::class);
+    }
+
     /**
      * список ролей
      * @return array
