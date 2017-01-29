@@ -91,21 +91,36 @@ AND tu.col_uID = $id")->fetch(static::class);
 
     /**
      * Список ролей
+     * @param null $grpID
      * @return array
      */
-    public static function getRoleList(){
-        if(empty(self::$sdata['RoleList'])){
+    public static function getRoleList($grpID = null){
+        if(is_null($grpID))
+            $grpID =0;
+
+        if(empty(self::$sdata['RoleList'][$grpID])){
             $db = Connect::start();
             $roles = array();
-            $query = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName");
+            if($grpID < 1)
+                $query = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName");
+            else
+                $query = $db->query("SELECT 
+  tur.* 
+FROM 
+  tbl_user_roles tur,
+  tbl_roles_in_group rig
+WHERE
+  tur.col_roleID = rig.col_roleID
+  and rig.col_gID = $grpID");
+
             while ($res = $query->fetch()){
                 $roles[$res['col_roleID']] = $res['col_roleName'];
             }
 
-            self::$sdata['RoleList'] = $roles;
-            asort(self::$sdata['RoleList']);
+            self::$sdata['RoleList'][$grpID] = $roles;
+            asort(self::$sdata['RoleList'][$grpID]);
         }
-        return self::$sdata['RoleList'];
+        return self::$sdata['RoleList'][$grpID];
     }
 
     /**

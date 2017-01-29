@@ -28,6 +28,7 @@ class ProjectManager extends eController
     protected $getField = array(
         'id' => ['type'=>self::INT],
         'tab' => ['type'=>self::STR],
+        'curGrp' => ['type'=>self::STR],
     );
 
     protected $postField = array(
@@ -107,6 +108,65 @@ class ProjectManager extends eController
                 }
                 elseif (!empty($_POST['stageName'])){
                     $stage->edit($_POST['stageName']);
+                }
+            }
+        }
+    }
+
+    /**
+     * редактирование доступов
+     */
+    public function actionStageAccessEdit(){
+        if(!empty($_GET['id'])){
+            $stage = mStages::getCurModel($_GET['id']);
+
+            if(empty($_GET['curGrp'])){
+                $grps = User::getGropList();
+                $grps[0] = '...';
+                $this->view
+                    ->set('groupList',html_::select($grps,'curGrp',0,'class="form-control inlineBlock" style="width:280px;" onchange="editStageAccessRole('.$_GET['id'].',this.value)"'))
+                    ->out('projectStageEditAccessForm',$this->className);
+            }
+            else if(!empty($_GET['curGrp'])){
+                $checked = array();
+
+                if(empty($_POST)){
+                    $ai = new \ArrayIterator($_POST);
+
+                    foreach ($ai as $pId=>$pVal){
+                        if(strpos($pId,'role_') !== false){
+                            $checked[] = (int)$pVal;
+                        }
+                    }
+                }
+                $stage->checkRoleAccess($_GET['curGrp'],$checked);
+            }
+        }
+    }
+
+    /**
+     * пользователи к выбранной группе на стадии
+     */
+    public function actionGetStageRespUsers(){
+        if(!empty($_GET['id']) && !empty($_GET['curGrp'])){
+            $stage = mStages::getCurModel($_GET['id']);
+            $stage->checkGroupAccess($_GET['curGrp']);
+
+            $checkedRoles = $stage->getAccessedUsers($_GET['curGrp']);
+            $roles = User::getRoleList($_GET['curGrp']);
+
+            if(!empty($roles)){
+                foreach ($roles as $rid=>$rval){
+                    if(in_array($rid,$checkedRoles)){
+                        $this->view->set('checked','checked');
+                    }
+                    else{
+                        $this->view->set('checked','');
+                    }
+
+                    $this->view
+                        ->set(['groupName'=>$rval,'roleID'=>$rid])
+                        ->out('roleList',$this->className);
                 }
             }
         }

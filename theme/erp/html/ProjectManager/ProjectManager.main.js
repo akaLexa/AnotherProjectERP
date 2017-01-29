@@ -76,6 +76,48 @@ function editStage(id) {
         }
     });
 }
+function editStageAccess(id) {
+    $('#forDialogs').dialog({
+        title:'Редактировать доступ к стадии',
+        modal:true,
+        resizable:false,
+        width:490,
+        buttons:{
+            'Сохранить':function () {
+                genIn({
+                    noresponse: true,
+                    address: '|site|page/|currentPage|/StageAccessEdit?id=' + id+'&curGrp=' + document.querySelector('#curGrp').value,
+                    type: 'POST',
+                    data: $('#editAccessStageF').serialize(),
+                    callback: function () {
+                        $('#forDialogs').dialog('close');
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            document.querySelector('#forDialogs').style.opacity = 1;
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/StageAccessEdit?id='+id,
+                loadicon:'Загружаю...'
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function editStageAccessRole(stage,group) {
+    genIn({
+        element:'editAccessStageF',
+        address:'|site|page/|currentPage|/GetStageRespUsers?id='+stage+'&curGrp='+group,
+        loadicon:'Загружаю...'
+    })
+}
 function addStage() {
     $('#forDialogs').dialog({
         title:'Добавить стадию',
