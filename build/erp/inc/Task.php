@@ -294,7 +294,7 @@ from
   tbl_tasks tt
 WHERE
   tt.col_nextID = {$this['col_taskID']}
-  AND tt.col_StatusID = 5")->fetchAll();
+  AND tt.col_StatusID in (1,5)")->fetchAll();
             if(!empty($childTasks)){
                 $pool = '';
 
