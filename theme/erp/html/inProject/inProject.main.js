@@ -14,6 +14,9 @@ $(document).ready(function () {
     $(window.location.hash).tab('show');
 });
 
+function changeProjectStage() {
+    
+}
 function agreeStage(state) {
 
     var desc = document.querySelector('#disagreeDesc').value.trim();

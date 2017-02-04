@@ -93,14 +93,6 @@ class inProject extends eController
                     $this->view->set('btPlanStageDis','DISABLED');
                 }
 
-                //разрешить ручное переключение стадии в случае, если человек является ответственным
-                if($project['col_ProjectPlanState'] == 0  && $project['col_respID'] == router::getCurUser()){
-                    $this->view->set('btChangeStageDis','');
-                }
-                else{
-                    $this->view->set('btChangeStageDis','DISABLED');
-                }
-
 
                 $this->view
                     ->add_dict($project)
