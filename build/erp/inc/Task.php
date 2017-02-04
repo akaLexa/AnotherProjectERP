@@ -11,6 +11,7 @@ use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
 use mwce\router;
+use mwce\Tools;
 use mwce\traits\tInsert;
 use mwce\traits\tUpdate;
 
@@ -280,11 +281,39 @@ WHERE
 
     public function finish($reason = null){
         if(!is_null($reason))
-            $reason = "col_lateFinishDesc='$reason',";
+            $reason = "col_lateFinishDesc='<strong>Причина просрочки:</strong><hr style=\"margin: 0 3px;\">$reason',";
         else
             $reason = '';
 
         $this->db->exec("UPDATE tbl_tasks SET col_endFact = NOW(), $reason col_StatusID = 3 WHERE col_taskID = ".$this['col_taskID']);
+        //задача из плана
+        if(!empty($this['col_startPlan'])){
+            $childTasks = $this->db->query("SELECT 
+  *
+from 
+  tbl_tasks tt
+WHERE
+  tt.col_nextID = {$this['col_taskID']}
+  AND tt.col_StatusID = 5")->fetchAll();
+            if(!empty($childTasks)){
+                $pool = '';
+
+                foreach ($childTasks as $childTask) {
+                    //завершение вместе
+                    if($childTask['col_bonding'] == 3){
+                        $pool.=" UPDATE tbl_tasks SET col_endFact = NOW(), col_lateFinishDesc='Завершена из-зи завершения основной задачи' col_StatusID = 3 WHERE col_taskID = {$childTask['col_taskID']} ;";
+                    }
+                    //завершилася главная, началась зависимая
+                    elseif ($childTask['col_bonding'] == 1){
+                        $pool.=" UPDATE tbl_tasks SET col_startFact = NOW(), col_StatusID = 1 WHERE col_taskID = {$childTask['col_taskID']} OR (col_seq = {$childTask['col_seq']} AND col_bonding = 2); ";
+                    }
+                }
+
+                if(!empty($pool)){
+                    $this->db->exec($pool);
+                }
+            }
+        }
     }
 
     protected function _adding($name, $value)

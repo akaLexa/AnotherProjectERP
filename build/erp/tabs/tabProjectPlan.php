@@ -144,7 +144,7 @@ class tabProjectPlan extends AprojectTabs
                                 ;
                             }
 
-                            if(strtotime($item['col_taskEnd'])<time())
+                            if(strtotime(date('Y-m-d',strtotime($item['col_taskEnd'])))<strtotime(date('Y-m-d',strtotime('NOW'))))
                                 $this->view->set('oldDateRed','color:red;');
                             else
                                 $this->view->set('oldDateRed','');

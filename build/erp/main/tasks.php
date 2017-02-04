@@ -223,6 +223,7 @@ class tasks extends eController
                     $this->view->set('curPlanEndStyle','danger');
                 }
 
+
                 self::actionShowComment($task['col_taskID']);
 
                 $this->view
