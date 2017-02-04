@@ -320,7 +320,7 @@ class ProjectManager extends eController
             $boolVars = array(0=>'Нет',1=>'Да');
 
             $groups = array();
-            $groups_ = User::getGropList();
+            $groups_ = User::getGropList(false);
 
             foreach ($groups_ as $num=>$group){
                 $groups[] = array($group,$num);
@@ -355,7 +355,9 @@ class ProjectManager extends eController
                                         else{
                                             $tmVal[$id][2] = false;
                                         }
+
                                     }
+
                                     $item['value'] = html_::checkGroup($pName,$tmVal," style='height:120px; width:auto; overflow-y:auto;' ");
                                     break;
                                 default:

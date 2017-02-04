@@ -20,7 +20,7 @@ class tabHistory extends AprojectTabs
      */
     public function In($params = null)
     {
-        $list = mTabHistory::getModels(['col_projectID'=>$_GET['id']]);
+        $list = mTabHistory::getModels(['col_projectID'=>$this->project['col_projectID']]);
         if(!empty($list)){
             $ai = new \ArrayIterator($list);
             $curStage = 0;
@@ -87,6 +87,5 @@ class tabHistory extends AprojectTabs
             $this->view->setFContainer('historyProject',true);
         }
         $this->view->out('main',$this->className);
-//historyProject
     }
 }

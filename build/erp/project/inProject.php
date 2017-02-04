@@ -120,7 +120,7 @@ class inProject extends eController
             $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
 
             if(class_exists($cPath)){
-                $tab = new $cPath($this->view, $this->pages);
+                $tab = new $cPath($this->view, $this->pages,$_GET['id']);
                 if($tab instanceof iProjectTabs){
                     $tab->In($_GET['id']);
                 }
@@ -141,12 +141,16 @@ class inProject extends eController
     }
 
     public function actionExecAction(){
-        if(!empty($_GET['id']) && !empty($_GET['tab']) && !empty($_GET['act'])){
+        if(!empty($_GET['id']) && !empty($_GET['tab'])){
 
             $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
 
+            if(empty($_GET['act']))
+                $_GET['act'] = 'Index';
+
             if(class_exists($cPath)){
-                $tab = new $cPath($this->view, $this->pages);
+                $tab = new $cPath($this->view, $this->pages,$_GET['id']);
+
                 if($tab instanceof iProjectTabs){
                     $action = $_GET['act'];
                     $tab->$action();

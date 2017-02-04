@@ -16,6 +16,10 @@ abstract class AprojectTabs extends eController implements iProjectTabs
      * @var array
      */
     protected $props;
+    /**
+     * @var Project
+     */
+    protected $project;
 
     /**
      * настройки для модуля
@@ -33,5 +37,24 @@ abstract class AprojectTabs extends eController implements iProjectTabs
         }
         else
             return [];
+    }
+
+    /**
+     * default action
+     */
+    public function Index(){
+
+    }
+
+    /**
+     * AprojectTabs constructor.
+     * @param \mwce\content $view
+     * @param string $pages
+     * @param int $project
+     */
+    public function __construct(\mwce\content $view, $pages, $project)
+    {
+        parent::__construct($view, $pages);
+        $this->project = Project::getCurModel($project);
     }
 }

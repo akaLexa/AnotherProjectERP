@@ -112,7 +112,7 @@ class tabDocs extends AprojectTabs
                     !empty($_POST['chosenFolder'])? $_POST['chosenFolder'] : 0,
                     router::getCurUser(),
                     $_POST['curChosenDg'],
-                    $_GET['id']
+                    $this->project['col_projectID']
                     )]);
         }
     }

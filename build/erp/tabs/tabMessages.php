@@ -66,8 +66,8 @@ class tabMessages extends AprojectTabs
     }
 
     public function getList(){
-        if(!empty($_GET['id'])){
-            $list = mTabMessages::getModels(['projectID'=>$_GET['id']]);
+        if(!empty($this->project['col_projectID'])){
+            $list = mTabMessages::getModels(['projectID'=>$this->project['col_projectID']]);
             if(!empty($list)){
                 foreach ($list as $item) {
                     if(file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'imgs' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . $item['col_AuthorID'] .'.png')){

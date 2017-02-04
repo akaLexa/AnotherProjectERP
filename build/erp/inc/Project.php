@@ -33,7 +33,7 @@ class Project extends Model
         $db->exec("INSERT INTO tbl_project(col_projectName,col_pnID,col_founderID) VALUE('$prName',f_setProjectNum($serialNum),$founder)");
         $prId = $db->lastId('tbl_project');
         $cfg = self::getCfg();
-        $db->exec("INSERT INTO tbl_project_stage (col_projectID,col_statusID,col_respID,col_dateStart,col_dateEnd,col_comment,col_stageID,col_dateEndPlan) VALUE ($prId,1,".router::getCurUser().",NOW(),NOW(),'Создан автоматически при заведении проекта',{$cfg['startStageID']}, DATE_ADD(NOW(), INTERVAL {$cfg['countDefStartDays']} DAY));");
+        $db->exec("INSERT INTO tbl_project_stage (col_projectID,col_statusID,col_respID,col_dateStart,col_dateEnd,col_comment,col_stageID,col_dateEndPlan,col_dateStartPlan) VALUE ($prId,1,".router::getCurUser().",NOW(),NOW(),'Создан автоматически при заведении проекта.',{$cfg['startStageID']}, DATE_ADD(NOW(), INTERVAL {$cfg['countDefStartDays']} DAY),NOW());");
         return self::getCurModel($prId);
     }
 

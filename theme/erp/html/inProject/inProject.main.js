@@ -43,17 +43,56 @@ function agreeStage(state) {
 }
 
 function changeStageTask() {
-
+    var planDate = new Date('|col_dateEndPlan|');
+    var nowDate = new Date();
+    var text = '';
+    //отключение
     if(curState == 1){
+        text = 'Вы уверены, что хотите отключить выполнение плана?' +
+            ' <textarea id="descPlanArea" class="form-control" style=" width:100%; height: 100px;" placeholder="Пожалуйста, укажите причину отключения автоплана"></textarea>';
+
         mwce_confirm({
             title:'Внимание',
-            text:'Вы уверены, что хотите отключить выполнение плана?',
+            text:text,
             buttons:{
                 'Да':function () {
-                    $('#glyphPlanIconStart').removeClass('planStarted');
-                    $('#glyphPlanIconStop').addClass('planStopped');
-                    curState = 0;
-                    mwce_confirm.close();
+                    if(document.querySelector('#descPlanArea').value.trim().length <3){
+                        document.querySelector('#descPlanArea').placeholder = 'Пожалуйста, укажите причину отключения автоплана. Параметр обязателен к заполнению!';
+                    }
+                    else{
+
+                        genIn({
+                            noresponse:true,
+                            address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=switchPlan',
+                            type:'POST',
+                            data:'planState=0&descState='+document.querySelector('#descPlanArea').value.trim(),
+                            callback:function (r) {
+                                try{
+                                    var receive = JSON.parse(r);
+                                    if(receive['error'] != undefined){
+                                        mwce_alert(receive['error'],'Внимание!');
+                                    }
+                                    else if(receive['stageIsLate'] != undefined){
+                                        mwce_alert('Не казана причина просрочки стадии','Внимание!');
+                                    }
+                                    else{
+                                        $('#glyphPlanIconStart').removeClass('planStarted');
+                                        $('#glyphPlanIconStop').addClass('planStopped');
+                                        curState = 0;
+                                        window.location.reload();
+                                    }
+                                }
+                                catch(e) {
+
+                                }
+                                finally {
+                                    mwce_confirm.close();
+
+                                }
+                            }
+                        });
+
+                    }
                 },
                 'Нет':function () {
                     mwce_confirm.close();
@@ -62,15 +101,54 @@ function changeStageTask() {
         });
     }
     else{
+
+        text = 'Вы уверены, что хотите включить автовыполнение плана? После включения данной функции проект <u>автоматически перейдет на следующую стадию</u> и Вы <u>не сможете редактировать план</u>, пока он запущен!';
+        if(nowDate.getTime() > planDate.getTime())
+            text+= '<textarea id="descStageArea" class="form-control" style=" width:100%; height: 100px;" placeholder="Пожалуйста, укажите причину просрочки стадии. Этот параметр обязателен!"></textarea>';
+
         mwce_confirm({
             title:'Внимание',
-            text:'Вы уверены, что хотите включить выполнение плана? Вы не сможете редактировать план, пока он запущен!',
+            text:text,
             buttons:{
                 'Да':function () {
-                    $('#glyphPlanIconStart').addClass('planStarted');
-                    $('#glyphPlanIconStop').removeClass('planStopped');
-                    curState = 1;
-                    mwce_confirm.close();
+                    var dataString = '';
+
+                    if(document.querySelector('#descStageArea')!=undefined){
+                        if(document.querySelector('#descStageArea').value.trim().length <3)
+                            return;
+                        else
+                            dataString = '&descStage='+document.querySelector('#descStageArea').value.trim();
+                    }
+
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=switchPlan',
+                        type:'POST',
+                        data:'planState=1' + dataString,
+                        callback:function (r) {
+                            try{
+                                var receive = JSON.parse(r);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Внимание!');
+                                }
+                                else if(receive['stageIsLate'] != undefined){
+                                    mwce_alert('Не указана причина просрочки стадии','Внимание!');
+                                }
+                                else{
+                                    $('#glyphPlanIconStart').addClass('planStarted');
+                                    $('#glyphPlanIconStop').removeClass('planStopped');
+                                    curState = 1;
+                                    window.location.reload();
+                                }
+                            }
+                            catch(e) {
+
+                            }
+                            finally {
+                                mwce_confirm.close();
+                            }
+                        }
+                    });
                 },
                 'Нет':function () {
                     mwce_confirm.close();
@@ -277,7 +355,7 @@ function tabProjectPlanDeleteStage(stageID){
             'Да':function () {
                 genIn({
                     noresponse:true,
-                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=deleteStage',
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=deleteStage',
                     type:'POST',
                     callback:function(r) {
                         try{
@@ -307,7 +385,7 @@ function tabProjectPlanEdit(id){
         open:function () {
             genIn({
                 element:'forDialogs',
-                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+id+'&act=edit',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+id+'&act=edit',
                 loadicon:'Загружаюсь..',
                 callback:function (r) {
                     try{
@@ -331,7 +409,7 @@ function tabProjectPlanEdit(id){
                 if (document.querySelector('#tbUserList') != undefined) {
                     genIn({
                         element: 'forDialogs',
-                        address: '|site|page/|currentPage|/ExecAction?tab=' + currentTab + '&id=' + id + '&act=edit',
+                        address: '|site|page/|currentPage|/ExecAction?tab=' + currentTab + '&id=|col_projectID|&stageID=' + id + '&act=edit',
                         type: 'POST',
                         data: $('#editStageForm').serialize(),
                         loadicon: 'Загружаюсь..',
@@ -370,7 +448,7 @@ function tabProjectPlanAddTask(stageID) {
         open:function () {
             genIn({
                 element:'forDialogs',
-                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=addStageTask',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=addStageTask',
                 loadicon:'Загружаюсь..',
                 callback:function (r) {
                     try{
@@ -394,7 +472,7 @@ function tabProjectPlanAddTask(stageID) {
                 if(document.querySelector('#tbUserList') != undefined){
                     genIn({
                         noresponse:true,
-                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+stageID+'&act=addStageTask',
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=addStageTask',
                         type:'POST',
                         data:$('#addTaskForm').serialize(),
                         callback:function(r) {
@@ -434,7 +512,7 @@ function tabProjectPlanEditTask(taskID) {
         open:function () {
             genIn({
                 element:'forDialogs',
-                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=editStageTask',
+                address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=editStageTask',
                 loadicon:'Загружаюсь..',
                 callback:function (r) {
                     try{
@@ -458,7 +536,7 @@ function tabProjectPlanEditTask(taskID) {
                 if(document.querySelector('#tbUserList') != undefined){
                     genIn({
                         noresponse:true,
-                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=editStageTask',
+                        address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=editStageTask',
                         type:'POST',
                         data:$('#editTaskForm').serialize(),
                         callback:function(r) {
@@ -501,7 +579,7 @@ function DeleteTask(taskID){
             'Да':function () {
                 genIn({
                     noresponse:true,
-                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id='+taskID+'&act=deleteTask',
+                    address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=deleteTask',
                     type:'POST',
                     callback:function(r) {
                         try{

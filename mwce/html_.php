@@ -121,7 +121,7 @@ class html_
         $i =0;
         foreach ($values as $item){
             $ret.=" <label class='mwceCustomCheckGroup'><span class='mwceCustomCheckGroupSpan'>{$item[0]}</span> <input type='checkbox' name='{$name}_{$i}' value='{$item[1]}'";
-            if($item[2]){
+            if($item[2] == true){
                 $ret.= ' checked ';
             }
             $ret.="> </label>";

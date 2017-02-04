@@ -64,8 +64,8 @@ class tabTasks extends AprojectTabs
     }
 
     public function getList(){
-        if(!empty($_GET['id'])){
-            $params['projectID'] = $_GET['id'];
+        if(!empty($this->project['col_projectID'])){
+            $params['projectID'] = $this->project['col_projectID'];
             if(!empty($_POST['ftaskName']))
                 $params['taskName'] = $_POST['ftaskName'];
 
@@ -108,10 +108,7 @@ class tabTasks extends AprojectTabs
             }
             else
                 $this->view->out('centerEmpty',$this->className);
-
-
         }
-
     }
 
     public function add(){
@@ -121,15 +118,15 @@ class tabTasks extends AprojectTabs
             && !empty($_POST['endDate'])
             && !empty($_POST['endTime'])
         ){
-            $project = Project::getCurModel($_GET['id']);
-            if(empty($project))
+
+            if(empty($this->project))
                 return;
 
             $_POST['duration'] = !empty($_POST['duration']) ? $_POST['duration'] : 1;
             $params = array(
                 'col_taskName' => $_POST['taskName'],
                 'col_respID' => $_POST['tbUserList1'],
-                'col_pstageID' => $project['col_pstageID'],
+                'col_pstageID' => $this->project['col_pstageID'],
                 'col_createDate' => date_::intransDate('now',true),
                 'col_startFact' => date_::intransDate('now',true),
                 'col_autoStart' => date_::intransDate('now + '.$_POST['duration'].' DAY',true),

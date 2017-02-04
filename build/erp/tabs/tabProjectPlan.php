@@ -37,6 +37,11 @@ class tabProjectPlan extends AprojectTabs
         'TaskRespID' => ['type'=>self::INT],
     );
 
+    protected $getField = array(
+        'stageID' => ['type'=>self::INT],
+        'taskID' => ['type'=>self::INT],
+    );
+
     /**
      * главный вид по умолчанию
      * @param null $params
@@ -44,23 +49,22 @@ class tabProjectPlan extends AprojectTabs
      */
     public function In($params = null)
     {
-        if(!empty($_GET['id'])){
-            $project = Project::getCurModel($_GET['id']);
+        if(!empty($this->project['col_projectID'])){
 
-            if(empty($project)){
+            if(empty($this->project)){
                 $this->view
                     ->set(['errTitle'=>'Ошибка','msg_desc'=>'Данные по выбранному проекту не найдены!'])
                     ->out('error');
             }
             else{
 
-                if($project['col_ProjectPlanState']>0)
+                if($this->project['col_ProjectPlanState']>0)
                     $this->view->set('isDisable',' DISABLED ');
                 else
                     $this->view->set('isDisable','');
 
                 $this->view
-                    ->add_dict($project)
+                    ->add_dict($this->project)
                     ->out('main',$this->className);
             }
         }
@@ -73,17 +77,17 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function getList(){
-        if(!empty($_GET['id'])){
-            $project = Project::getCurModel($_GET['id']);
-            if(!empty($project)){
-                $stageList = mProjectPlan::getModels($project);
+        if(!empty($this->project['col_projectID'])){
+
+            if(!empty($this->project)){
+                $stageList = mProjectPlan::getModels($this->project);
 
                 if(!empty($stageList)){
                     $ai = new \ArrayIterator($stageList);
 
                     $curStage = 0;
 
-                    if($project['col_ProjectPlanState']>0)
+                    if($this->project['col_ProjectPlanState']>0)
                         $this->view->set('isDisable',' DISABLED ');
                     else
                         $this->view->set('isDisable','');
@@ -153,21 +157,20 @@ class tabProjectPlan extends AprojectTabs
         }
     }
 
-
     /**
      * добавление стадии проекта
      */
     public function add(){
-        if(!empty($_GET['id'])){
-            $project = Project::getCurModel($_GET['id']);
-            if($project['col_ProjectPlanState']>0){
+        if(!empty($this->project['col_projectID'])){
+
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }
-            if(!empty($project)){
+            if(!empty($this->project)){
                 if(empty($_POST)){
 
-                    $stageList = mProjectPlan::getModels($project);
+                    $stageList = mProjectPlan::getModels($this->project);
                     $curSettings = array('nextSeq'=>2,'minSeq'=>2,'dateStart'=>date('Y-m-d'));
 
                     foreach ($stageList as $item) {
@@ -191,7 +194,7 @@ class tabProjectPlan extends AprojectTabs
                     $stages = Project::getStagesList();
 
                     $this->view
-                        ->add_dict($project)
+                        ->add_dict($this->project)
                         ->set('stageList',html_::select($stages,'tbStageList',0,'class="form-control inlineBlock"'))
                         ->set('userList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                         //->set('userList',html_::select($users,'tbUserList',router::getCurUser(),'class="form-control inlineBlock"'))
@@ -207,12 +210,11 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function edit(){
-        if(!empty($_GET['id'])){
+        if(!empty($_GET['stageID'])){
 
-            $stageInfo = mProjectPlan::getCurModel($_GET['id']);
-            $project = Project::getCurModel($stageInfo['col_projectID']);
+            $stageInfo = mProjectPlan::getCurModel($_GET['stageID']);
 
-            if($project['col_ProjectPlanState']>0){
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }
@@ -223,7 +225,7 @@ class tabProjectPlan extends AprojectTabs
 
             if(!empty($stageInfo)){
                 if(empty($_POST)){
-                    $stageList = mProjectPlan::getModels($project);
+                    $stageList = mProjectPlan::getModels($this->project);
                     $curSettings = array('nextSeq'=>2,'minSeq'=>2,'dateStart'=>date('Y-m-d'));
 
                     foreach ($stageList as $item) {
@@ -238,7 +240,7 @@ class tabProjectPlan extends AprojectTabs
 
                     foreach ($stageList as $item) {
 
-                        if($item['col_pstageID'] == $_GET['id'])
+                        if($item['col_pstageID'] == $_GET['stageID'])
                             break;
 
                         if(empty($item['col_dateEndFact']))
@@ -256,7 +258,7 @@ class tabProjectPlan extends AprojectTabs
 
 
                     $this->view
-                        ->add_dict($project)
+                        ->add_dict($this->project)
                         ->add_dict($stageInfo)
                         ->set('stageList',html_::select($stages,'tbStageList',$stageInfo['col_stageID'],'class="form-control inlineBlock"'))
                         ->set('userList',html_::select($users,'tbUserList',$stageInfo['col_respID'],'class="form-control inlineBlock"'))
@@ -274,12 +276,11 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function addStageTask(){
-        if(!empty($_GET['id'])) {
+        if(!empty($_GET['stageID'])) {
 
-            $stageInfo = mProjectPlan::getCurModel($_GET['id']);
-            $project = Project::getCurModel($stageInfo['col_projectID']);
+            $stageInfo = mProjectPlan::getCurModel($_GET['stageID']);
 
-            if($project['col_ProjectPlanState']>0){
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }
@@ -301,14 +302,14 @@ class tabProjectPlan extends AprojectTabs
                     ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
                     ->set('groupList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                     ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock"'))
-                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['id']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px;"'))
+                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['stageID']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px;"'))
                     ->out('addTaskForm',$this->className);
             }
             else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur'])&& !empty($_POST['tbUserList'])){
-                $totalDurs = Task::getSumDur($_GET['id']) + $_POST['taskDur'];
+                $totalDurs = Task::getSumDur($_GET['stageID']) + $_POST['taskDur'];
 
                 if(empty($_POST['TaskRespID']))
-                    $_POST['TaskRtype'] = 0;
+                    $_POST['TaskRtype'] = 1;
 
                 Task::Add([
                     'col_taskName' => "'{$_POST['TaskName']}'",
@@ -316,7 +317,7 @@ class tabProjectPlan extends AprojectTabs
                     'col_initID'=> router::getCurUser(), // пока в плане, инициатор тот, кто составил план
                     'col_respID' => $_POST['tbUserList'],
                     'col_curatorID' =>'Null',
-                    'col_pstageID'=>$_GET['id'],
+                    'col_pstageID'=> $_GET['stageID'],
                     'col_taskDesc' => !empty($_POST['taskDesc']) ? "'{$_POST['taskDesc']}'" : 'NULL',
                     'col_createDate' => 'NOW()',
                     'col_startPlan'=> "'{$stageInfo['col_dateStartPlan']}'",
@@ -333,9 +334,9 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function editStageTask(){
-        if(!empty($_GET['id'])) {
+        if(!empty($_GET['taskID'])) {
 
-            $curTask = Task::getCurModel($_GET['id']);
+            $curTask = Task::getCurModel($_GET['taskID']);
             if(empty($curTask)){
                 echo json_encode(['error'=>'Задача не найдена!']);
                 return;
@@ -347,9 +348,9 @@ class tabProjectPlan extends AprojectTabs
             }
 
             $stageInfo = mProjectPlan::getCurModel($curTask['col_pstageID']);
-            $project = Project::getCurModel($stageInfo['col_projectID']);
 
-            if($project['col_ProjectPlanState']>0){
+
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }
@@ -371,7 +372,7 @@ class tabProjectPlan extends AprojectTabs
                 $this->view
                     ->add_dict($curTask)
                     ->set('userList',html_::select($users,'tbUserList',$curTask['col_respID'],'class="form-control inlineBlock"'))
-                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($curTask['col_pstageID'],$_GET['id']),'TaskRespID',$curTask['col_bonding'],'class="form-control inlineBlock" style="width:180px;"'))
+                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($curTask['col_pstageID'],$_GET['taskID']),'TaskRespID',$curTask['col_nextID'],'class="form-control inlineBlock" style="width:180px;"'))
                     ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
                     ->set('groupList',html_::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                     ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',$curTask['col_bonding'],'class="form-control inlineBlock"'))
@@ -397,8 +398,8 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function deleteTask(){
-        if(!empty($_GET['id'])){
-            $curTask = Task::getCurModel($_GET['id']);
+        if(!empty($_GET['taskID'])){
+            $curTask = Task::getCurModel($_GET['taskID']);
             if(empty($curTask)){
                 echo json_encode(['error'=>'Задача не найдена!']);
                 return;
@@ -410,9 +411,8 @@ class tabProjectPlan extends AprojectTabs
             }
 
             $stageInfo = mProjectPlan::getCurModel($curTask['col_pstageID']);
-            $project = Project::getCurModel($stageInfo['col_projectID']);
 
-            if($project['col_ProjectPlanState']>0){
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }
@@ -426,11 +426,10 @@ class tabProjectPlan extends AprojectTabs
     }
 
     public function deleteStage(){
-        if(!empty($_GET['id'])){
-            $stageInfo = mProjectPlan::getCurModel($_GET['id']);
-            $project = Project::getCurModel($stageInfo['col_projectID']);
+        if(!empty($_GET['stageID'])){
+            $stageInfo = mProjectPlan::getCurModel($_GET['stageID']);
 
-            if($project['col_ProjectPlanState']>0){
+            if($this->project['col_ProjectPlanState']>0){
                 echo json_encode(['error'=>'Пока план проекта запущен, изменения запрещены.']);
                 return;
             }

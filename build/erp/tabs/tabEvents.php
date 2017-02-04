@@ -27,8 +27,8 @@ class tabEvents extends AprojectTabs
     }
 
     public function getList(){
-        if(!empty($_GET['id'])){
-            $list = mTabMessages::getModels(['projectID'=>$_GET['id'],'isSys'=>1]);
+        if(!empty($this->project['col_projectID'])){
+            $list = mTabMessages::getModels(['projectID'=>$this->project['col_projectID'],'isSys'=>1]);
             if(!empty($list)){
                 foreach ($list as $item) {
                     $this->view
