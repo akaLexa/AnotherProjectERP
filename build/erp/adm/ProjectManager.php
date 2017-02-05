@@ -39,6 +39,7 @@ class ProjectManager extends eController
         'countDefStartDays' => ['type'=>self::INT],
         'documentsFolder' => ['type'=>self::STR],
         'endStagesID' => ['type'=>self::STR],
+        'activeStagesID' => ['type'=>self::STR],
 
         //настройки вкладок проекта
         'TabChosen' => ['type'=>self::STR],
@@ -59,6 +60,7 @@ class ProjectManager extends eController
     protected $types = array(
         'startStageID' =>['select','stages'],
         'endStagesID' =>['checkGroup','stagesGroup'],
+        'activeStagesID' =>['checkGroup','stagesGroup'],
         'countDefStartDays' =>['text','text'],
         'documentsFolder' =>['text','text'],
     );

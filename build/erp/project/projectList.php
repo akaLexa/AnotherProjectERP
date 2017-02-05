@@ -23,6 +23,7 @@ class projectList extends eController
     protected $postField = array(
         'projectNum' => ['type' => self::INT],
         'projectName' => ['type' => self::STR],
+        'stages' => ['type' => self::STR],
         'UserResponse' => ['type' => self::INT],
         'UserManager' => ['type' => self::INT],
         'curPage' => ['type' => self::INT],
@@ -32,6 +33,23 @@ class projectList extends eController
 
     public function actionIndex()
     {
+        $stages = Project::getStagesList();
+        $stages[-1]='Активные';
+        asort($stages);
+        if(!empty($stages)){
+            foreach ($stages as $num=>$stage){
+                if($num == -1){
+                    $this->view->set('isChecked','checked');
+                }
+                else
+                    $this->view->set('isChecked','');
+
+                $this->view
+                    ->set(['stageName'=>$stage,'stageNum'=>$num])
+                    ->out('stageList',$this->className);
+            }
+            $this->view->setFContainer('curStagesList',true);
+        }
         $usrs = User::getUserList();
         $usrs[0] = '...';
         $this->view
@@ -72,6 +90,18 @@ class projectList extends eController
             $params['endDate'] = $_POST['endDate'];
         }
 
+        $projectCfg = Configs::readCfg('project',tbuild);
+
+
+        if(!empty($_POST['stages'])){
+            if($_POST['stages']=='-1')
+                $params['stageIds'] = $projectCfg['activeStagesID'];
+            else
+                $params['stageIds'] = $_POST['stages'];
+        }
+        else
+            $params['stageIds'] = $projectCfg['activeStagesID'];
+
 
         $pageCnt = Project::getCountProject($params);
         $pageData = Tools::paginate($pageCnt,50,$params['curPage']);
@@ -84,7 +114,7 @@ class projectList extends eController
         $list = Project::getModels($params);
 
         if(!empty($list)){
-            $projectCfg = Configs::readCfg('project',tbuild);
+
             $projectCfg['endStagesID'] = explode(',',$projectCfg['endStagesID']);
 
             $ai = new \ArrayIterator($list);
@@ -94,7 +124,6 @@ class projectList extends eController
                     $this->view->set('isDeadLine','deadLine');
                 else
                     $this->view->set('isDeadLine','');
-
 
                 if($item['col_ProjectPlanState'] == 1){
                     $this->view->set('knowProjectPlan','glyphicon glyphicon-play planStarted');
@@ -117,7 +146,7 @@ class projectList extends eController
                     ->out('paginator',$this->className);
             }
         }
-
-
+        else
+            $this->view->out('centerEmpty',$this->className);
     }
 }

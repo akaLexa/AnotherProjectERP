@@ -9,7 +9,7 @@
                 <input type="text" style="width: 300px; margin:0" class="erpInput" name="projectName" onclick="this.value =''">
             </td>
             <td style="padding:0;border: 0;">
-                <select class="erpSelect" style="width: 300px;" >
+                <select class="erpSelect" style="width: 300px;" onclick="openChoseStages()">
                     <option>Выбрать стадию...</option>
                 </select>
             </td>
@@ -33,4 +33,7 @@
         </thead>
         <tbody id="projectListContent"></tbody>
     </table>
+    <form method="POST" id="redirectForm" target="_blank" style="display: none;"></form>
 </div>
+
+<div style="display: none;" id="curStagesList">|curStagesList|</div>

@@ -155,6 +155,10 @@ WHERE
             $filter.= " AND tps.col_dateEndPlan BETWEEN '{$params['endDate']} 00:00:00' AND '{$params['endDate']} 23:59:59'";
         }
 
+        if(!empty($params['stageIds'])){
+            $filter.= " AND tps.col_stageID IN ({$params['stageIds']})";
+        }
+
         $queryString = 'FROM 
   tbl_project tp,
   tbl_project_num tpn,
@@ -194,6 +198,7 @@ WHERE
      */
     public static function getCfg(){
         if(empty(self::$projectCfg)){
+            //todo: распарсить сразу настройки, там где нужно в массивы
             self::$projectCfg = Configs::readCfg('project',tbuild);
         }
         return self::$projectCfg;
@@ -213,6 +218,7 @@ WHERE
             while ($r = $q->fetch()){
                 $stages[$r['col_StageID']] = $r['col_StageName'];
             }
+            //asort($stages);
             self::$sdata['StagesList'] = $stages;
             return $stages;
         }

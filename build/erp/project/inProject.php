@@ -85,7 +85,6 @@ class inProject extends eController
                     $this->view->set('customLState','infoGood');
                 }
 
-
                 if($project['col_ProjectPlanState'] == 1){
                     $this->view
                         ->set('planStoped','')
