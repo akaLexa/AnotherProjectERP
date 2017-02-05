@@ -11,6 +11,7 @@ use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\tPaginate;
 use build\erp\inc\User;
+use mwce\Configs;
 use mwce\html_;
 use mwce\Tools;
 
@@ -83,6 +84,9 @@ class projectList extends eController
         $list = Project::getModels($params);
 
         if(!empty($list)){
+            $projectCfg = Configs::readCfg('project',tbuild);
+            $projectCfg['endStagesID'] = explode(',',$projectCfg['endStagesID']);
+
             $ai = new \ArrayIterator($list);
             foreach ($ai as $item) {
 
@@ -97,6 +101,9 @@ class projectList extends eController
                 }
                 else{
                     $this->view->set('knowProjectPlan','glyphicon glyphicon-stop planStopped');
+                }
+                if(in_array($item['col_stageID'],$projectCfg['endStagesID'])){
+                    $item['col_StatusName'] = '';
                 }
 
                 $this->view

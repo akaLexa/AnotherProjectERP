@@ -13,6 +13,7 @@ use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
 use build\erp\tabs\m\mProjectPlan;
+use mwce\Configs;
 use mwce\html_;
 use mwce\router;
 use mwce\Tools;
@@ -70,10 +71,20 @@ class inProject extends eController
 
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
 
+                $projectCfg =  Configs::readCfg('project',tbuild);
+                $projectCfg['endStagesID'] = explode(',',$projectCfg['endStagesID']);
+
+
                 if(strtotime($project['col_dateEndPlan']) < time())
                     $this->view->set('customLState','infoBad');
                 else
                     $this->view->set('customLState','infoGood');
+
+                if(in_array($project['col_stageID'],$projectCfg['endStagesID'])){
+                    $project['col_StatusName'] = '';
+                    $this->view->set('customLState','infoGood');
+                }
+
 
                 if($project['col_ProjectPlanState'] == 1){
                     $this->view

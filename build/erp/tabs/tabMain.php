@@ -193,7 +193,7 @@ class tabMain extends AprojectTabs
                 if($this->project['col_ProjectPlanState'] == 1){
                     $stnfo = $this->project->getNextStageID();
                     if(empty($stnfo)){
-                        echo json_encode(['error'=>'В плане больше нет стадий.']);
+                        echo json_encode(['error'=>'В плане проекта больше нет стадий. Скорее всего, выполнение плана завершено.']);
                     }
                     else{
                         $this->view
