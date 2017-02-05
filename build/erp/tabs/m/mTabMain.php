@@ -88,6 +88,9 @@ SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исп
      * @return bool
      */
     public function switchToNextPlanStage($descLate=0){
+        if($this['col_respID']!= router::getCurUser())
+            return false;
+
         $next = self::getNextStageID();
 
         $this->db->exec("CALL sp_CalcProjectPlan({$this['col_projectID']},'".date_::intransDate('now')."');");

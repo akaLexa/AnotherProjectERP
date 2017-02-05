@@ -186,8 +186,10 @@ class tabMain extends AprojectTabs
                 elseif (strtotime($stageInfo['col_dateEndPlan']) < time())
                     $_POST['descStage'] = 'Причина просрочки: '.$_POST['descStage'];
 
-                $this->project->switchToNextPlanStage(empty($_POST['descStage'])? 0 : $_POST['descStage']);
-                echo json_encode(['success'=>1]);
+                if($this->project->switchToNextPlanStage(empty($_POST['descStage'])? 0 : $_POST['descStage']))
+                    echo json_encode(['success'=>1]);
+                else
+                    echo json_encode(['error'=>'Ошибка при попытке перевести стадию']);
             }
             else{
                 if($this->project['col_ProjectPlanState'] == 1){
