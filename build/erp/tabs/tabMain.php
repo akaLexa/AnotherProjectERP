@@ -76,6 +76,9 @@ class tabMain extends AprojectTabs
         }
     }
 
+    /**
+     * принятие решения по пришедшей стадии
+     */
     public function stageAction(){
         if(!empty($_GET['type'])){
             if($this->project['col_statusID'] == 4 && $this->project['col_respID'] == router::getCurUser()){
@@ -149,10 +152,9 @@ class tabMain extends AprojectTabs
                         echo json_encode(['stageIsLate'=>true]);
                     }
                     else{
-
                         if(!$this->project->switchPlanState(
                             $_POST['planState'],
-                            !empty($_POST['descStage']) ? $_POST['descStage'] : 0,
+                            !empty($_POST['descStage']) ? ' Причина просрочки:'.$_POST['descStage'] : 0,
                             !empty($_POST['descState']) ? $_POST['descState'] : ''
                         )){
                             echo json_encode(['error'=>'Не удалось запустить автоплан. Возможно, больше нет плановых стадий.']);
@@ -166,6 +168,43 @@ class tabMain extends AprojectTabs
                 }
             }
         }
+    }
+
+    /**
+     * перевод проекта на след. стадию.
+     */
+    public function stageMove(){
+        if(!empty($this->project)){
+
+            $stageInfo = mProjectPlan::getCurModel($this->project['col_pstageID']);
+
+            if(!empty($_POST['goNextStage'])){
+                if(strtotime($stageInfo['col_dateEndPlan']) < time() && empty($_POST['descStage'])){
+                    echo json_encode(['error'=>'Не указана причина просрочки стадии']);
+                    return;
+                }
+                elseif (strtotime($stageInfo['col_dateEndPlan']) < time())
+                    $_POST['descStage'] = 'Причина просрочки: '.$_POST['descStage'];
+
+                $this->project->switchToNextPlanStage(empty($_POST['descStage'])? 0 : $_POST['descStage']);
+                echo json_encode(['success'=>1]);
+            }
+            else{
+                if($this->project['col_ProjectPlanState'] == 1){
+                    $stnfo = $this->project->getNextStageID();
+                    if(empty($stnfo)){
+                        echo json_encode(['error'=>'В плане больше нет стадий.']);
+                    }
+                    else{
+                        $this->view
+                            ->set($stnfo)
+                            ->out('infoNextStageForm',$this->className);
+                    }
+
+                }
+            }
+        }
+
     }
 
     /**

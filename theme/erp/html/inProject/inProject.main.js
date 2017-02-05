@@ -15,6 +15,61 @@ $(document).ready(function () {
 });
 
 function changeProjectStage() {
+    console.log('qq');
+    $('#forDialogs').dialog({
+        title:'Следующая стадия',
+        width:400,
+        modal:true,
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=stageMove',
+                callback:function (r) {
+                    try{
+                        var receive = JSON.parse(r);
+                        if(receive['error'] != undefined){
+                            $('#forDialogs').dialog('close');
+                            mwce_alert(receive['error'],'Внимание!');
+                        }
+                    }
+                    catch(e) {
+
+                    }
+                }
+            });
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        },
+        buttons:{
+            'Продолжить':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=stageMove',
+                    type:'POST',
+                    data:$('#nextStageForm').serialize(),
+                    callback:function (r) {
+                        try{
+                            var receive = JSON.parse(r);
+                            if(receive['error'] != undefined){
+                                mwce_alert(receive['error'],'Внимание!');
+                            }
+                            else{
+                                $('#forDialogs').dialog('close');
+                                window.location.reload();
+                            }
+                        }
+                        catch(e) {
+
+                        }
+                    }
+                });
+            },
+            'Закрыть':function () {
+                $('#forDialogs').dialog('close');
+            }
+        }
+    });
     
 }
 function agreeStage(state) {

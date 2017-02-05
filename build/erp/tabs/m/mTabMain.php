@@ -79,41 +79,54 @@ SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исп
         }
         //включение
         else{
-            $next = self::getNextStageID();
-
-            $this->db->exec("CALL sp_CalcProjectPlan({$this['col_projectID']},'".date_::intransDate('now')."');");
-            $this->db->closeCursor();
-
-            // нет следующей стадии, ничего не делаем!
-            if(!$next)
-                return false;
-
-            if(!empty($descLate))
-                $descLate = "CONCAT(COALESCE(col_comment,''),' Причина просрочки: $descLate')";
-            else
-                $descLate = "CONCAT(COALESCE(col_comment,''),'')";
-
-            $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 3, col_comment = $descLate, col_dateEndFact = NOW() WHERE  col_pstageID = ".$this['col_pstageID']);
-            $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1, col_dateStart = NOW(),col_prevStageID={$this['col_pstageID']} WHERE col_pstageID = $next");
-            $this->db->exec("UPDATE tbl_project SET col_ProjectPlanState = 1 WHERE col_projectID = ".$this['col_projectID']);
-            $this->db->exec("CALL sp_StartTaskPlan({$next})");
-            $this->db->closeCursor();
-            return true;
+            return self::switchToNextPlanStage($descLate);
         }
     }
 
     /**
-     * узнать следующую стадию, что идет по плану
-     * @return bool|int
+     * @param string|int $descLate причина просрочки
+     * @return bool
      */
-    protected function getNextStageID(){
+    public function switchToNextPlanStage($descLate=0){
+        $next = self::getNextStageID();
+
+        $this->db->exec("CALL sp_CalcProjectPlan({$this['col_projectID']},'".date_::intransDate('now')."');");
+        $this->db->closeCursor();
+
+        // нет следующей стадии, ничего не делаем!
+        if(!$next)
+            return false;
+
+        if(!empty($descLate))
+            $descLate = "CONCAT(COALESCE(col_comment,''),' $descLate')";
+        else
+            $descLate = "CONCAT(COALESCE(col_comment,''),'')";
+
+        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 3, col_comment = $descLate, col_dateEndFact = NOW() WHERE  col_pstageID = ".$this['col_pstageID']);
+        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1, col_dateStart = NOW(),col_prevStageID={$this['col_pstageID']} WHERE col_pstageID = {$next['col_pstageID']}");
+        $this->db->exec("UPDATE tbl_project SET col_ProjectPlanState = 1 WHERE col_projectID = ".$this['col_projectID']);
+        $this->db->exec("CALL sp_StartTaskPlan({$next['col_pstageID']})");
+        $this->db->closeCursor();
+        return true;
+    }
+
+    /**
+     * узнать следующую стадию, что идет по плану
+     * @return bool|array
+     */
+    public function getNextStageID(){
         $result = $this->db->query("SELECT
-  tps.col_pstageID
+  tps.col_pstageID,
+  htps.col_StageName,
+  tps.col_respID,
+  f_getUserFIO(tps.col_respID) as col_resp
 FROM
-  tbl_project_stage tps
+  tbl_project_stage tps,
+  tbl_hb_project_stage htps
 WHERE
   tps.col_statusID = 5
   AND tps.col_projectID = {$this['col_projectID']}
+  and htps.col_StageID = tps.col_stageID
 ORDER BY
   tps.col_seq, tps.col_pstageID ASC
 LIMIT 1")->fetch();
@@ -121,6 +134,6 @@ LIMIT 1")->fetch();
         if(empty($result) && empty($result['col_pstageID']))
             return false;
 
-        return $result['col_pstageID'];
+        return $result;
     }
 }
