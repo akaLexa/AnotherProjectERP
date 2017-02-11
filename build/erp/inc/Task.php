@@ -149,8 +149,13 @@ WHERE
         if(!empty($params['taskName']))
             $q.= " AND tt.col_taskName like '%{$params['taskName']}%'";
 
-        if(!empty($params['taskStatus']))
-            $q.= " AND tt.col_StatusID =".$params['taskStatus'];
+        if(isset($params['taskStatus'])){
+            if($params['taskStatus']>0)
+                $q.= " AND tt.col_StatusID =".$params['taskStatus'];
+            else
+                $q.= " AND tt.col_StatusID IN (1,4)";
+        }
+
 
         if(!empty($params['taskInit']))
             $q.= " AND tt.col_initID =".$params['taskInit'];
@@ -335,7 +340,8 @@ WHERE
                 parent::_adding($name.'LegendTD', date_::transDate($value,true));
                 break;
             case 'col_taskDesc':
-                parent::_adding($name.'Legend', htmlspecialchars_decode($value));
+                if(!empty($value))
+                    parent::_adding($name.'Legend', htmlspecialchars_decode($value));
                 break;
         }
         parent::_adding($name, $value);

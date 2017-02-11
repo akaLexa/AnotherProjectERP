@@ -56,8 +56,11 @@ class tasks extends eController
         $users = User::getUserList();
         $users[0] = '...';
 
+        $taskStates = Project::getStates();
+        $taskStates[0] = 'Актвные';
+
         $this->view
-            ->set('stateList',html_::select(Project::getStates(),'taskStatus',1,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
+            ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
             ->set('initList',html_::select($users,'taskInit',0,'style="width:120px;" class="erpInput" onchange="filterTask();"'))
             ->set('respList',html_::select($users,'taskResp',router::getCurUser(),'style="width:120px;" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
@@ -73,7 +76,7 @@ class tasks extends eController
         if(!empty($_POST['isCurator']))
             $params['taskCurator'] = router::getCurUser();
 
-        if(!empty($_POST['taskStatus']))
+        if(isset($_POST['taskStatus']))
             $params['taskStatus'] = $_POST['taskStatus'];
 
         if(!empty($_POST['taskInit']))

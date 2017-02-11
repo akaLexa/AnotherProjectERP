@@ -14,22 +14,16 @@ class mTabTasks extends Task
 {
     /**
      * @param array $params
-     * @return mTabTasks
+     * @return mTabTasks|bool
      */
     public static function Add($params){
         $query = self::genInsertSt($params);
         if(!empty($query)){
             $db = Connect::start();
             $db->query("INSERT INTO tbl_tasks $query");
-            $lid = $db->lastId('tbl_tasks');
-
-            $curTask = new mTabTasks();
-            foreach ($params as $id=>$param) {
-                $curTask[$id] = $params;
-            }
-
-            return $curTask;
+            return Task::getCurModel($db->lastId('tbl_tasks'));
         }
+        return false;
     }
 
 }

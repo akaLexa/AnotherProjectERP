@@ -56,8 +56,11 @@ class tabTasks extends AprojectTabs
         $users = User::getUserList();
         $users[0] = '...';
 
+        $taskStates = Project::getStates();
+        $taskStates[0] = 'Актвные';
+
         $this->view
-            ->set('stateList',html_::select(Project::getStates(),'taskStatus',1,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
+            ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
             ->set('initList',html_::select($users,'taskInit',0,'style="width:100%" class="erpInput" onchange="filterTask();"'))
             ->set('respList',html_::select($users,'taskResp',router::getCurUser(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
@@ -69,7 +72,7 @@ class tabTasks extends AprojectTabs
             if(!empty($_POST['ftaskName']))
                 $params['taskName'] = $_POST['ftaskName'];
 
-            if(!empty($_POST['taskStatus']))
+            if(isset($_POST['taskStatus']))
                 $params['taskStatus'] = $_POST['taskStatus'];
             else
                 $params['taskStatus'] = 1;

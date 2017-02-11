@@ -18,11 +18,15 @@ class date_
      */
     public static function transDate($date= "0000-00-00",$type=false)
     {
+        if(empty($date))
+            return '';
+
         if (trim($date) == "0000-00-00" or $date==NULL or $date=="1970-01-01 00:00:00" or $date=="1970-01-01")
             return "-/-";
-        if (!$type)
 
+        if (!$type)
             return date("d-m-Y",strtotime($date));
+
         return date("d-m-Y H:i",strtotime($date));
     }
 
