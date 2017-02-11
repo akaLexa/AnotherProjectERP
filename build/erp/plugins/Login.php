@@ -49,7 +49,7 @@ class Login extends PluginController
 
             }
 
-            $cfg = Configs::readCfg('main', tbuild);
+            $cfg = Configs::readCfg('main', Configs::currentBuild());
             if (!empty($cfg['defpage'])) {
                 router::setCurController($cfg['defpage']);
                 router::setCurAction('actionErrorInLogin');

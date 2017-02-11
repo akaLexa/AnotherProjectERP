@@ -9,6 +9,8 @@
  **/
 namespace  build\erp\inc;
 
+use mwce\Configs;
+
 abstract class AprojectTabs extends eController implements iProjectTabs
 {
     /**
@@ -30,7 +32,7 @@ abstract class AprojectTabs extends eController implements iProjectTabs
         if(!empty($this->props))
             return $this->props;
 
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this->className.'.php';
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this->className.'.php';
         if(file_exists($path)) {
             $this->props = require $path;
             return $this->props;

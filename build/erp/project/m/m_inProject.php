@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\project\m;
+use mwce\Configs;
 use mwce\Model;
 
 class m_inProject extends Model
@@ -17,7 +18,7 @@ class m_inProject extends Model
      * @return array|mixed
      */
     public static function GetTabList($group,$role){
-        $fileCache = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'_dat'.DIRECTORY_SEPARATOR.'generatedTabs'.$role;
+        $fileCache = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'_dat'.DIRECTORY_SEPARATOR.'generatedTabs'.$role;
         if(file_exists($fileCache)){
             $uns = unserialize(file_get_contents($fileCache));
             if(!empty($uns))
@@ -26,7 +27,7 @@ class m_inProject extends Model
 
         $tabs = array();
 
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
         $dirs = scandir($path);
         unset($dirs[0],$dirs[1]);
         if(!empty($dirs)){
@@ -63,7 +64,7 @@ class m_inProject extends Model
      * @return array
      */
     public static function getAllTabs(){
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg';
         $dirs = scandir($path);
         unset($dirs[0],$dirs[1]);
 

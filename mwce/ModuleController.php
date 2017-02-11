@@ -32,7 +32,7 @@ class ModuleController extends Controller
         $this->view = $view;
         $this->pages = $pages;
 
-        $build = tbuild;
+        $build = Configs::currentBuild();
 
         if (!empty($_SESSION["whosconfig"]))
             $build = $_SESSION["whosconfig"];
@@ -56,7 +56,7 @@ class ModuleController extends Controller
      */
     public function actionTitle()
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $_SESSION['mwclang'] . DIRECTORY_SEPARATOR . 'titles.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $_SESSION['mwclang'] . DIRECTORY_SEPARATOR . 'titles.php';
 
         if (file_exists($path)) {
             $lang = include $path;
@@ -130,7 +130,7 @@ class ModuleController extends Controller
      */
     protected function cacheDif($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
 
         if (file_exists($path)) {
             return time() - filemtime($path);
@@ -145,7 +145,7 @@ class ModuleController extends Controller
      */
     protected function cacheDelete($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
 
         if (file_exists($path)) {
             unlink($path);
@@ -174,7 +174,7 @@ class ModuleController extends Controller
      */
     protected function cacheGive($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
 
         if (file_exists($path)) {
             return file_get_contents($path);
@@ -190,7 +190,7 @@ class ModuleController extends Controller
      */
     protected function cacheWrite($fname, $content)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_$fname";
         $h = fopen($path, "w");
         fwrite($h, $content);
         fclose($h);

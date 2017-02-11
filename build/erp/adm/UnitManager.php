@@ -573,7 +573,7 @@ class UnitManager extends eController
 
         if(!empty($list)){
 
-            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
             foreach ($list as $item) {
                 if(!empty($lang[$item['mtitle']])){
                     $item['mtitle'] = $lang[$item['mtitle']];
@@ -610,7 +610,7 @@ class UnitManager extends eController
                 return;
 
             if(empty($_POST)){
-                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
                 $lang = DicBuilder::getLang($lpath);
                 asort($lang);
 
@@ -624,7 +624,7 @@ class UnitManager extends eController
 
                 if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
                     if(!empty($_POST['newtitle'])) {
-                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
                         $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
                     }
                     elseif(empty($_POST["mtitel"])){
@@ -662,7 +662,7 @@ class UnitManager extends eController
                 return;
 
             if(empty($_POST)){
-                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
                 $lang = DicBuilder::getLang($lpath);
                 asort($lang);
                 $mlist = $info->pageList();
@@ -678,7 +678,7 @@ class UnitManager extends eController
 
                 if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
                     if(!empty($_POST['newtitle'])) {
-                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
                         $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
                     }
                     elseif(empty($_POST["mtitel"])){
@@ -739,9 +739,9 @@ class UnitManager extends eController
                         $menuAcs.= substr($id, 4);
                     }
                 }
-                $old = Configs::readCfg('plugin_mainMenu',tbuild);
+                $old = Configs::readCfg('plugin_mainMenu',Configs::currentBuild());
                 $old[$_POST['menuType']] = $menuAcs;
-                Configs::writeCfg($old,'plugin_mainMenu',tbuild);
+                Configs::writeCfg($old,'plugin_mainMenu',Configs::currentBuild());
             }
             else{
                 $list = $menu->getAccessList($_POST['menuType']);
@@ -809,7 +809,7 @@ class UnitManager extends eController
         $list = mPlugin::getModels();
         if(!empty($list)){
 
-            $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+            $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
 
             foreach ($list as $item) {
 
@@ -879,7 +879,7 @@ class UnitManager extends eController
                     $this->view->setFContainer('groupList', true);
                 }
 
-                $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+                $pluginsLegend = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
 
                 if(!empty($pluginsLegend[$plugin['col_pluginName']])){
                     $plugin['pluginDesc'] = $pluginsLegend[$plugin['col_pluginName']];
@@ -888,7 +888,7 @@ class UnitManager extends eController
                     $plugin['pluginDesc'] = '';
                 }
 
-                $cfg = Configs::readCfg('plugin_'.$plugin['col_pluginName'],tbuild);
+                $cfg = Configs::readCfg('plugin_'.$plugin['col_pluginName'],Configs::currentBuild());
                 if(!empty($cfg) && !empty($cfg['allowedUsrs'])){
                     $plugin['pluginCustomUsrs'] = $cfg['allowedUsrs'];
                 }
@@ -927,14 +927,14 @@ class UnitManager extends eController
                     $params['pluginState'] = $_POST['stateList'];
 
                     if(!empty($_POST['pluginDesc'])){
-                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.$_SESSION['mwclang'].DIRECTORY_SEPARATOR.'plugins.php');
                         $db->add2Dic($_POST['pluginDesc'],$params['pluginName'],true);
                     }
 
                     if(!empty(trim($_POST['pluginCustomUsrs']))){
-                        $cfg = Configs::readCfg('plugin_'.$params['pluginName'],tbuild);
+                        $cfg = Configs::readCfg('plugin_'.$params['pluginName'],Configs::currentBuild());
                         $cfg['allowedUsrs'] = $_POST['pluginCustomUsrs'];
-                        Configs::writeCfg($cfg,'plugin_'.$params['pluginName'],tbuild);
+                        Configs::writeCfg($cfg,'plugin_'.$params['pluginName'],Configs::currentBuild());
                     }
 
                     $plugin->edit($params);

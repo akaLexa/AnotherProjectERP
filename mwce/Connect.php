@@ -134,7 +134,7 @@ class Connect
         }
         else {
 
-            $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php';
+            $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php';
             if (file_exists($path)) {
                 $configs = require $path;
             }
@@ -255,7 +255,7 @@ class Connect
             return;
 
         try {
-            $this->resId->query("INSERT INTO mwce_settings.{$suf}mwc_logs(col_ErrNum,col_msg,col_mname,col_createTime,tbuild) VALUES($errNo,'$msg','{$file}',$dt,'" . tbuild . "')");
+            $this->resId->query("INSERT INTO mwce_settings.{$suf}mwc_logs(col_ErrNum,col_msg,col_mname,col_createTime,tbuild) VALUES($errNo,'$msg','{$file}',$dt,'" . Configs::currentBuild() . "')");
         }
         catch (\Exception $e) {
             Logs::textLog(1, $e->getMessage() . ' log text: ' . $msg);

@@ -22,13 +22,6 @@ class router
     use singleton;
 
     /**
-     * @var array|bool
-     * глобальная настройка для понимания,
-     * какой бид сейчас по умолчанию должен быть запущен
-     */
-    protected static $globalCfg;
-
-    /**
      * @var string
      * контроллер для вызова
      */
@@ -49,33 +42,9 @@ class router
     protected $isBg = false;
 
     /**
-     * @var array|bool
-     * главный конфиг текущего билда
-     */
-    protected $buildCfg;
-
-    /**
      * @var content
      */
     protected $view;
-
-    /**
-     * @var int
-     * id пользователя
-     */
-    protected static $curUserId = 0;
-
-    /**
-     * @var int
-     * группа, по умолчанию - гости
-     */
-    protected static $userGroup = 2;
-
-    /**
-     * @var int
-     * роль пользователя
-     */
-    protected static $userRole = 0;
 
     /**
      * @var string
@@ -202,96 +171,111 @@ class router
     {
         try {
             session_start();
-            self::$globalCfg = require_once baseDir . '/configs/configs.php';
+
+            $cfg_params['globalCfg'] = require_once baseDir . '/configs/configs.php';
 
             $data = $this->parseURL();
 
-            if (empty($data) || empty(self::$globalCfg['defaultabuild']) || trim($data['type']) != 'control') //обычные страницы
+            if (empty($data) || empty($cfg_params['globalCfg']['defaultabuild']) || trim($data['type']) != 'control') //обычные страницы
             {
                 if (empty($_SESSION['mwcbuild'])) {
-                    define('tbuild', self::$globalCfg['defaultbuild']);
-                    $_SESSION['mwcbuild'] = self::$globalCfg['defaultbuild'];
+                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultbuild'];
+                    $_SESSION['mwcbuild'] = $cfg_params['globalCfg']['defaultbuild'];
                 }
                 else{
-                    define('tbuild', $_SESSION['mwcbuild']);
+                    $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];
                 }
 
                 if (empty($_SESSION['mwcGroup'])) {
-                    $_SESSION['mwcGroup'] = self::$userGroup;
+                    $cfg_params['curGroup'] = 2;
+                    $_SESSION['mwcGroup'] = 2;
                 }
                 else {
-                    self::$userGroup = $_SESSION['mwcGroup'];
+                    $cfg_params['curGroup'] = $_SESSION['mwcGroup'];
                 }
 
-                if (empty($_SESSION['mwcRole'])) {
-                    $_SESSION['mwcRole'] = self::$userRole;
+                if (!empty($_SESSION['mwcRole'])) {
+                    $cfg_params['curRole'] = $_SESSION['mwcRole'];
                 }
                 else {
-                    self::$userRole = $_SESSION['mwcRole'];
+                    $cfg_params['curRole'] = 0;
+                    $_SESSION['mwcRole'] = 0;
                 }
-
-
 
                 if (!empty($_SESSION['mwcuid'])) {
-                    self::$curUserId = $_SESSION['mwcuid'];
+                    $cfg_params['userID'] = $_SESSION['mwcuid'];
                 }
+                else{
+                    $cfg_params['userID'] = 0;
+                    $_SESSION['mwcuid'] = 0;
+                }
+
             }
             else //админка
             {
                 if (empty($_SESSION['mwcabuild'])) {
-                    define('tbuild', self::$globalCfg['defaultabuild']);
-                    $_SESSION['mwcabuild'] = self::$globalCfg['defaultabuild'];
+                    $_SESSION['mwcabuild'] = $cfg_params['globalCfg']['defaultabuild'];
+                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultabuild'];
                 }
                 else{
-                    define('tbuild', $_SESSION['mwcabuild']);
+                    $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];
                 }
 
                 if (empty($_SESSION['mwcaGroup'])) {
-                    $_SESSION['mwcaGroup'] = self::$userGroup;
+                    $cfg_params['curGroup'] = 2;
+                    $_SESSION['mwcaGroup'] = 2;
                 }
                 else {
-                    self::$userGroup = $_SESSION['mwcaGroup'];
+                    $cfg_params['curGroup'] = $_SESSION['mwcaGroup'];
                 }
 
-                if (empty($_SESSION['mwcaRole'])) {
-                    $_SESSION['mwcaRole'] = self::$userRole;
+                if (!empty($_SESSION['mwcaRole'])) {
+                    $cfg_params['curRole'] = $_SESSION['mwcaRole'];
                 }
                 else {
-                    self::$userRole = $_SESSION['mwcaRole'];
+                    $cfg_params['curRole'] = 0;
+                    $_SESSION['mwcaRole'] = 0;
                 }
 
                 if (!empty($_SESSION['mwcauid'])) {
-                    self::$curUserId = $_SESSION['mwcauid'];
+                    $cfg_params['userID'] = $_SESSION['mwcauid'];
+                }
+                else{
+                    $cfg_params['userID'] = 0;
+                    $_SESSION['mwcauid'] = 0;
                 }
             }
 
-            define('conNum', self::$globalCfg['defaultConNum']);  //set default connection num from builds pool
-            define('errorLevel', self::$globalCfg['errorLevel']); //set default errors show level
+            //todo: проверить, зачем они нужны и выпилить
+            define('conNum', $cfg_params['globalCfg']['defaultConNum']);  //set default connection num from builds pool
+            define('errorLevel', $cfg_params['globalCfg']['errorLevel']); //set default errors show level
 
-            $this->buildCfg = Configs::readCfg('main', tbuild);
+            $cfg_params['buildCfg'] = Configs::readCfg('main', $cfg_params['currentBuild']);
 
-            if (empty($this->buildCfg)) {
+            if (empty($cfg_params['buildCfg'])) {
                 session_destroy();
-                throw new CfgException ('Can\'t read build config: main.cfg in ' . tbuild);
+                throw new CfgException ('Can\'t read build config: main.cfg in ' . $cfg_params['currentBuild']);
             }
 
             if (empty($_SESSION['mwclang'])) {
-                $_SESSION['mwclang'] = $this->buildCfg['dlang'];
+                $_SESSION['mwclang'] = $cfg_params['buildCfg']['dlang'];
             }
 
-            define('curLang',$_SESSION['mwclang']);
+            Configs::initConfigs($cfg_params); //собираем все логи в 1 кучу
 
-            $this->defController = '\\build\\' . tbuild . '\\' . 'inc\\' . $this->buildCfg['defController'];
+            define('curLang',Configs::buildCfg('dlang'));//todo: проверить, зачем они нужны и выпилить
 
-            $this->view = new content(Tools::getAddress(), $this->buildCfg["theme"], curLang);
+            $this->defController = '\\build\\' . Configs::currentBuild() . '\\inc\\' . Configs::buildCfg('defController');
+
+            $this->view = new content(Tools::getAddress(), Configs::buildCfg('theme'), Configs::buildCfg('dlang'));
 
             //region запуск роутинга доступов для плагинов и модулей
 
-            if(file_exists(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR . 'AccessRouter.php')){
+            if(file_exists(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR .  Configs::currentBuild() . DIRECTORY_SEPARATOR . 'inc' . DIRECTORY_SEPARATOR . 'AccessRouter.php')){
 
-                $ar = '\\build\\' . tbuild . '\\' . 'inc\\' . 'AccessRouter';
+                $ar = '\\build\\' . Configs::currentBuild() . '\\' . 'inc\\' . 'AccessRouter';
 
-                self::$accessor = new $ar($this->view,self::$globalCfg['defaultConNum']);
+                self::$accessor = new $ar($this->view,Configs::globalCfg('defaultConNum')); //todo: прописать в конфиг билда загрузку по умолчанию?
 
                 if(!(self::$accessor instanceof mwceAccessor)){
                     $e = new ModException('AccessRouter does not extends mwceAccessor!');
@@ -311,7 +295,7 @@ class router
             //endregion
 
             if (empty($data['controller'])) {
-                self::$curController = $this->buildCfg['defpage'];
+                self::$curController = Configs::buildCfg('defpage');
                 $this->isBg = false;
             }
             else {
@@ -354,7 +338,8 @@ class router
      * @return int
      */
     public static function getCurUser(){
-        return self::$curUserId;
+        return Configs::userID();
+
     }
 
     /**
@@ -362,7 +347,7 @@ class router
      * @return int
      */
     public static function getUserGroup(){
-        return self::$userGroup;
+        return Configs::curGroup();
     }
 
     /**
@@ -370,7 +355,7 @@ class router
      * @return int
      */
     public static function getUserRole(){
-        return self::$userRole;
+        return Configs::curRole();
     }
 
     /**
@@ -380,12 +365,12 @@ class router
     {
         try {
 
-            if (self::$curController == $this->buildCfg['defController']) //если указан контроллер по умолчанию, то никаких действий не предпринимаем
+            if (self::$curController == $this->defController) //если указан контроллер по умолчанию, то никаких действий не предпринимаем
             {
                 return;
             }
 
-            self::$accessor->renderPage(self::$curController,self::$curAction,self::$userGroup,self::$userRole,self::$curUserId,$this->defController);
+            self::$accessor->renderPage(self::$curController,self::$curAction, Configs::curGroup(),Configs::curRole(),Configs::userID(),$this->defController);
         }
         catch (\Exception $e) {
             Logs::log($e);
@@ -406,7 +391,7 @@ class router
     {
         if (!$this->isBg) //если в бекграунде, то плагины не включаем.
         {
-           self::$accessor->renderPlugin(self::$userGroup,self::$userRole,self::$curUserId);
+           self::$accessor->renderPlugin(Configs::curGroup(),Configs::curRole(),Configs::userID());
         }
     }
 

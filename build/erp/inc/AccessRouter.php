@@ -34,7 +34,7 @@ class AccessRouter extends mwceAccessor
      */
     protected function getModuleList(){
 
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_pages.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_pages.php';
 
         if(file_exists($path)){
             $pages = require $path;
@@ -54,7 +54,7 @@ ORDER BY
 
         $pages = array();
         $inFile = '';
-        $dict = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . curLang . DIRECTORY_SEPARATOR . 'titles.php');
+        $dict = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . curLang . DIRECTORY_SEPARATOR . 'titles.php');
 
         while ($res = $q->fetch()){
             $pages[$res['col_moduleName']] = array(
@@ -76,7 +76,7 @@ ORDER BY
     }
 
     protected function getPluginsList(){
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_plugins.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_plugins.php';
 
         if(file_exists($path)){
             $plugins = require $path;
@@ -142,7 +142,7 @@ ORDER BY tp.col_seq");
             }
 
             //region проверка на пользователя (если есть)
-            $ccfg = Configs::readCfg($page, tbuild);
+            $ccfg = Configs::readCfg($page, Configs::currentBuild());
 
             if (!empty($ccfg["allowedUsrs"])) {
                 $usrs = explode(",", $ccfg["allowedUsrs"]);
@@ -166,7 +166,7 @@ ORDER BY tp.col_seq");
             {
                 if ($this->pages[$page]["isClass"] == '1') //если модуль является православным MVC
                 {
-                    $cPath = '\\build\\' . tbuild . '\\' . str_replace('/', '\\', $this->pages[$page]['path']);
+                    $cPath = '\\build\\' . Configs::currentBuild() . '\\' . str_replace('/', '\\', $this->pages[$page]['path']);
                     if (class_exists($cPath)) {
 
                         $controller = new $cPath($this->view, $this->pages);
@@ -181,7 +181,7 @@ ORDER BY tp.col_seq");
                 }
                 else {
                     $controller = new $defController ($this->view, $this->pages);
-                    $controller->genNonMVC(baseDir . DIRECTORY_SEPARATOR . 'build/' . tbuild . '/' . $this->pages[$page]['path'] . '/' . $page . '.php');
+                    $controller->genNonMVC(baseDir . DIRECTORY_SEPARATOR . 'build/' . Configs::currentBuild() . '/' . $this->pages[$page]['path'] . '/' . $page . '.php');
                 }
             }
             else {
@@ -209,9 +209,9 @@ ORDER BY tp.col_seq");
                 try {
                     if ($param["state"] == 1)//если плагин включен
                     {
-                        $contoller_path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name . '.php';
+                        $contoller_path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . $name . '.php';
 
-                        $cPath = 'build\\' . tbuild . '\\plugins\\' . $name;
+                        $cPath = 'build\\' . Configs::currentBuild() . '\\plugins\\' . $name;
 
                         if(!file_exists($contoller_path))
                         {
@@ -220,7 +220,7 @@ ORDER BY tp.col_seq");
                         else
                         {
                             //region проверка на пользователя (если есть)
-                            $ccfg = Configs::readCfg("plugin_" . $name, tbuild);
+                            $ccfg = Configs::readCfg("plugin_" . $name, Configs::currentBuild());
                             if (!empty($ccfg["allowedUsrs"])) {
                                 $usrs = explode(",", $ccfg["allowedUsrs"]); //доступ по id для определенных пользователей
 

@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\plugins\m;
+use mwce\Configs;
 use mwce\Connect;
 use mwce\Model;
 use mwce\Tools;
@@ -19,11 +20,11 @@ class mMainMenu extends Model
      */
     public static function getModels($params = null)
     {
-        if(!empty(self::$sdata[tbuild])){
-            return self::$sdata[tbuild];
+        if(!empty(self::$sdata[Configs::currentBuild()])){
+            return self::$sdata[Configs::currentBuild()];
         }
 
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
         if(file_exists($path))
             $lang = require $path;
         else
@@ -65,7 +66,7 @@ ORDER BY mmt.col_seq,mmt.col_ttitle, mm.col_Seq")->fetchAll();
 
         }
 
-        self::$sdata[tbuild] = $menus;
+        self::$sdata[Configs::currentBuild()] = $menus;
         return $menus;
     }
 

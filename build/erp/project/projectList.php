@@ -90,7 +90,7 @@ class projectList extends eController
             $params['endDate'] = $_POST['endDate'];
         }
 
-        $projectCfg = Configs::readCfg('project',tbuild);
+        $projectCfg = Configs::readCfg('project',Configs::currentBuild());
 
 
         if(!empty($_POST['stages'])){

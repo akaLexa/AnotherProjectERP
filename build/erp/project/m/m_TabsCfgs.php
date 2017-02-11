@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\project\m;
+use mwce\Configs;
 use mwce\DicBuilder;
 use mwce\Model;
 
@@ -24,14 +25,14 @@ class m_TabsCfgs extends Model
      */
     public static function getCurModel($id)
     {
-        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$id.'.php';
+        $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$id.'.php';
         if(!file_exists($path))
             return false;
 
         $cfg = DicBuilder::getLang($path);
         if(!empty($cfg)){
             $obj = new m_TabsCfgs();
-            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'tab_cfgs.php');
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'tab_cfgs.php');
 
             foreach ($cfg as $id_=> $item) {
 
@@ -60,7 +61,7 @@ class m_TabsCfgs extends Model
                     $newCfg[$id] = '';
             }
 
-            $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this['name']['value'].'.php';
+            $path = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'tabs'.DIRECTORY_SEPARATOR.'cfg'.DIRECTORY_SEPARATOR.$this['name']['value'].'.php';
 
             $db = new DicBuilder($path);
             $db->buildDic($newCfg);
@@ -73,7 +74,7 @@ class m_TabsCfgs extends Model
      * удалить кешированные списки видимости вкладок в проекте
      */
     public static function delCache(){
-        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
             if(stripos($file,'generatedTabs') !== false){

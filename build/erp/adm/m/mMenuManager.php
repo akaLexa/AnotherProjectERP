@@ -25,7 +25,7 @@ class mMenuManager extends Model
      */
     public function getAccessList($menu){
 
-        $config = Configs::readCfg('plugin_mainMenu',tbuild);
+        $config = Configs::readCfg('plugin_mainMenu',Configs::currentBuild());
         if(!empty($config)){
             $m = $config;
             foreach ($m as $name =>$item) {
@@ -205,7 +205,7 @@ ORDER BY mm.col_Seq");
         $array = array(-1=>"...");
         $q = $this->db->query("SELECT col_moduleName,col_title FROM tbl_modules ORDER BY col_moduleName");
 
-        $lpath = "build".DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR."titles.php";
+        $lpath = "build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR."titles.php";
         $lang = DicBuilder::getLang($lpath);
 
         while ($r = $q->fetch())
@@ -224,7 +224,7 @@ ORDER BY mm.col_Seq");
      */
     public static function RefreshCache(){
 
-        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR .'cache';
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR .'cache';
         $files = scandir($path);
         foreach ($files as $file) {
             if(stripos($file,'plugin_mainMenu') !== false){

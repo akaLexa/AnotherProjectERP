@@ -199,7 +199,7 @@ WHERE
     public static function getCfg(){
         if(empty(self::$projectCfg)){
             //todo: распарсить сразу настройки, там где нужно в массивы
-            self::$projectCfg = Configs::readCfg('project',tbuild);
+            self::$projectCfg = Configs::readCfg('project',Configs::currentBuild());
         }
         return self::$projectCfg;
     }

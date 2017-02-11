@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\adm\m;
+use mwce\Configs;
 use mwce\Connect;
 use mwce\Model;
 
@@ -44,7 +45,7 @@ WHERE
     {
         $db = Connect::start();
         $curPlugins = array();
-        $pluginPath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'plugins';
+        $pluginPath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'plugins';
 
         if(!file_exists($pluginPath))
             return $curPlugins;
@@ -107,7 +108,7 @@ WHERE col_pID =".$this['col_pID']);
      */
     public static function RefreshCache(){
 
-        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
             if(stripos($file,'_plugins.php') !== false){

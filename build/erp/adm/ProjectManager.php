@@ -193,8 +193,8 @@ class ProjectManager extends eController
             $stagesGroup[] = array($name,$num);
         }
 
-        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.tbuild.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'cfg_project.php');
-        $cfg = Configs::readCfg('project',tbuild);
+        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'cfg_project.php');
+        $cfg = Configs::readCfg('project',Configs::currentBuild());
 
         foreach ($cfg as $cname=>$cval){
 
@@ -280,14 +280,14 @@ class ProjectManager extends eController
             }
 
             //чтобы не потерять существующую конфигурацию в случае, если она не заполнена
-            $oldCfg = Configs::readCfg('project',tbuild);
+            $oldCfg = Configs::readCfg('project',Configs::currentBuild());
             foreach ($oldCfg as $id=>$item) {
                 if(empty($cfg[$id])){
                     $cfg[$id] = '';
                 }
             }
 
-            Configs::writeCfg($cfg,'project',tbuild);
+            Configs::writeCfg($cfg,'project',Configs::currentBuild());
         }
     }
 

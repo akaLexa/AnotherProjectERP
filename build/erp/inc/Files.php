@@ -94,7 +94,7 @@ class Files
 
     protected function __construct($con = 0)
     {
-        $cfg = Configs::readCfg('project', tbuild);
+        $cfg = Configs::readCfg('project', Configs::currentBuild());
         if (!empty($cfg['documentsFolder']))
             self::$docPath = $cfg['documentsFolder'];
         else

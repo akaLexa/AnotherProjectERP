@@ -88,7 +88,7 @@ mp.tbuild = '" . tbuild . "')t");
         }
 */
         if ($this->db->type == Connect::MSSQL || $this->db->type == Connect::ODBC || $this->db->type == Connect::SQLSRV){
-            $pages = $this->db->query("SELECT * FROM mwce_settings.dbo.mwc_pages  WHERE tbuild = '" . tbuild . "'")->fetchAll();
+            $pages = $this->db->query("SELECT * FROM mwce_settings.dbo.mwc_pages  WHERE tbuild = '" . Configs::currentBuild() . "'")->fetchAll();
 
             if(!empty($pages)){
                 foreach ($pages as $res) {
@@ -112,7 +112,7 @@ mp.tbuild = '" . tbuild . "')t");
         }
         else
         {
-            $q = $this->db->query("SELECT *, (SELECT GROUP_CONCAT(goupId) FROM mwce_settings.mwc_access WHERE pageId = id) AS groups FROM mwce_settings.mwc_pages  WHERE tbuild = '" . tbuild . "'");
+            $q = $this->db->query("SELECT *, (SELECT GROUP_CONCAT(goupId) FROM mwce_settings.mwc_access WHERE pageId = id) AS groups FROM mwce_settings.mwc_pages  WHERE tbuild = '" . Configs::currentBuild() . "'");
             while ($res = $q->FetchRow()) {
 
                 $inf .= '"' . $res["pname"] . '"=>["title"=> "' . $res["ptitle"] . '","ppath"=>"' . str_replace('/', '\\', $res["ppath"]) . '","caching"=>"' . $res["caching"] . '","ison"=>"' . $res["ison"] . '","isClass"=>"' . $res["isClass"] . '",';
@@ -123,7 +123,7 @@ mp.tbuild = '" . tbuild . "')t");
         }
 
         if (!empty($inf))
-            $this->writef(baseDir.DIRECTORY_SEPARATOR. "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php", '<?php return array(' . $inf . ');');
+            $this->writef(baseDir.DIRECTORY_SEPARATOR. "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php", '<?php return array(' . $inf . ');');
 
     }
 
@@ -173,7 +173,7 @@ mp.tbuild = '" . tbuild . "')t");
         }*/
 
         if ($this->db->type == Connect::MSSQL || $this->db->type == Connect::ODBC || $this->db->type == Connect::SQLSRV){
-            $plugins = $this->db->query("SELECT * FROM mwce_settings.dbo.mwc_plugins  WHERE tbuild = '" . tbuild . "'")->fetchAll();
+            $plugins = $this->db->query("SELECT * FROM mwce_settings.dbo.mwc_plugins  WHERE tbuild = '" . Configs::currentBuild() . "'")->fetchAll();
             if(!empty($plugins)){
                 foreach ($plugins as $res)
                 {
@@ -200,7 +200,7 @@ mp.tbuild = '" . tbuild . "')t");
         }
         else
         {
-            $q = $this->db->query("SELECT *, (SELECT GROUP_CONCAT(col_groupID) FROM mwce_settings.mwc_pluginsaccess WHERE col_pluginID = pid) AS groups FROM mwce_settings.mwc_plugins WHERE tbuild = '" . tbuild . "'");
+            $q = $this->db->query("SELECT *, (SELECT GROUP_CONCAT(col_groupID) FROM mwce_settings.mwc_pluginsaccess WHERE col_pluginID = pid) AS groups FROM mwce_settings.mwc_plugins WHERE tbuild = '" . Configs::currentBuild() . "'");
             while ($res = $q->fetch()) {
 
                 $res["pstate"] = !empty($res["pstate"]) ? 1 : 0;
@@ -210,7 +210,7 @@ mp.tbuild = '" . tbuild . "')t");
             }
         }
 
-        $this->writef(baseDir.DIRECTORY_SEPARATOR."build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php", '<?php return array(' . $inf . ');');
+        $this->writef(baseDir.DIRECTORY_SEPARATOR."build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php", '<?php return array(' . $inf . ');');
 
     }
 
@@ -222,13 +222,13 @@ mp.tbuild = '" . tbuild . "')t");
     public function refresh($type = 0)
     {
         if ($type == 0) {
-            unlink("build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php");
-            unlink("build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php");
+            unlink("build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php");
+            unlink("build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php");
         }
         elseif ($type == 1)
-            unlink("build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php");
+            unlink("build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php");
         else
-            unlink("build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php");
+            unlink("build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php");
 
         $this->checkBase();
     }
@@ -257,13 +257,13 @@ mp.tbuild = '" . tbuild . "')t");
      */
     public function checkBase()
     {
-        if (!file_exists(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php")) {
+        if (!file_exists(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php")) {
             if (is_null($this->db))
                 $this->db = Connect::start('siteBase');
             $this->buildPage();
         }
 
-        if (!file_exists(baseDir . DIRECTORY_SEPARATOR ."build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php")) {
+        if (!file_exists(baseDir . DIRECTORY_SEPARATOR ."build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php")) {
             if (is_null($this->db))
                 $this->db = Connect::start('siteBase');
             $this->buildPlugin();
@@ -276,7 +276,7 @@ mp.tbuild = '" . tbuild . "')t");
      */
     public function getPages()
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php";
         if (file_exists($path)) {
             return include $path;
         }
@@ -290,7 +290,7 @@ mp.tbuild = '" . tbuild . "')t");
      */
     public function getPlugins()
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php";
         if (file_exists($path)) {
             return include $path;
         }
@@ -302,13 +302,13 @@ mp.tbuild = '" . tbuild . "')t");
     {
         switch ($name) {
             case 'pages':
-                $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php";
+                $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_pages.php";
                 if (file_exists($path)) {
                     return include $path;
                 }
                 break;
             case 'plugins':
-                $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php";
+                $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $this->lang . "_plugins.php";
                 if (file_exists($path)) {
                     return include $path;
                 }

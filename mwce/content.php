@@ -270,7 +270,7 @@ class content
         }
         else {
 
-            $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . ".php");
+            $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . ".php");
 
             if($file == 'titles'){
 

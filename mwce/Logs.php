@@ -36,7 +36,7 @@ class Logs
             $build = 'global';
         }
         else {
-            $build = tbuild;
+            $build = Configs::currentBuild();
         }
         
         file_put_contents(baseDir . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . '[' . @date("d_m_Y", time()) . ']' . $build . '_error_' . $errNum . '.txt', $text . PHP_EOL, FILE_APPEND);

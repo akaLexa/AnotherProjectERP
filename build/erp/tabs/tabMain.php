@@ -142,7 +142,7 @@ class tabMain extends AprojectTabs
     {
         eController::__construct($view, $pages);
         $this->project = mTabMain::getCurModel($project);
-        $this->configs = Configs::readCfg('project',tbuild);
+        $this->configs = Configs::readCfg('project',Configs::currentBuild());
         $this->configs['endStagesID'] = explode(',',$this->configs['endStagesID']);
         $this->configs['activeStagesID'] = explode(',',$this->configs['activeStagesID']);
     }

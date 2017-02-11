@@ -71,7 +71,7 @@ class inProject extends eController
 
                 $this->view->set('title',$project['col_pnID'].':'.$project['col_projectName']);
 
-                $projectCfg =  Configs::readCfg('project',tbuild);
+                $projectCfg =  Configs::readCfg('project',Configs::currentBuild());
                 $projectCfg['endStagesID'] = explode(',',$projectCfg['endStagesID']);
 
 
@@ -119,7 +119,7 @@ class inProject extends eController
     public function actionTabContent(){
         if(!empty($_GET['tab']) && !empty($_GET['id'])){
 
-            $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
+            $cPath = '\\build\\' . Configs::currentBuild() . '\\' . 'tabs\\' . $_GET['tab'];
 
             if(class_exists($cPath)){
                 $tab = new $cPath($this->view, $this->pages,$_GET['id']);
@@ -145,7 +145,7 @@ class inProject extends eController
     public function actionExecAction(){
         if(!empty($_GET['id']) && !empty($_GET['tab'])){
 
-            $cPath = '\\build\\' . tbuild . '\\' . 'tabs\\' . $_GET['tab'];
+            $cPath = '\\build\\' . Configs::currentBuild() . '\\' . 'tabs\\' . $_GET['tab'];
 
             if(empty($_GET['act']))
                 $_GET['act'] = 'Index';

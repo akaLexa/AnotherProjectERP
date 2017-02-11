@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\adm\m;
+use mwce\Configs;
 use mwce\Connect;
 use mwce\Model;
 
@@ -138,7 +139,7 @@ ORDER BY mm.col_title")->fetch(static::class);
      */
     public static function RefreshCache(){
 
-        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . tbuild . DIRECTORY_SEPARATOR . '_dat';
+        $path = $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat';
         $files = scandir($path);
         foreach ($files as $file) {
             if(stripos($file,'_pages.php') !== false){
