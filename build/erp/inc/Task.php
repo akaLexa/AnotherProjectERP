@@ -111,7 +111,6 @@ WHERE
   f_getUserFIO(tt.col_curatorID) AS col_curator,
   COALESCE(tt.col_startFact,tt.col_startPlan) AS col_dateStart,
   DATEDIFF(COALESCE(tt.col_endFact,tt.col_endPlan),COALESCE(tt.col_startFact,tt.col_startPlan)) AS col_dayDifs,
-  tps.col_pstageID,
   tp.col_projectName,
   tp.col_pnID,
   tp.col_founderID
