@@ -43,25 +43,6 @@ class Task extends Model
         $db->closeCursor();
     }
 
-    public function edit($params){
-        $qString = self::genUpdate($params);
-        if(!empty($qString)){
-            $this->db->exec("UPDATE tbl_tasks SET $qString WHERE col_taskID = {$this['col_taskID']}");
-
-            if(!empty($this['col_endPlan']) && !empty($this['col_nextID'])){
-                $this->db->exec("CALL sp_setTaskPlanQuenue({$this['col_pstageID']},null,{$params['col_nextID']});");
-                $this->db->closeCursor();
-            }
-        }
-    }
-
-    public function delete(){
-        if($this['col_StatusID'] == 5){
-            $this->db->exec("UPDATE tbl_tasks SET col_bonding = 0, col_nextID = null WHERE col_nextID = {$this['col_taskID']}");
-            $this->db->exec("DELETE FROM tbl_tasks WHERE col_taskID = {$this['col_taskID']}");
-        }
-    }
-
     /**
      * возвращает список задач в стадии для создания связи
      * @param int $stageId
@@ -122,7 +103,7 @@ WHERE
         if(empty($query))
             return false;
 
-        $q = "SELECT
+        $q = "SELECT * FROM (SELECT
   tt.*,
   ths.col_StatusName,
   f_getUserFIO(tt.col_initID) AS col_init,
@@ -134,8 +115,8 @@ WHERE
   tp.col_projectName,
   tp.col_pnID,
   tp.col_founderID
-$query
-";
+$query)t
+ORDER BY t.col_endFact DESC, t.col_endPlan ASC";
         if(isset($params['min'])){
             $q.=" LIMIT ".$params['min'];
             if(!empty($params['max']))
@@ -150,7 +131,7 @@ $query
      * @return string
      */
     protected static function qBuilder($params = null){
-        //
+
         $q = 'FROM
   tbl_tasks tt,
   tbl_hb_status ths,
@@ -313,6 +294,25 @@ WHERE
                     $this->db->exec($pool);
                 }
             }
+        }
+    }
+
+    public function edit($params){
+        $qString = self::genUpdate($params);
+        if(!empty($qString)){
+            $this->db->exec("UPDATE tbl_tasks SET $qString WHERE col_taskID = {$this['col_taskID']}");
+
+            if(!empty($this['col_endPlan']) && !empty($this['col_nextID'])){
+                $this->db->exec("CALL sp_setTaskPlanQuenue({$this['col_pstageID']},null,{$params['col_nextID']});");
+                $this->db->closeCursor();
+            }
+        }
+    }
+
+    public function delete(){
+        if($this['col_StatusID'] == 5){
+            $this->db->exec("UPDATE tbl_tasks SET col_bonding = 0, col_nextID = null WHERE col_nextID = {$this['col_taskID']}");
+            $this->db->exec("DELETE FROM tbl_tasks WHERE col_taskID = {$this['col_taskID']}");
         }
     }
 
