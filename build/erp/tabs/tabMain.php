@@ -7,12 +7,13 @@
  *
  **/
 namespace build\erp\tabs;
+use build\erp\adm\m\mStages;
 use build\erp\inc\AprojectTabs;
 use build\erp\inc\eController;
-use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use build\erp\tabs\m\mTabMain;
+use mwce\Configs;
 use mwce\html_;
 use mwce\router;
 use mwce\Tools;
@@ -29,14 +30,21 @@ class tabMain extends AprojectTabs
     protected $postField = array(
         'projectNane' => ['type'=>self::STR,'maxLength'=>200],
         'projectDesc' => ['type'=>self::STR],
+        'stageComment' => ['type'=>self::STR],
+        'stageFailDesc' => ['type'=>self::STR],
         'curManager' => ['type'=>self::INT],
         'planState' => ['type'=>self::INT],
+        'choosedGroup' => ['type'=>self::INT],
+        'chosedStage' => ['type'=>self::INT],
+        'chosedStageResp' => ['type'=>self::INT],
         'descState' => ['type'=>self::STR],
         'descStage' => ['type'=>self::STR],
+        'stageDateTo' => ['type'=>self::DATE],
     );
 
     protected $getField = array(
         'type' => ['type'=>self::INT],
+        'group' => ['type'=>self::INT],
         'desc' => ['type'=>self::STR],
     );
 
@@ -134,6 +142,9 @@ class tabMain extends AprojectTabs
     {
         eController::__construct($view, $pages);
         $this->project = mTabMain::getCurModel($project);
+        $this->configs = Configs::readCfg('project',tbuild);
+        $this->configs['endStagesID'] = explode(',',$this->configs['endStagesID']);
+        $this->configs['activeStagesID'] = explode(',',$this->configs['activeStagesID']);
     }
 
     /**
@@ -148,7 +159,10 @@ class tabMain extends AprojectTabs
                 $stageInfo = mProjectPlan::getCurModel($this->project['col_pstageID']);
                 if(!empty($stageInfo)){
                     //просрочка по стадии, а если так, то нужно указать причину просрочки
-                    if(strtotime($stageInfo['col_dateEndPlan']) < time() && empty($_POST['descStage'])){
+                    if(
+                        strtotime($stageInfo['col_dateEndPlan']) < time()
+                        && empty($_POST['descStage'])
+                        && !in_array($this->project['col_pstageID'],$this->configs['endStagesID'])){
                         echo json_encode(['stageIsLate'=>true]);
                     }
                     else{
@@ -176,6 +190,7 @@ class tabMain extends AprojectTabs
     public function stageMove(){
         if(!empty($this->project)){
 
+
             $stageInfo = mProjectPlan::getCurModel($this->project['col_pstageID']);
 
             if(!empty($_POST['goNextStage'])){
@@ -192,7 +207,7 @@ class tabMain extends AprojectTabs
                     echo json_encode(['error'=>'Ошибка при попытке перевести стадию']);
             }
             else{
-                if($this->project['col_ProjectPlanState'] == 1){
+                if($this->project['col_ProjectPlanState'] == 1){//автоплан
                     $stnfo = $this->project->getNextStageID();
                     if(empty($stnfo)){
                         echo json_encode(['error'=>'В плане проекта больше нет стадий. Скорее всего, выполнение плана завершено.']);
@@ -202,11 +217,73 @@ class tabMain extends AprojectTabs
                             ->set($stnfo)
                             ->out('infoNextStageForm',$this->className);
                     }
+                }
+                else{ //не по плану
+                    if(empty($_POST)){
+                        $groups = User::getGropList();
+                        $groups[0] = '...';
+                        //если нет просрочки стадии
+                        if(strtotime($stageInfo['col_dateEndPlan']) > time() || in_array($this->project['col_pstageID'],$this->configs['endStagesID'])){
+                            $this->view->set('customDisplayStyle','display: none;');
+                        }
 
+                        $this->view
+                            ->set('groupList',html_::select($groups,'choosedGroup',0,'class="form-control inlineBlock" style="width:230px;" onchange="getStagesByGroup(this.value)"'))
+                            ->out('nextStageForm',$this->className);
+                    }
+                    else if(
+                        !empty($_POST['chosedStage'])
+                        && !empty($_POST['chosedStageResp'])
+                        && !empty($_POST['stageDateTo'])
+                    ){
+                        //если просрочена стадия и неот обьяснения или дата окончания след. стадии выставлена неверно, нужно завернуть
+                        if(
+                            (strtotime($stageInfo['col_dateEndPlan']) < time() && empty($_POST['stageFailDesc']) && !in_array($this->project['col_pstageID'],$this->configs['endStagesID']))
+                            || (strtotime($_POST['stageDateTo']) < time())
+                        ){
+                            return;
+                        }
+
+                        $this->project->sendStage(
+                            !empty($_POST['stageComment']) ? "'{$_POST['stageComment']}'": 'NULL',
+                            $_POST['chosedStageResp'],
+                            $_POST['chosedStage'],
+                            $_POST['stageDateTo'],
+                            !empty($_POST['stageFailDesc']) ? $_POST['stageFailDesc']: ''
+                        );
+                        echo json_encode(['success'=>1]);
+                    }
                 }
             }
         }
+    }
 
+    /**
+     * список стадий для группы
+     */
+    public function getStageList(){
+        if(!empty($this->project) && !empty($_GET['group'])){
+            $list = mStages::getStageListByGroup($_GET['group']);
+
+            if(!empty($list)){
+                $list[0] = '...';
+                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите стадию: </span>'.html_::select($list,'chosedStage',0,'class="form-control inlineBlock" style="width:230px;" onchange="getRespByStage(this.value)"');
+            }
+        }
+    }
+
+    /**
+     * Ответственные за стадию
+     */
+    public function getRespList(){
+        if(!empty($this->project) && !empty($_GET['stage'])){
+            $list = User::getUserListByStage($_GET['stage']);
+
+            if(!empty($list)){
+                $list[0] = '...';
+                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите ответственного: </span>'.html_::select($list,'chosedStageResp',0,'class="form-control inlineBlock" style="width:230px;"');
+            }
+        }
     }
 
     /**

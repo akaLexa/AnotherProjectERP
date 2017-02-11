@@ -13,14 +13,12 @@ use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\User;
-use build\erp\project\addProject;
 use build\erp\project\m\m_inProject;
 use build\erp\project\m\m_TabsCfgs;
 use mwce\Configs;
 use mwce\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\html_;
-use mwce\Tools;
 
 
 class ProjectManager extends eController
@@ -132,15 +130,18 @@ class ProjectManager extends eController
             else if(!empty($_GET['curGrp'])){
                 $checked = array();
 
-                if(empty($_POST)){
+                if(!empty($_POST)){
                     $ai = new \ArrayIterator($_POST);
 
                     foreach ($ai as $pId=>$pVal){
-                        if(strpos($pId,'role_') !== false){
+                        if(stripos(trim($pId),'role_') !== false){
                             $checked[] = (int)$pVal;
                         }
+                        else
+                            echo $pId;
                     }
                 }
+
                 $stage->checkRoleAccess($_GET['curGrp'],$checked);
             }
         }

@@ -180,6 +180,34 @@ WHERE
     }
 
     /**
+     * список активных пользователей по стадии
+     * @param int $stageID
+     * @return array
+     */
+    public static function getUserListByStage($stageID){
+        $db = Connect::start();
+        $ar = array();
+        $q = $db->query("SELECT
+  tu.col_uID,
+  CONCAT(tu.col_Sername,' ',LEFT(tu.col_Name,1),'.',COALESCE(CONCAT(LEFT(tu.col_Sername,1),'.'),'')) AS col_user
+FROM
+  tbl_project_stage_group tpsg,
+  tbl_project_stage_role tpsr,
+  tbl_user tu
+WHERE
+  tpsg.col_StageID = $stageID
+  AND tpsr.col_psgID = tpsg.col_psgID
+  and tu.col_roleID = tpsr.col_roleID
+  AND tu.col_isBaned != 1");
+
+        while ($r = $q->fetch()){
+            $ar[$r['col_uID']] = $r['col_user'];
+        }
+
+        return $ar;
+    }
+
+    /**
      * список пользователей по id группы
      * @param int $groupId
      * @param bool $withBlocked

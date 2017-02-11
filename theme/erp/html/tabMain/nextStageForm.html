@@ -1,0 +1,12 @@
+<form id="nextStageForm">
+    <div>
+        <div>
+            <textarea name="stageComment" id="stageComment" class="form-control inlineBlock" style="width:450px; height:100px;" placeholder="Комментраий (не обязательно)"></textarea>
+            <textarea name="stageFailDesc" id="stageFailDesc" class="form-control inlineBlock" style="background: rgba(236,218,161,0.27); width:450px; height:60px;|customDisplayStyle|" placeholder="Причины просрочки. Поле обязательно к заполнению!"></textarea>
+        </div>
+        <div style="margin-top:7px;vertical-align: middle;" id="stageFormGroupChoose"><span style="display: inline-block; width: 220px;">Пожалуйста, выберите отдел: </span>|groupList|</div>
+        <div style="margin-top:11px;vertical-align: middle;" id="stageFormStages"></div>
+        <div id="stageFormPeople" style="vertical-align: middle;"></div>
+        <div id="stageFormDate" style="visibility: hidden;margin-top:3px;vertical-align: middle;"><span style="display: inline-block; width: 220px;">Пожалуйста, выберите дату завершения стадии: </span><input type="date" name="stageDateTo" class="form-control inlineBlock"></div>
+    </div>
+</form>

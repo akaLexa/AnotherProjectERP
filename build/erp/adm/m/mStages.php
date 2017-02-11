@@ -9,6 +9,7 @@
 namespace build\erp\adm\m;
 use mwce\Connect;
 use mwce\Model;
+use mwce\Tools;
 
 class mStages extends Model
 {
@@ -43,6 +44,32 @@ class mStages extends Model
         return self::getCurModel($lid);
     }
 
+    /**
+     * список возможныхстадий для группы
+     * @param int $group
+     * @return array
+     */
+    public static function getStageListByGroup($group){
+        $db= Connect::start();
+        $ar = array();
+        $q = $db->query("SELECT
+  thps.col_StageID,
+  thps.col_StageName
+FROM
+  tbl_project_stage_group tpsg,
+  tbl_hb_project_stage thps
+WHERE
+  tpsg.col_gID = $group
+  AND thps.col_StageID = tpsg.col_StageID
+  AND thps.col_isDel != 1");
+
+        while ($r = $q->fetch()){
+            $ar[$r['col_StageID']] = $r['col_StageName'];
+        }
+
+        return $ar;
+    }
+
     public function delete(){
         $this->db->exec('UPDATE tbl_hb_project_stage SET col_isDel = 1 WHERE col_StageID='.$this['col_StageID']);
     }
@@ -58,7 +85,7 @@ class mStages extends Model
      */
     public function getAccessedUsers($group){
         $list = array();
-        $roleRelation = $this->db->query("SELECT col_psgID FROM tbl_project_stage_group WHERE col_gID = $group")->fetch();
+        $roleRelation = $this->db->query("SELECT col_psgID FROM tbl_project_stage_group WHERE col_gID = $group AND col_StageID = {$this['col_StageID']}")->fetch();
         $q = $this->db->query("SELECT col_roleID FROM tbl_project_stage_role WHERE col_psgID = ".$roleRelation['col_psgID']);
         while ($res = $q->fetch()){
             $list[] = $res['col_roleID'];
@@ -73,9 +100,9 @@ class mStages extends Model
      */
     public function checkGroupAccess($group){
 
-        $r = $this->db->query("SELECT count(*) as cnt FROM tbl_project_stage_group WHERE col_gID = $group")->fetch();
+        $r = $this->db->query("SELECT count(*) as cnt FROM tbl_project_stage_group WHERE col_gID = $group AND col_StageID = {$this['col_StageID']}")->fetch();
         if($r['cnt']<1)
-            $this->db->exec("INSERT INTO tbl_project_stage_group (col_gID) VALUE($group)");
+            $this->db->exec("INSERT INTO tbl_project_stage_group (col_gID,col_StageID) VALUE($group,{$this['col_StageID']})");
     }
 
     /**
@@ -85,7 +112,7 @@ class mStages extends Model
      */
     public function checkRoleAccess($group,$roles){
         // это не говнокод, это лешкий способ делать выборку по отделам для стадии, когда слишком много пользователей
-        $roleRelation = $this->db->query("SELECT col_psgID FROM tbl_project_stage_group WHERE col_gID = $group")->fetch();
+        $roleRelation = $this->db->query("SELECT col_psgID FROM tbl_project_stage_group WHERE col_gID = $group AND col_StageID =".$this['col_StageID'])->fetch();
         $this->db->exec("DELETE FROM tbl_project_stage_role WHERE col_psgID=".$roleRelation['col_psgID']);
         if(!empty($roles)){
             $q = '';
@@ -95,8 +122,9 @@ class mStages extends Model
                 $q.="({$roleRelation['col_psgID']},$role)";
             }
 
-            if(!empty($q))
+            if(!empty($q)){
                 $this->db->exec("INSERT INTO tbl_project_stage_role (col_psgID,col_roleID)VALUES $q");
+            }
         }
     }
 

@@ -13,12 +13,33 @@ $(document).ready(function () {
 
     $(window.location.hash).tab('show');
 });
-
+function getStagesByGroup(group){
+    document.querySelector('#stageFormDate').style.visibility = 'hidden';
+    document.querySelector('#stageFormPeople').innerHTML='';
+    genIn({
+        element:'stageFormStages',
+        address:'|site|page/|currentPage|/ExecAction?tab=tabMain&act=getStageList&id=|col_projectID|&group='+group,
+        loadicon:'Загружаю'
+    });
+}
+function getRespByStage(stage){
+    document.querySelector('#stageFormDate').style.visibility = 'hidden';
+    genIn({
+        element:'stageFormPeople',
+        address:'|site|page/|currentPage|/ExecAction?tab=tabMain&act=getRespList&id=|col_projectID|&stage='+stage,
+        loadicon:'Загружаю',
+        callback:function (r) {
+            if(r.trim().length>10){
+                document.querySelector('#stageFormDate').style.visibility = 'visible';
+            }
+        }
+    });
+}
 function changeProjectStage() {
-    console.log('qq');
+
     $('#forDialogs').dialog({
         title:'Следующая стадия',
-        width:400,
+        width:500,
         modal:true,
         open:function () {
             genIn({
@@ -60,7 +81,7 @@ function changeProjectStage() {
                             }
                         }
                         catch(e) {
-
+                            mwce_alert('Произошла обшибка: скорее всего, Вы не заполнили какие-то обязательные поля','Внимание');
                         }
                     }
                 });

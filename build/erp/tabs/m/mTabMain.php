@@ -36,34 +36,6 @@ class mTabMain extends Project
     }
 
     /**
-     * принять стадию
-     */
-    public function stageAgree(){
-        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1,col_dateStart = NOW() WHERE col_pstageID = ".$this['col_pstageID']);
-    }
-
-    /**
-     * отказаться от стадии, указав комментарий
-     * @param string $comment
-     */
-    public function stageDisagree($comment){
-        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 2,col_dateStart = NOW(),col_dateEndFact=NOW(),col_comment='$comment' WHERE col_pstageID = ".$this['col_pstageID']);
-        $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID)
-SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исполнитель отказался от стадии по причине: $comment',col_stageID,col_prevStageID,col_respID FROM tbl_project_stage WHERE col_pstageID = ".$this['col_pstageID']);
-    }
-
-    /**
-     * передать стадию
-     * @param string $comment
-     * @param int $receiver
-     * @param int $stage
-     * @param date $toDate
-     */
-    public function sendStage($comment,$receiver,$stage,$toDate){
-        $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID) VALUE ({$this['col_projectID']},4,NOW(),NOW(),NOW(),'$toDate',$comment,$stage,{$this['col_pstageID']},$receiver)");
-    }
-
-    /**
      * включеиние / отключение автоплана
      * @param int $state
      * @param string $descLate причина просрочки стадии
