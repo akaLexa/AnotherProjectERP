@@ -10,6 +10,7 @@ namespace build\erp\main;
 use build\erp\inc\eController;
 use build\erp\inc\tPaginate;
 use build\erp\main\m\mEventJournal;
+use mwce\Configs;
 use mwce\date_;
 use mwce\html_;
 use mwce\router;
@@ -52,7 +53,7 @@ class EventJournal extends eController
             $curPage = !empty($_POST['curPage']) ? $_POST['curPage'] : 1;
 
             $params = array(
-                'userID' => router::getCurUser(),
+                'userID' => Configs::userID(),
                 'dFrom' => $_POST['dFrom'],
                 'dTo' => $_POST['dTo'],
                 'isTop' => !empty($_POST['showPushed']) ? 1 : 0,
@@ -139,7 +140,7 @@ class EventJournal extends eController
      * отметить ВСЕ рочитанными
      */
     public function actionSetAllRead(){
-        mEventJournal::setAllRead(router::getCurUser());
+        mEventJournal::setAllRead(Configs::userID());
     }
 
 }

@@ -14,6 +14,7 @@ use build\erp\inc\TaskComments;
 use build\erp\inc\tPaginate;
 use build\erp\inc\User;
 use build\erp\main\m\mTasks;
+use mwce\Configs;
 use mwce\date_;
 use mwce\Exceptions\ModException;
 use mwce\html_;
@@ -62,7 +63,7 @@ class tasks extends eController
         $this->view
             ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
             ->set('initList',html_::select($users,'taskInit',0,'style="width:120px;" class="erpInput" onchange="filterTask();"'))
-            ->set('respList',html_::select($users,'taskResp',router::getCurUser(),'style="width:120px;" class="erpInput" onchange="filterTask();"'))
+            ->set('respList',html_::select($users,'taskResp',Configs::userID(),'style="width:120px;" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
     }
 
@@ -74,7 +75,7 @@ class tasks extends eController
             $params['projectID'] = $_POST['projectNum'];
 
         if(!empty($_POST['isCurator']))
-            $params['taskCurator'] = router::getCurUser();
+            $params['taskCurator'] = Configs::userID();
 
         if(isset($_POST['taskStatus']))
             $params['taskStatus'] = $_POST['taskStatus'];
@@ -179,10 +180,10 @@ class tasks extends eController
 
                 $status = Project::getStates();
 
-                if($task['col_initID'] == router::getCurUser() || $task['col_respID'] == router::getCurUser()){
+                if($task['col_initID'] == Configs::userID() || $task['col_respID'] == Configs::userID()){
                     switch ($task['col_StatusID']){
                         case 1: //работа
-                            if($task['col_respID'] == router::getCurUser()){
+                            if($task['col_respID'] == Configs::userID()){
                                /* if(!empty($task['col_startPlan'])) //если
                                     unset($status[1],$status[2],$status[4],$status[5]);
                                 else*/
@@ -197,7 +198,7 @@ class tasks extends eController
                             break;
                         case 2: //отказ
                         case 3: //завершено
-                            if($task['col_initID'] == router::getCurUser()){
+                            if($task['col_initID'] == Configs::userID()){
                                 $status = array();
                                 $status[99] = 'Перезапустить';
                                 $this->view
@@ -207,7 +208,7 @@ class tasks extends eController
                             }
                             break;
                         case 4: //принятие решения
-                            if($task['col_respID'] == router::getCurUser()){
+                            if($task['col_respID'] == Configs::userID()){
                                 $this->view->out('acceptForm',$this->className);
                                 $this->view->setFContainer('inTaskProperties',true);
                             }
@@ -273,7 +274,7 @@ class tasks extends eController
                 try{
                     $task =TaskComments::Add([
                         'col_taskID'=>$_POST['task'],
-                        'col_UserID'=>router::getCurUser(),
+                        'col_UserID'=>Configs::userID(),
                         'col_text'=>$_POST['taskComment'],
                     ]);
                     echo json_encode([

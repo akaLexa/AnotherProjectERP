@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\inc;
+use mwce\Configs;
 use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
@@ -238,7 +239,7 @@ WHERE
     public function newComment($text,$isNotice = true){
         $params = [
             'col_taskID'=>$this['col_taskID'],
-            'col_UserID'=>router::getCurUser(),
+            'col_UserID'=>Configs::userID(),
             'col_text'=>$text,
         ];
 

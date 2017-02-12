@@ -82,8 +82,8 @@ class Connect
      */
     static public function start($conNum = 0)
     {
-        if (defined('conNum') && $conNum == 0 && strtolower(trim($conNum)) !='sitebase')
-            $conNum = conNum;
+        if (Configs::globalCfg('defaultConNum') && $conNum == 0 && strtolower(trim($conNum)) !='sitebase')
+            $conNum = Configs::globalCfg('defaultConNum');
 
         if (!isset(self::$pool[$conNum])) {
             if ($conNum == -1) {

@@ -246,10 +246,6 @@ class router
                 }
             }
 
-            //todo: проверить, зачем они нужны и выпилить
-            define('conNum', $cfg_params['globalCfg']['defaultConNum']);  //set default connection num from builds pool
-            define('errorLevel', $cfg_params['globalCfg']['errorLevel']); //set default errors show level
-
             $cfg_params['buildCfg'] = Configs::readCfg('main', $cfg_params['currentBuild']);
 
             if (empty($cfg_params['buildCfg'])) {
@@ -334,31 +330,6 @@ class router
     }
 
     /**
-     * текущий пользователь
-     * @return int
-     */
-    public static function getCurUser(){
-        return Configs::userID();
-
-    }
-
-    /**
-     * текущая группа пользователя
-     * @return int
-     */
-    public static function getUserGroup(){
-        return Configs::curGroup();
-    }
-
-    /**
-     * текущая роль пользователя
-     * @return int
-     */
-    public static function getUserRole(){
-        return Configs::curRole();
-    }
-
-    /**
      * запуск обработки моделей
      */
     public function startModules()
@@ -375,7 +346,7 @@ class router
         catch (\Exception $e) {
             Logs::log($e);
             
-            if (defined('errorLevel') && errorLevel > 0) {
+            if (!empty(Configs::globalCfg('errorLevel')) && Configs::globalCfg('errorLevel') > 0) {
                 $this->view->error($e);
             }
             else {

@@ -70,7 +70,7 @@ class tabMain extends AprojectTabs
                 $this->view->set('customVizStyle','display:none');
             }
 
-            if($this->project['col_statusID'] == 4 && $this->project['col_respID'] == router::getCurUser()){
+            if($this->project['col_statusID'] == 4 && $this->project['col_respID'] == Configs::userID()){
                 $this->view->set('chooseStageStyle','');
             }
             else{
@@ -89,7 +89,7 @@ class tabMain extends AprojectTabs
      */
     public function stageAction(){
         if(!empty($_GET['type'])){
-            if($this->project['col_statusID'] == 4 && $this->project['col_respID'] == router::getCurUser()){
+            if($this->project['col_statusID'] == 4 && $this->project['col_respID'] == Configs::userID()){
                 switch ($_GET['type']){
                     case 1:
                         $this->project->stageAgree();
@@ -296,8 +296,8 @@ class tabMain extends AprojectTabs
         $role = explode(',',$prop['userAccessRW']);
         $group = explode(',',$prop['groupAccessRW']);
 
-        if(in_array(router::getUserGroup(),$group) || in_array(3,$group)
-            || in_array(router::getUserRole(),$role)){
+        if(in_array(Configs::curGroup(),$group) || in_array(3,$group)
+            || in_array(Configs::curRole(),$role)){
             return true;
         }
 

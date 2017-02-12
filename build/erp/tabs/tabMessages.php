@@ -10,6 +10,7 @@ namespace build\erp\tabs;
 use build\erp\inc\AprojectTabs;
 use build\erp\inc\User;
 use build\erp\tabs\m\mTabMessages;
+use mwce\Configs;
 use mwce\router;
 use mwce\Tools;
 
@@ -30,8 +31,8 @@ class tabMessages extends AprojectTabs
         $role = explode(',',$settings['userAccessRW']);
         $group = explode(',',$settings['groupAccessRW']);
 
-        if(in_array(router::getUserGroup(),$group) || in_array(3,$group)
-            || in_array(router::getUserRole(),$role)){
+        if(in_array(Configs::curGroup(),$group) || in_array(3,$group)
+            || in_array(Configs::curRole(),$role)){
             $this->view->emptyName('isDisabled');
         }
         else
@@ -39,7 +40,7 @@ class tabMessages extends AprojectTabs
 
         $userlist = User::getUserList();
         asort($userlist);
-        unset($userlist[router::getCurUser()]);
+        unset($userlist[Configs::userID()]);
 
         //todo: подумать как лучше запилить форму пользователей, особенно, если их будет очень многою справочники?
         if(!empty($userlist)){
@@ -97,7 +98,7 @@ class tabMessages extends AprojectTabs
                 }
             }
 
-            mTabMessages::addComment($_GET['id'],$_POST['messageText'],router::getCurUser(),$listeners);
+            mTabMessages::addComment($_GET['id'],$_POST['messageText'],Configs::userID(),$listeners);
             echo json_encode(['success'=>1]);
         }
     }

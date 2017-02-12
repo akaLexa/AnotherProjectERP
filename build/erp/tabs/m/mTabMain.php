@@ -9,6 +9,7 @@
 namespace build\erp\tabs\m;
 use build\erp\inc\Project;
 use build\erp\inc\User;
+use mwce\Configs;
 use mwce\date_;
 use mwce\router;
 
@@ -30,7 +31,7 @@ class mTabMain extends Project
             $this->db->exec("UPDATE tbl_project SET $q WHERE col_projectID=".$this['col_projectID']);
             if($this['col_founderID'] != $params['col_founderID']){
                 $famList = User::getUserList();
-                mTabMessages::addEvent($this['col_projectID'],"Пользователь «{$famList[router::getCurUser()]}» сменил менеджера проекта с «{$famList[$this['col_founderID']]}» на «{$famList[$params['col_founderID']]}»");
+                mTabMessages::addEvent($this['col_projectID'],"Пользователь «{$famList[Configs::userID()]}» сменил менеджера проекта с «{$famList[$this['col_founderID']]}» на «{$famList[$params['col_founderID']]}»");
             }
         }
     }
@@ -46,7 +47,7 @@ class mTabMain extends Project
         //отключение
         if($state == 0){
             $this->db->exec("UPDATE tbl_project SET col_ProjectPlanState = 0 WHERE col_projectID = ".$this['col_projectID']);
-            mTabMessages::addEvent($this['col_projectID'],'Функция автоплана проекта была отключена {userID:'.router::getCurUser().'} по причине: '.$descOff);
+            mTabMessages::addEvent($this['col_projectID'],'Функция автоплана проекта была отключена {userID:'.Configs::userID().'} по причине: '.$descOff);
             return true;
         }
         //включение
@@ -60,7 +61,7 @@ class mTabMain extends Project
      * @return bool
      */
     public function switchToNextPlanStage($descLate=0){
-        if($this['col_respID']!= router::getCurUser())
+        if($this['col_respID']!= Configs::userID())
             return false;
 
         $next = self::getNextStageID();

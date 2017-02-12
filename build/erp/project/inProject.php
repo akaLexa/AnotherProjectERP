@@ -48,7 +48,7 @@ class inProject extends eController
             }
             else{
 
-                $tabs = m_inProject::GetTabList(router::getUserGroup(),router::getUserRole());
+                $tabs = m_inProject::GetTabList(Configs::curGroup(),Configs::curRole());
 
                 if(empty($tabs)) {
                     $tabs = array(
@@ -96,7 +96,7 @@ class inProject extends eController
                 }
 
                 //разрешить кнопку останова/запуска плана проекта
-                if($project['col_founderID'] == router::getCurUser()){
+                if($project['col_founderID'] == Configs::userID()){
                     $this->view->set('btPlanStageDis','');
                 }
                 else{

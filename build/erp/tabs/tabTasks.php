@@ -14,6 +14,7 @@ use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use build\erp\tabs\m\mTabTasks;
+use mwce\Configs;
 use mwce\date_;
 use mwce\Exceptions\ModException;
 use mwce\html_;
@@ -62,7 +63,7 @@ class tabTasks extends AprojectTabs
         $this->view
             ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
             ->set('initList',html_::select($users,'taskInit',0,'style="width:100%" class="erpInput" onchange="filterTask();"'))
-            ->set('respList',html_::select($users,'taskResp',router::getCurUser(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
+            ->set('respList',html_::select($users,'taskResp',Configs::userID(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
     }
 
@@ -135,7 +136,7 @@ class tabTasks extends AprojectTabs
                 'col_autoStart' => date_::intransDate('now + '.$_POST['duration'].' DAY',true),
                 'col_endPlan' => $_POST['endDate'].' '.$_POST['endTime'],
                 'col_taskDur' => $_POST['duration'],
-                'col_initID' => router::getCurUser(),
+                'col_initID' => Configs::userID(),
                 'col_StatusID' => 4,
             );
 

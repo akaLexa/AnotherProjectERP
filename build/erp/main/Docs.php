@@ -11,6 +11,7 @@ namespace  build\erp\main;
 use build\erp\inc\eController;
 use build\erp\inc\Files;
 use build\erp\inc\Project;
+use mwce\Configs;
 use mwce\Exceptions\ModException;
 use mwce\router;
 
@@ -45,7 +46,7 @@ class Docs extends eController
             else{
                 try{
                     $file = Files::start();
-                    $file->projectUpload($_GET['p'],$_GET['gr'],!empty($_GET['f']) ? $_GET['f'] : 0,router::getCurUser());
+                    $file->projectUpload($_GET['p'],$_GET['gr'],!empty($_GET['f']) ? $_GET['f'] : 0,Configs::userID());
                     echo json_encode(['success' => 1]);
                 }
                 catch (\Exception $e){
@@ -58,21 +59,21 @@ class Docs extends eController
     public function actionProjectDownload(){
         if(!empty($_GET['f'])){
             $f = Files::start();
-            $f->projectDownloadFile($_GET['f'],router::getUserRole());
+            $f->projectDownloadFile($_GET['f'],Configs::curRole());
         }
     }
 
     public function actionProjectFolderDownload(){
         if(!empty($_GET['f'])){
             $f = Files::start();
-            $f->projectFolderDownload($_GET['f'],router::getUserRole());
+            $f->projectFolderDownload($_GET['f'],Configs::curRole());
         }
     }
 
     public function actionProjectFilesDownload(){
         if(!empty($_GET['queue'])){
             $f = Files::start();
-            $f->projectFilesDownload($_GET['queue'],router::getUserRole());
+            $f->projectFilesDownload($_GET['queue'],Configs::curRole());
         }
     }
 }

@@ -8,6 +8,7 @@
  **/
 namespace build\erp\main\m;
 use build\erp\inc\Events;
+use mwce\Configs;
 use mwce\router;
 
 class mEventJournal extends Events
@@ -130,7 +131,7 @@ class mEventJournal extends Events
      * @return int
      */
     public function pushEvent(){
-       $r =  $this->db->query("SELECT f_pushEvent({$this['col_evID']},".router::getCurUser().") as col_result")->fetch();
+       $r =  $this->db->query("SELECT f_pushEvent({$this['col_evID']},".Configs::userID().") as col_result")->fetch();
        return $r['col_result'];
     }
 
@@ -138,7 +139,7 @@ class mEventJournal extends Events
      * отметить как прочитанное
      */
     public function setIsRead(){
-        $this->db->exec("UPDATE tbl_events SET col_isNoticed = 1 WHERE col_evID = {$this['col_evID']} AND col_userID=".router::getCurUser());
+        $this->db->exec("UPDATE tbl_events SET col_isNoticed = 1 WHERE col_evID = {$this['col_evID']} AND col_userID=".Configs::userID());
     }
 
     protected function _adding($name, $value)

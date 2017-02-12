@@ -664,7 +664,7 @@ class content
         else
             $this->replace('errTitle','title');
 
-        if ($erNum instanceof \Exception && defined('errorLevel') && errorLevel > 0) {
+        if ($erNum instanceof \Exception && !empty(Configs::globalCfg('errorLevel')) && Configs::globalCfg('errorLevel') > 0) {
             $this->set('msg_desc', $this->getVal('err' . $erNum->getCode()).': '.$erNum->getMessage());
         }
         else {
@@ -698,10 +698,10 @@ class content
     public static function errorException(\Exception $e, $sepatator = '|')
     {
 
-        if (file_exists(baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . "error.html")) {
-            $content = file_get_contents(baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . "error.html");
+        if (file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'error.html')) {
+            $content = file_get_contents(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'error.html');
 
-            if (defined('errorLevel') && errorLevel > 0) {
+            if (!empty(Configs::globalCfg('errorLevel')) && Configs::globalCfg('errorLevel') > 0) {
                 $c = array(
                     $sepatator . 'message' . $sepatator => $e->getMessage(),
                     $sepatator . 'line' . $sepatator => $e->getLine(),

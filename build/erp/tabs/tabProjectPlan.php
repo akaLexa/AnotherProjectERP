@@ -13,6 +13,7 @@ use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
+use mwce\Configs;
 use mwce\html_;
 use mwce\router;
 use mwce\Tools;
@@ -314,7 +315,7 @@ class tabProjectPlan extends AprojectTabs
                 Task::Add([
                     'col_taskName' => "'{$_POST['TaskName']}'",
                     'col_StatusID' => 5,
-                    'col_initID'=> router::getCurUser(), // пока в плане, инициатор тот, кто составил план
+                    'col_initID'=> Configs::userID(), // пока в плане, инициатор тот, кто составил план
                     'col_respID' => $_POST['tbUserList'],
                     'col_curatorID' =>'Null',
                     'col_pstageID'=> $_GET['stageID'],
@@ -385,7 +386,7 @@ class tabProjectPlan extends AprojectTabs
 
                 $curTask->edit([
                     'col_taskName' => $_POST['TaskName'],
-                    'col_initID'=> router::getCurUser(), // пока в плане, инициатор тот, кто составил план
+                    'col_initID'=> Configs::userID(), // пока в плане, инициатор тот, кто составил план
                     'col_respID' => $_POST['tbUserList'],
                     'col_curatorID' =>'null',
                     'col_taskDesc' => !empty($_POST['taskDesc']) ? $_POST['taskDesc'] : 'NULL',
