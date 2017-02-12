@@ -1,5 +1,5 @@
 ﻿--
--- Script date 11.02.2017 15:00:18
+-- Script date 12.02.2017 14:15:01
 -- Server version: 5.5.5-10.1.17-MariaDB
 -- Client version: 4.1
 --
@@ -470,7 +470,7 @@ CREATE TABLE tbl_tasks_comments (
   REFERENCES tbl_tasks (col_taskID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 25
+  AUTO_INCREMENT = 27
   AVG_ROW_LENGTH = 1365
   CHARACTER SET utf8
   COLLATE utf8_general_ci
@@ -599,7 +599,8 @@ CREATE TABLE tbl_files (
   REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 1
+  AUTO_INCREMENT = 2
+  AVG_ROW_LENGTH = 16384
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'файлы';
@@ -621,8 +622,8 @@ CREATE TABLE tbl_project_messages (
   REFERENCES tbl_project (col_projectID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 21
-  AVG_ROW_LENGTH = 1024
+  AUTO_INCREMENT = 23
+  AVG_ROW_LENGTH = 963
   CHARACTER SET utf8
   COLLATE utf8_general_ci
   COMMENT = 'вкладка переписок и событий в проекте';
@@ -1191,10 +1192,10 @@ INSERT INTO tbl_tasks VALUES
   (9, 'тестовая задача1', 2, 3, 1, NULL, 1, '&lt;p&gt;какое-то описание&lt;/p&gt;', '2017-01-05 11:13:44', NULL, '2017-01-06 16:33:50', '2017-01-09 17:00:00', '2017-01-06 16:33:50', '2017-01-07 11:13:44', 2, 1, NULL, '0', '0', NULL, '!!!&quot;№;', NULL),
   (10, 'еще 1 тестовая', 3, 1, 1, NULL, 2, 'еще 1 тестовая задача', '2017-02-04 10:22:02', '2017-02-07 00:00:00', '2017-02-04 17:53:01', '2017-02-08 00:00:00', '2017-02-04 17:53:25', NULL, 1, 2, 11, '2', '1', NULL, NULL, NULL),
   (11, 'совсем совсем тестовая 123', 3, 1, 1, NULL, 2, 'малость баг что ли?', '2017-02-04 10:27:18', '2017-02-07 00:00:00', '2017-02-04 17:53:01', '2017-02-11 00:00:00', '2017-02-04 17:53:20', NULL, 4, 2, 3, '1', '1', NULL, NULL, NULL),
-  (12, 'тестовая задача', 1, 1, 1, NULL, 4, '&lt;p&gt;просто тестим задачи&lt;/p&gt;', '2017-02-11 12:45:07', NULL, '2017-02-11 14:59:41', '2017-02-12 17:00:00', NULL, '2017-02-10 12:45:07', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
-  (13, 'тестовая задача1', 1, 1, 1, NULL, 4, '&lt;p&gt;просто тестим задачи&lt;/p&gt;', '2017-02-11 12:45:43', NULL, '2017-02-11 14:59:41', '2017-02-12 17:00:00', NULL, '2017-02-11 12:45:43', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
-  (14, 'еще 1 разок', 1, 1, 1, NULL, 4, '&lt;p&gt;йцук&lt;/p&gt;', '2017-02-11 13:04:57', NULL, '2017-02-11 14:59:41', '2017-02-11 17:00:00', NULL, '2017-02-10 13:04:57', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
-  (15, 'последяя в этом списке', 1, 1, 1, NULL, 4, '&lt;p&gt;йй&lt;/p&gt;', '2017-02-11 13:07:35', NULL, '2017-02-11 14:59:41', '2017-02-11 17:00:00', NULL, '2017-02-11 13:07:35', 1, 1, NULL, '0', '0', NULL, NULL, NULL);
+  (12, 'тестовая задача', 3, 1, 1, NULL, 4, '&lt;p&gt;просто тестим задачи&lt;/p&gt;', '2017-02-11 12:45:07', NULL, '2017-02-11 14:59:41', '2017-02-12 17:00:00', '2017-02-11 15:03:25', '2017-02-10 12:45:07', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
+  (13, 'тестовая задача1', 3, 1, 1, NULL, 4, '&lt;p&gt;просто тестим задачи&lt;/p&gt;', '2017-02-11 12:45:43', NULL, '2017-02-11 14:59:41', '2017-02-12 17:00:00', '2017-02-12 13:42:44', '2017-02-11 12:45:43', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
+  (14, 'еще 1 разок', 3, 1, 1, NULL, 4, '&lt;p&gt;йцук&lt;/p&gt;', '2017-02-11 13:04:57', NULL, '2017-02-11 14:59:41', '2017-02-11 17:00:00', '2017-02-11 15:03:11', '2017-02-10 13:04:57', 1, 1, NULL, '0', '0', NULL, NULL, NULL),
+  (15, 'последяя в этом списке', 3, 1, 1, NULL, 4, '&lt;p&gt;йй&lt;/p&gt;', '2017-02-11 13:07:35', NULL, '2017-02-11 14:59:41', '2017-02-11 17:00:00', '2017-02-12 13:42:23', '2017-02-11 13:07:35', 1, 1, NULL, '0', '0', NULL, NULL, '<strong>Причина просрочки:</strong><hr style="margin: 0 3px;">тестирую');
 
 --
 -- Dumping data for table tbl_user_groups
@@ -1330,7 +1331,9 @@ INSERT INTO tbl_tasks_comments VALUES
   (21, 12, 2, 'Задача запущена автоматически, так как истек срок ожидания принятия решения', '2017-02-11 14:59:41', '0'),
   (22, 13, 2, 'Задача запущена автоматически, так как истек срок ожидания принятия решения', '2017-02-11 14:59:41', '0'),
   (23, 14, 2, 'Задача запущена автоматически, так как истек срок ожидания принятия решения', '2017-02-11 14:59:41', '0'),
-  (24, 15, 2, 'Задача запущена автоматически, так как истек срок ожидания принятия решения', '2017-02-11 14:59:41', '0');
+  (24, 15, 2, 'Задача запущена автоматически, так как истек срок ожидания принятия решения', '2017-02-11 14:59:41', '0'),
+  (25, 15, 1, '&lt;p&gt;123&lt;/p&gt;', '2017-02-11 17:18:15', '1'),
+  (26, 10, 1, '&lt;p&gt;11&lt;/p&gt;', '2017-02-12 14:12:08', '1');
 
 --
 -- Dumping data for table tbl_user
@@ -1348,13 +1351,13 @@ INSERT INTO tbl_events VALUES
   (19, '2017-02-04 14:05:39', 2, 1, 1, '0', '1', '0', 'Выполнение проекта'),
   (20, '2017-02-04 17:38:21', 2, 1, 1, '0', '0', '0', 'Выполнение проекта'),
   (21, '2017-02-05 12:25:05', 2, 1, 1, '0', '0', '0', 'Проект завершен'),
-  (22, '2017-02-11 11:53:41', 1, 4, 1, '0', '0', '0', 'Создание. Сбор информации');
+  (22, '2017-02-11 11:53:41', 1, 4, 1, '0', '1', '0', 'Создание. Сбор информации');
 
 --
 -- Dumping data for table tbl_project
 --
 INSERT INTO tbl_project VALUES
-  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09', '&lt;p&gt;asdasd&lt;/p&gt;', '0');
+  (1, 'Тестовый проект', 1, 1, '2016-12-10 11:34:09', '&lt;p&gt;asdasd!!&lt;/p&gt;', '0');
 
 --
 -- Dumping data for table tbl_project_stage_role
@@ -1368,8 +1371,8 @@ INSERT INTO tbl_project_stage_role VALUES
 --
 -- Dumping data for table tbl_files
 --
-
--- Table erp_db.tbl_files does not contain any data (it is empty)
+INSERT INTO tbl_files VALUES
+  (1, '321', NULL, '1', NULL, NULL, '2017-02-11 17:18:05', '1', '2017-02-11 17:18:10', 1, 1, 1, 1);
 
 --
 -- Dumping data for table tbl_project_messages
@@ -1394,7 +1397,9 @@ INSERT INTO tbl_project_messages VALUES
   (17, 2, 'Пользователь «Админов А.А.» сменил менеджера проекта с «Админов А.А.» на «тестовый т.т.»', '2017-01-29 14:52:28', 1, '1'),
   (18, 2, 'Пользователь «Админов А.А.» сменил менеджера проекта с «тестовый т.т.» на «Админов А.А.»', '2017-01-29 14:53:03', 1, '1'),
   (19, 2, 'Функция автоплана проекта была отключена {userID:1} по причине: тестовый прогон', '2017-02-04 14:06:30', 1, '1'),
-  (20, 2, 'Функция автоплана проекта была отключена {userID:1} по причине: старт', '2017-02-11 09:25:21', 1, '1');
+  (20, 2, 'Функция автоплана проекта была отключена {userID:1} по причине: старт', '2017-02-11 09:25:21', 1, '1'),
+  (21, 1, 'q', '2017-02-11 17:18:24', 1, '0'),
+  (22, 1, 'q', '2017-02-12 14:11:55', 1, '0');
 
 --
 -- Dumping data for table tbl_project_stage
@@ -1459,10 +1464,10 @@ FOR EACH ROW
   BEGIN
     IF new.col_statusID != 5 THEN
       INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment)
-        VALUE (1, new.col_pstageID, new.col_respID, (SELECT
-                                                       col_StageName
-                                                     FROM tbl_hb_project_stage
-                                                     WHERE col_StageID = new.col_stageID));
+        VALUE (1, new.col_projectID, new.col_respID, (SELECT
+                                                        col_StageName
+                                                      FROM tbl_hb_project_stage
+                                                      WHERE col_StageID = new.col_stageID));
     END IF;
   END
 $$
