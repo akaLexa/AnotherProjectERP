@@ -176,11 +176,11 @@ class router
 
             $data = $this->parseURL();
 
-            if (empty($data) || empty($cfg_params['globalCfg']['defaultabuild']) || trim($data['type']) != 'control') //обычные страницы
+            if (empty($data) || empty($cfg_params['globalCfg']['defaultABuild']) || trim($data['type']) != 'control') //обычные страницы
             {
                 if (empty($_SESSION['mwcbuild'])) {
-                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultbuild'];
-                    $_SESSION['mwcbuild'] = $cfg_params['globalCfg']['defaultbuild'];
+                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultBuild'];
+                    $_SESSION['mwcbuild'] = $cfg_params['globalCfg']['defaultBuild'];
                 }
                 else{
                     $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];
@@ -214,8 +214,8 @@ class router
             else //админка
             {
                 if (empty($_SESSION['mwcabuild'])) {
-                    $_SESSION['mwcabuild'] = $cfg_params['globalCfg']['defaultabuild'];
-                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultabuild'];
+                    $_SESSION['mwcabuild'] = $cfg_params['globalCfg']['defaultABuild'];
+                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultABuild'];
                 }
                 else{
                     $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];

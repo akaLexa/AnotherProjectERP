@@ -980,6 +980,19 @@ function menuRefresh() {
 
 }
 
+
+function saveMainCfg() {
+    genIn({
+        noresponse:true,
+        address:'|site|page/|currentPage|/GetMainCfg',
+        type:'POST',
+        data:$('#MainCfgForm').serialize(),
+        callback:function () {
+            mwce_alert('Сохранено','Сообщение');
+        }
+    });
+}
+
 $(document).ready(function(){
     genTabContent('Group');
 });

@@ -57,6 +57,14 @@ class UnitManager extends eController
         'uBlock' => ['type'=>self::INT],
         'uAddRoleList' => ['type'=>self::INT],
         'uBlockList' => ['type'=>self::INT],
+
+        'dlang' => ['type'=>self::STR],
+        'theme' => ['type'=>self::STR],
+        'defpage' => ['type'=>self::STR],
+        'defController' => ['type'=>self::STR],
+        'defgrp' => ['type'=>self::INT],
+        'defConNum' => ['type'=>self::INT],
+        'defLogConNum' => ['type'=>self::INT],
     );
 
     protected $getField = array(
@@ -1143,6 +1151,46 @@ class UnitManager extends eController
                 ->add_dict($info)
                 ->out('EditUser',$this->className);
         }
+    }
+    //endregion
+
+    //region главный конфиг
+    public function actionGetMainCfg(){
+        $cfg = Configs::readCfg('main',Configs::globalCfg('defaultBuild'));
+        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::globalCfg('defaultBuild').DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'cfg_main.php');
+
+        if(!empty($_POST))
+        {
+            $toWrite = array();
+            foreach ($cfg as $_id=>$value){
+                if(!empty($_POST[$_id]))
+                    $toWrite[$_id] = $_POST[$_id];
+                else
+                    $toWrite[$_id] = $cfg[$_id];
+            }
+
+            if(!empty($toWrite))
+                Configs::writeCfg($toWrite,'main',Configs::globalCfg('defaultBuild'));
+
+        }
+        else{
+            if(!empty($cfg)){
+                foreach ($cfg as $_name => $_item) {
+                    $this->view
+                        ->set([
+                            'paramLegend' => !empty($lang[$_name]) ? $lang[$_name] : $_name,
+                            'paramName' => $_name,
+                            'paramValue' => $_item,
+                        ])
+                        ->out('MainCfgCenter',$this->className);
+                }
+
+                $this->view
+                    ->setFContainer('MainCfgTable',true)
+                    ->out('MainCfg',$this->className);
+            }
+        }
+
     }
     //endregion
 }

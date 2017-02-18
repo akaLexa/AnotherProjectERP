@@ -23,8 +23,8 @@ class Connect
     const ODBC = 1;
     const MYSQL = 2;
     const MSSQL = 3;
-    const SQLSRV = 5;
     const INSTALL = 4;
+    const SQLSRV = 5;
     //endregion
 
 
@@ -80,10 +80,14 @@ class Connect
      * @param int $conNum номер или название подключения
      * @return mixed|Connect
      */
-    static public function start($conNum = 0)
+    static public function start($conNum = null)
     {
-        if (Configs::globalCfg('defaultConNum') && $conNum == 0 && strtolower(trim($conNum)) !='sitebase')
-            $conNum = Configs::globalCfg('defaultConNum');
+        if(is_null($conNum)){
+            if(Configs::buildCfg('defConNum') !== FALSE)
+                $conNum = Configs::buildCfg('defConNum');
+            else
+                $conNum = Configs::globalCfg('defaultConNum');
+        }
 
         if (!isset(self::$pool[$conNum])) {
             if ($conNum == -1) {
@@ -143,14 +147,14 @@ class Connect
             }
 
             if (empty($configs[$conNum]) && $conNum == 'siteBase') //если нет отдельно выделенного конфига под базу(с настройками) сайта, то переключаем в умолчание
-                $conNum = 0;
+                $conNum = Configs::globalCfg('defaultConNum');
 
             if (empty($configs[$conNum])) {
-                throw new CfgException('config file corrupted');
+                throw new CfgException('Config file corrupted');
             }
 
             if (empty($configs[$conNum]['type'])) {
-                throw new CfgException('config file corrupted: connection type is empty');
+                throw new CfgException('Config file corrupted: connection type is empty');
             }
         }
 
@@ -238,14 +242,10 @@ class Connect
             $msg = htmlspecialchars($msg, ENT_QUOTES);
         }
 
-        if (self::MSSQL == $this->curConType || self::ODBC == $this->curConType) {
+        if (self::MSSQL == $this->curConType || self::ODBC == $this->curConType)
             $dt = "GETDATE()";
-            $suf = 'dbo.';
-        }
-        else {
+        else
             $dt = "NOW()";
-            $suf = '';
-        }
 
         $msg = str_replace('\\', '/', $msg);
         $file = str_replace('\\', '/', $file);
@@ -255,7 +255,7 @@ class Connect
             return;
 
         try {
-            $this->resId->query("INSERT INTO mwce_settings.{$suf}mwc_logs(col_ErrNum,col_msg,col_mname,col_createTime,tbuild) VALUES($errNo,'$msg','{$file}',$dt,'" . Configs::currentBuild() . "')");
+            $this->resId->query("INSERT INTO mwce_logs(col_ErrNum,col_msg,col_mname,col_createTime,tbuild) VALUES($errNo,'$msg','$file',$dt,'" . Configs::currentBuild() . "')");
         }
         catch (\Exception $e) {
             Logs::textLog(1, $e->getMessage() . ' log text: ' . $msg);

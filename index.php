@@ -1,15 +1,14 @@
 <?php
 /**
  * MuWebCloneEngine
- * Version: 1.6.2
+ * Version: 1.6.3
  * User: epmak
- * 07.04.2016
+ * 18.02.2017
  * ->
  **/
 if (PHP_VERSION_ID < 50604)
-    die('PHP version must be > 5.6.3');
+    die('PHP version must be >= 5.6.4');
 
-$start_time = microtime();
 
 define('baseDir',__DIR__);
 
@@ -31,6 +30,4 @@ $app->startPlugins();
 $app->startModules();
 $app->show();
 
-//echo '<!-- '.\mwce\Connect::$queryCount.' -->';
-//echo "<!--".round(microtime()-$start_time,4)."-->";
 ob_end_flush();
