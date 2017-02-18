@@ -1,0 +1,2 @@
+ALTER EVENT ev_taskAutoStart
+ENABLE

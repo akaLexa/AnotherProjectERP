@@ -1,5 +1,1 @@
-<?php return array(
-    'defaultBuild'=>'erp',            //название билда, что стартует при заходе на сайт
-    'defaultConNum'=>0,               //номер подключения из массива подключений билда
-    'errorLevel'=>1,                  // 1- показывать ошибки на экран 0 - только в логи
-    );
+<?php return array("defaultBuild"=>"erp","defaultConNum"=>"0","errorLevel"=>"1",);

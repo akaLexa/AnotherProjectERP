@@ -244,10 +244,10 @@ class content
      * Добавляет язык к контенту
      *
      * @param  string $file - название файла "словаря"
-     * @param  int $isJSON - json ворфмат или нет
+     * @param  bool $isJSON - json ворфмат или нет
      * @return content
      */
-    public function add_dict($file, $isJSON = 0)
+    public function add_dict($file, $isJSON = false)
     {
 
         if (is_array($file) || $file instanceof Model) {
@@ -272,25 +272,27 @@ class content
 
             $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . ".php");
 
-            if($file == 'titles'){
+            if(!empty($lang)){
+                if($file == 'titles'){
 
-            }
-            if (!empty($this->adedDic[$file])) // если словарь уже подключен, второй раз лопатить смысла нет
-            {
-                return $this;
-            }
-
-            if (is_array($lang)) {
-
-                foreach ($lang as $d => $v) {
-                    if (!empty($this->curModule)) {
-                        $this->vars[$this->curModule][$this->separator . $d . $this->separator] = $v;
-                    }
-                    else {
-                        $this->vars[$this->separator . $d . $this->separator] = $v;
-                    }
                 }
-                $this->adedDic[$file] = 1;
+                if (!empty($this->adedDic[$file])) // если словарь уже подключен, второй раз лопатить смысла нет
+                {
+                    return $this;
+                }
+
+                if (is_array($lang)) {
+
+                    foreach ($lang as $d => $v) {
+                        if (!empty($this->curModule)) {
+                            $this->vars[$this->curModule][$this->separator . $d . $this->separator] = $v;
+                        }
+                        else {
+                            $this->vars[$this->separator . $d . $this->separator] = $v;
+                        }
+                    }
+                    $this->adedDic[$file] = 1;
+                }
             }
         }
         return $this;

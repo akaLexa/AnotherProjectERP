@@ -50,10 +50,12 @@ class Login extends PluginController
             }
 
             $cfg = Configs::readCfg('main', Configs::currentBuild());
-            if (!empty($cfg['defpage'])) {
+            if (!empty($cfg['defpage']) && Configs::userID()>0) {
                 router::setCurController($cfg['defpage']);
                 router::setCurAction('actionErrorInLogin');
             }
+            else
+                router::setCurController('MainPage');
             $this->view->out('Login', 'plugin_' . $this->className);
 
         }

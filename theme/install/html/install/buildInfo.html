@@ -1,0 +1,40 @@
+
+<div class="alert alert-info" role="alert" style="width: 500px;margin: 10px auto;">|desc|</div>
+<form id="setupForm">
+<table style="width: 500px;margin: 15px auto;" class="table table-hover text-justify" >
+    <tr>
+        <td style="width: 250px;vertical-align: middle;">|lng_dirs|</td>
+        <td><ul>|dirList|</ul></td>
+    </tr>
+    <tr>
+        <td style="width: 250px;vertical-align: middle;">|lng_aboList| <b class="text-danger">*</b></td>
+        <td>|bdList|</td>
+    </tr>
+    <tr>
+        <td style="width: 250px;vertical-align: middle;">|lng_bdAddress| <b class="text-danger">*</b></td>
+        <td><input type="text" name="db_address" class="form-control inlineBlock" style="width: 200px;"></td>
+    </tr>
+    <tr>
+        <td style="width: 250px;vertical-align: middle;">|lng_bdUser| <b class="text-danger">*</b></td>
+        <td><input type="text" name="db_user" class="form-control inlineBlock" style="width: 200px;"></td>
+    </tr>
+    <tr>
+        <td style="width: 250px;vertical-align: middle;">|lng_bdPwd| <b class="text-danger">*</b></td>
+        <td><input type="text" name="db_pwd" class="form-control inlineBlock" style="width: 200px;"></td>
+    </tr>
+    <tr style="|needAdminStyle|">
+        <td style="width: 250px;vertical-align: middle;">|lng_aUser| <b class="text-danger">*</b></td>
+        <td><input type="text" name="adm_user" class="form-control inlineBlock" value="|aLogin|" style="width: 200px;"></td>
+    </tr>
+    <tr style="|needAdminStyle|">
+        <td style="width: 250px;vertical-align: middle;">|lng_aPwd| <b class="text-danger">*</b></td>
+        <td><input type="text" name="adm_pwd" class="form-control inlineBlock" value="|aPwd|" style="width: 200px;"></td>
+    </tr>
+    <tr>
+        <td>
+            <button id="startInstallButton" class="btn btn-default" type="button" onclick="beginSetup()">Установить</button>
+        </td>
+        <td id="resultSetup"></td>
+    </tr>
+</table>
+</form>

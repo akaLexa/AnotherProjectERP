@@ -69,7 +69,7 @@ class Tools
         return str_replace("&amp;","&",$link);
     }
 
-    public static function getAllBuilds()
+    public static function getAllBuilds($width = true)
     {
         $list = scandir("build");
         $ai = new \ArrayIterator($list);
@@ -83,7 +83,8 @@ class Tools
             }
 
         }
-        $sel[-1] = "...";
+        if($width)
+            $sel[-1] = "...";
 
         return $sel;
     }

@@ -94,13 +94,7 @@ class Connect
                 self::$pool[$conNum] = new connect($conNum);
             }
             else {
-                try {
-                    self::$pool[$conNum] = new connect($conNum);
-                }
-                catch (\Exception $e) {
-                    content::errorException($e);
-                    die();
-                }
+                self::$pool[$conNum] = new connect($conNum);
             }
         }
 
@@ -129,7 +123,7 @@ class Connect
             $configs = array(
                 -1 => [
                     'server' => $_SESSION['installServer'],
-                    'db' => $_SESSION['installBuildDb'],
+                    'db' => '',//($_SESSION['installCt'] != 2) ? 'master' : 'information_schema'
                     'user' => $_SESSION['installUsr'],
                     'password' => $_SESSION['installPwd'],
                     'type' => $_SESSION['installCt']
@@ -161,7 +155,6 @@ class Connect
         $this->curConType = $configs[$conNum]['type'];
 
         try {
-
             switch ($configs[$conNum]['type']) {
                 case self::MSSQL:
                     $this->mssql($configs[$conNum]);
@@ -178,7 +171,7 @@ class Connect
                     $this->sqlsrv($configs[$conNum]);
             }
         }
-        catch (\PDOException $e) {
+        catch (\Exception $e) {
             throw new DBException($e->getMessage(), 1, $e);
         }
     }
