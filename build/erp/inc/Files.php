@@ -192,7 +192,7 @@ class Files
                             $curFile['ext'] = 'NULL';
                         $curFile['size'] = round(($_FILES['dFile']['size'][$i]/1048576),2); //save mb size
 
-                        $this->db->exec("INSERT INTO tbl_files (col_fName,col_ext,col_parentID,col_size,col_uploaderID,col_groupID,col_projectID) VALUES('{$curFile['name']}',{$curFile['ext']},$folderID,{$curFile['size']},$upUser,$group,$project)");
+                        $this->db->exec("INSERT INTO tbl_files (col_fName,col_ext,col_parentID,col_size,col_uploaderID,col_groupID,col_projectID,col_cDate) VALUES('{$curFile['name']}',{$curFile['ext']},$folderID,{$curFile['size']},$upUser,$group,$project,NOW())");
                         $lid = $this->db->lastId('tbl_files');
                         if(!move_uploaded_file($_FILES['dFile']['tmp_name'][$i],self::$docPath.DIRECTORY_SEPARATOR .'projects'.DIRECTORY_SEPARATOR.$project.DIRECTORY_SEPARATOR.$group.DIRECTORY_SEPARATOR.$lid)){
                             $this->db->exec('DELETE FROM tbl_files WHERE col_fID ='.$lid);

@@ -230,7 +230,7 @@ WHERE
         if(empty($parent))
             $parent = 'NULL';
         $db = Connect::start();
-        $db->exec("INSERT INTO tbl_files (col_fName,col_parentID,col_uploaderID,col_groupID,col_projectID,col_isFolder) VALUES('$name',$parent,$user,$group,$project,1)");
+        $db->exec("INSERT INTO tbl_files (col_fName,col_parentID,col_uploaderID,col_groupID,col_projectID,col_isFolder,col_cDate) VALUES('$name',$parent,$user,$group,$project,1,NOW())");
         return $db->lastId('tbl_files');
     }
 
