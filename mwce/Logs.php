@@ -10,18 +10,24 @@ class Logs
      */
     public static function log($errNum, $text = '')
     {
-        $dbh = Connect::start((Configs::buildCfg('defLogConNum') !== false) ? Configs::buildCfg('defLogConNum') : Configs::globalCfg('defaultConNum'));
+        try{
+            $dbh = Connect::start((Configs::buildCfg('defLogConNum') !== false) ? Configs::buildCfg('defLogConNum') : Configs::globalCfg('defaultConNum'));
 
-        if ($errNum instanceof \Exception) {
-            $ec = $errNum->getCode() == 0 ? 3 : $errNum->getCode();
-            $errf = substr($errNum->getFile(), 0, 254);
-            $text = $errNum->getMessage() . ' Line: ' . $errNum->getLine();
-        } else {
-            $ec = $errNum;
-            $errf = 'router';
+            if ($errNum instanceof \Exception) {
+                $ec = $errNum->getCode() == 0 ? 3 : $errNum->getCode();
+                $errf = substr($errNum->getFile(), 0, 254);
+                $text = $errNum->getMessage() . ' Line: ' . $errNum->getLine();
+            } else {
+                $ec = $errNum;
+                $errf = 'router';
+            }
+
+            $dbh->SQLog($text . '<br> Uri:' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES), $errf, $ec);
+        }
+        catch (\Exception $e){
+            self::textLog(1,$e->getMessage().' WHEN try to log something else o0');
         }
 
-        $dbh->SQLog($text . '<br> Uri:' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES), $errf, $ec);
     }
 
     /**
