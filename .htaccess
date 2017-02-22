@@ -3,3 +3,37 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
 RewriteRule ^(.*)$ index.php [QSA]
+# ------------------------------------------------------------------------
+# config for nginx
+# копировать без #
+# ------------------------------------------------------------------------
+# location ~* ^/(mwce|build|log|lib|configs|temp_)($|\/) {
+# 			deny all;
+# 		}
+#
+# 		location ~ \.(js|css|png|jpg|gif|swf|ico|pdf|mov|fla|zip|rar)$ {
+# 		root   $docroot;
+# 		}
+#         location / {
+#             root   $docroot;
+#             index  index.html index.htm index.php;
+# 			try_files $uri $uri/ @rewrite;
+#         }
+#
+# 		location ~ control?\.php
+# 		{
+# 		rewrite ^(.*)$ /index.php;
+# 		}
+#
+# 		location @rewrite {
+# 			root   $docroot;
+# 			if (!-e $request_filename){
+# 			rewrite ^(.*)$ /index.php;
+# 			}
+# 		}
+#
+#  location ~ /\.ht {
+#               deny  all;
+#           }
+#
+
