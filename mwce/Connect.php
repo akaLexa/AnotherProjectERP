@@ -123,7 +123,7 @@ class Connect
             $configs = array(
                 -1 => [
                     'server' => $_SESSION['installServer'],
-                    'db' => '',//($_SESSION['installCt'] != 2) ? 'master' : 'information_schema'
+                    'db' => !empty($_SESSION['installDb']) ? $_SESSION['installDb'] : '',
                     'user' => $_SESSION['installUsr'],
                     'password' => $_SESSION['installPwd'],
                     'type' => $_SESSION['installCt']

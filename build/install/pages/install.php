@@ -27,6 +27,7 @@ class install extends iController
         'adm_user' => ['type'=>self::STR],
         'adm_pwd' => ['type'=>self::STR],
         'db_address' => ['type'=>self::STR],
+        'db_baseName' => ['type'=>self::STR],
     );
 
     private $allowableBulds;
@@ -59,6 +60,9 @@ class install extends iController
             ->out('main',$this->className);
     }
 
+    /**
+     * форма настройки билда для установки
+     */
     public function actionGetBuildInfo(){
         if(!empty($_POST['choseBuild']) && $_POST['choseBuild']!='-1' && in_array($_POST['choseBuild'],$this->allowableBulds)){
 
@@ -103,6 +107,11 @@ class install extends iController
 
                 //endregion
 
+                if(isset($params['writeBase']) && $params['writeBase'])
+                    $this->view->set('isShowBd','');
+                else
+                    $this->view->set('isShowBd','display:none;');
+
                 $this->view
                     ->set('desc', !empty($params['description'])?$params['description']:$this->view->getVal('lng_aboutErr'))
                     ->set('bdList', html_::select($avc,'choseConnection',0,'class="form-control inlineBlock"'))
@@ -111,6 +120,7 @@ class install extends iController
 
                 return;
             }
+
             $this->view
                 ->set('err_title',$this->view->getVal('lng_errTitle'))
                 ->set('err_desc',$this->view->getVal('lng_err1'))
@@ -155,6 +165,15 @@ class install extends iController
                 }
                 //endregion
 
+                if(isset($params['writeBase']) && $params['writeBase']){
+                    if(empty($_POST['db_baseName'])){
+                        echo json_encode(['error' => $this->view->getVal('lng_err2')]);
+                        return;
+                    }
+
+                    $_SESSION['installDb'] = $_POST['db_baseName'];
+                }
+
                 try{
                     $_SESSION['installServer'] = $_POST['db_address'];
                     $_SESSION['installUsr'] = $_POST['db_user'];
@@ -165,6 +184,9 @@ class install extends iController
                     $files = glob(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.$_POST['choseBuild'].DIRECTORY_SEPARATOR.'SQL'.DIRECTORY_SEPARATOR.'*.sql');
 
                     if(!empty($files)){
+                        if(!empty($_SESSION['installDb']))
+                            $db->exec("USE ".$_SESSION['installDb']);
+
                         foreach ($files as $file){
 
                             $file = trim(file_get_contents($file));
