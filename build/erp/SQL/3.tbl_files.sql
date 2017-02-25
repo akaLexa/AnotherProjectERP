@@ -5,7 +5,7 @@ CREATE TABLE tbl_files (
   col_isFolder char(1) DEFAULT '0',
   col_parentID int(11) DEFAULT NULL,
   col_size decimal(10, 2) DEFAULT NULL COMMENT 'размер',
-  col_cDate datetime DEFAULT CURRENT_TIMESTAMP,
+  col_cDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   col_isDel char(1) DEFAULT '0',
   col_dDate datetime DEFAULT NULL,
   col_uploaderID int(11) DEFAULT NULL,
