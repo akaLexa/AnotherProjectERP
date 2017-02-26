@@ -27,6 +27,7 @@ class projectList extends eController
         'UserResponse' => ['type' => self::INT],
         'UserManager' => ['type' => self::INT],
         'curPage' => ['type' => self::INT],
+        'isInsideProject' => ['type' => self::INT],
         'startDate' => ['type' => self::DATE],
         'endDate' => ['type' => self::DATE],
     );
@@ -88,6 +89,9 @@ class projectList extends eController
 
         if(!empty($_POST['endDate'])){
             $params['endDate'] = $_POST['endDate'];
+        }
+        if(!empty($_POST['isInsideProject'])){
+            $params['isInside'] = 1;
         }
 
         $projectCfg = Configs::readCfg('project',Configs::currentBuild());

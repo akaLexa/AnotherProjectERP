@@ -20,18 +20,22 @@ $(document).ready(function () {
 
 
 
-function projectFilter() {
+function projectFilter(cur_Page) {
+    if(cur_Page != undefined)
+        curPage = cur_Page;
+    else
+        curPage = 1;
+
     genIn({
         element:'projectListContent',
         address:'|site|page/|currentPage|/GetProjects',
         type:'POST',
-        data:$('#filterForProjects input[type=text], #filterForProjects input[type=date], #filterForProjects select').serialize()+'&curPage='+curPage+'&stages='+stages,
+        data:$('#filterForProjects input[type=text], #filterForProjects input[type=date], #filterForProjects select').serialize()+'&curPage='+curPage+'&stages='+stages + '&'+$('#additionalFilter input[type=checkbox]').serialize(),
         loadicon:'<tr><td colspan="8" style="text-align: center; color: gray;">Загружаю..</td></tr>'
     });
 }
 function paginate(id) {
-    curPage = id;
-    projectFilter();
+    projectFilter(id);
 }
 
 function openChoseStages() {

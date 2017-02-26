@@ -159,6 +159,11 @@ WHERE
             $filter.= " AND tps.col_stageID IN ({$params['stageIds']})";
         }
 
+        if(!empty($params['isInside']))
+            $filter.= " AND tp.col_gID IS NOT NULL";
+        else
+            $filter.= " AND tp.col_gID IS NULL";
+
         $queryString = 'FROM 
   tbl_project tp,
   tbl_project_num tpn,

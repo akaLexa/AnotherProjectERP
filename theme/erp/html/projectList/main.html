@@ -1,6 +1,11 @@
 <div class="container-fluid">
     <table class="table table-hover table-striped table-bordered erpTable ">
         <thead>
+        <tr>
+            <td colspan="8" style="padding: 1px;" id="additionalFilter">
+                <label style="width: auto; font-weight: normal;"> Проекты отделов <input type="checkbox" value="1" name="isInsideProject" onclick="projectFilter();"></label>
+            </td>
+        </tr>
         <tr id="filterForProjects">
             <td style="padding:0;border: 0;width: 94px;">
                 <input type="text" style="width: 94px; margin:0" class="erpInput" name="projectNum" onclick="this.value =''">
