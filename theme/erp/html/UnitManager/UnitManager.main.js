@@ -158,7 +158,27 @@ function groupDel(id) {
         }
     })
 }
-
+function addSpecialProject(id) {
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Данная функция создаст проект для выбранной группы пользователей. Проект не может быть удален, но может быть завершен. Вы уверены?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/SetSpecProject?id='+id,
+                    callback:function () {
+                        mwce_confirm.close();
+                        genTabContent('Group');
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    })
+}
 
 function addRole() {
     $('#forDialogs').dialog({

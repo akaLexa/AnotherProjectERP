@@ -11,8 +11,8 @@ namespace build\erp\inc;
 use mwce\Configs;
 use mwce\Connect;
 use mwce\date_;
+use mwce\Exceptions\DBException;
 use mwce\Model;
-use mwce\router;
 
 class Project extends Model
 {
@@ -289,5 +289,20 @@ SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исп
      */
     public function stageAgree(){
         $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1,col_dateStart = NOW() WHERE col_pstageID = ".$this['col_pstageID']);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $value
+     * @return bool
+     */
+    public function setField($fieldName,$value){
+        try{
+            $this->db->exec("UPDATE tbl_project SET $fieldName = '$value' WHERE col_projectID =".$this['col_projectID']);
+            return true;
+        }
+        catch (DBException $e){
+            return false;
+        }
     }
 }

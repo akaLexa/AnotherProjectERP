@@ -15,6 +15,7 @@ use build\erp\adm\m\mUser;
 use build\erp\adm\m\mUserGroup;
 use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
+use build\erp\inc\Project;
 use build\erp\inc\User;
 use mwce\Configs;
 use mwce\DicBuilder;
@@ -122,9 +123,23 @@ class UnitManager extends eController
         if(!empty($curGeoups)){
             $ai = new \ArrayIterator($curGeoups);
             foreach ($ai as $item) {
+                if(!empty($item['col_projectID']))
+                    $this->view->set('actions',"<a href='".$this->view->getAdr()."page/inProject.html?id=".$item['col_projectID']."' target='_blank'>Перейти к проекту</a>");
+                else
+                    $this->view->set('actions',"<a href='#' onclick='addSpecialProject(".$item['col_gID'].");return false;'>Добавить проект</a>");
+
                 $this->view
                     ->add_dict($item)
                     ->out('groupCenter',$this->className);
+            }
+        }
+    }
+    public function actionSetSpecProject(){
+        if(!empty($_GET['id'])){
+            $obj = mUserGroup::getCurModel($_GET['id']);
+            if(!empty($obj)){
+                $newProject = Project::Add($obj['col_gName'],Configs::userID());
+                $newProject->setField('col_gID',$obj['col_gID']);
             }
         }
     }

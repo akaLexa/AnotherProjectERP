@@ -19,7 +19,7 @@ class mUserGroup extends Model
     public static function getModels($params = null)
     {
         $db = Connect::start();
-        return $db->query("SELECT * FROM tbl_user_groups")->fetchAll(static::class);
+        return $db->query("SELECT grps.*,tp.col_projectID FROM tbl_user_groups grps LEFT JOIN tbl_project tp ON tp.col_gID = grps.col_gID")->fetchAll(static::class);
     }
 
     /**
