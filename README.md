@@ -26,7 +26,7 @@
  ![Вкладки в проекте](https://github.com/akaLexa/AnotherProjectERP/blob/master/3.png "Вкладки в проекте")
 
 
-### Системные требования:\
+### Системные требования:
 - PHP >= 5.6.22 (лучше 7)
 - MySQL >= 5.5 или MariaDB >= 10.x
 - Apache 2.4.x или nginx 
