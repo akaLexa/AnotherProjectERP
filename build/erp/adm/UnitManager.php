@@ -145,7 +145,7 @@ class UnitManager extends eController
         if(!empty($_GET['id'])){
             $obj = mUserGroup::getCurModel($_GET['id']);
             if(!empty($obj)){
-                $newProject = Project::Add($obj['col_gName'],Configs::userID());
+                $newProject = Project::Add($obj['col_gName'], !empty($obj['col_founder']) ? $obj['col_founder'] : Configs::userID());
                 $newProject->setField('col_gID',$obj['col_gID']);
             }
         }
