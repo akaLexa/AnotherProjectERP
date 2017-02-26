@@ -120,6 +120,8 @@ class UnitManager extends eController
 
     public function actionGetGroupList(){
         $curGeoups = mUserGroup::getModels();
+        $users = User::getUserList();
+        $users[0] = 'Нет';
         if(!empty($curGeoups)){
             $ai = new \ArrayIterator($curGeoups);
             foreach ($ai as $item) {
@@ -130,16 +132,34 @@ class UnitManager extends eController
 
                 $this->view
                     ->add_dict($item)
+                    ->set('controlList',html_::select($users,'cList_'.$item['col_gID'],!empty($item['col_founder'])?$item['col_founder']:0,'class="form-control inlineBlock" style="width:140px;" onchange="setGroupFounder('.$item['col_gID'].',this.value)"'))
                     ->out('groupCenter',$this->className);
             }
         }
     }
+
+    /**
+     * создать проект для отдела
+     */
     public function actionSetSpecProject(){
         if(!empty($_GET['id'])){
             $obj = mUserGroup::getCurModel($_GET['id']);
             if(!empty($obj)){
                 $newProject = Project::Add($obj['col_gName'],Configs::userID());
                 $newProject->setField('col_gID',$obj['col_gID']);
+            }
+        }
+    }
+
+    public function  actionSetFounder(){
+        if(!empty($_GET['id']) && isset($_POST['id'])){
+            $obj = mUserGroup::getCurModel($_GET['id']);
+
+            if(!empty($obj)){
+                if(!empty($_POST['id']))
+                    $obj->setField('col_founder',$_POST['id']);
+                else
+                    $obj->setField('col_founder','NULL');
             }
         }
     }

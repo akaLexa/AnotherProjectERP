@@ -6,9 +6,12 @@ CREATE TABLE tbl_project (
   col_CreateDate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   col_Desc text DEFAULT NULL,
   col_ProjectPlanState char(1) DEFAULT '0' COMMENT '0/1 не запущен, запущен план проекта',
+  col_gID int(11) DEFAULT NULL,
   PRIMARY KEY (col_projectID),
   CONSTRAINT FK_tbl_project_col_founderID FOREIGN KEY (col_founderID)
   REFERENCES tbl_user (col_uID) ON DELETE NO ACTION ON UPDATE RESTRICT,
+  CONSTRAINT FK_tbl_project_col_gID FOREIGN KEY (col_gID)
+  REFERENCES tbl_user_groups (col_gID) ON DELETE NO ACTION ON UPDATE RESTRICT,
   CONSTRAINT FK_tbl_project_col_pnID FOREIGN KEY (col_pnID)
   REFERENCES tbl_project_num (col_pnID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )

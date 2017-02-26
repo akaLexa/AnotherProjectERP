@@ -8,7 +8,9 @@
  **/
 namespace  build\erp\adm\m;
 use mwce\Connect;
+use mwce\Exceptions\DBException;
 use mwce\Model;
+use mwce\Tools;
 
 class mUserGroup extends Model
 {
@@ -86,7 +88,6 @@ WHERE
         }
     }
 
-
     /**
      * maxlength 250
      * @param string $name
@@ -100,4 +101,22 @@ WHERE
         }
     }
 
+    /**
+     * @param string $fieldName
+     * @param string $value
+     * @return bool
+     */
+    public function setField($fieldName,$value){
+        try{
+            if(trim(strtolower($value)) != 'null')
+                $value = "'$value'";
+
+            $this->db->exec("UPDATE tbl_user_groups SET $fieldName = $value WHERE col_gID =".$this['col_gID']);
+            return true;
+        }
+        catch (DBException $e){
+            Tools::debug($e->getMessage());
+            return false;
+        }
+    }
 }

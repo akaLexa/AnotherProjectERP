@@ -179,6 +179,29 @@ function addSpecialProject(id) {
         }
     })
 }
+function setGroupFounder(group,founder) {
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы уверены?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/SetFounder?id='+group,
+                    type:'POST',
+                    data:'id='+founder,
+                    callback:function () {
+                        mwce_confirm.close();
+                        genTabContent('Group');
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    })
+}
 
 function addRole() {
     $('#forDialogs').dialog({
