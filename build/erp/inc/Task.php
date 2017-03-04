@@ -104,7 +104,7 @@ WHERE
         if(empty($query))
             return false;
 
-        $q = "SELECT * FROM (SELECT
+        $q = "SELECT
   tt.*,
   ths.col_StatusName,
   f_getUserFIO(tt.col_initID) AS col_init,
@@ -114,9 +114,9 @@ WHERE
   DATEDIFF(COALESCE(tt.col_endFact,tt.col_endPlan),COALESCE(tt.col_startFact,tt.col_startPlan)) AS col_dayDifs,
   tp.col_projectName,
   tp.col_pnID,
-  tp.col_founderID
-$query)t
-ORDER BY t.col_endFact DESC, t.col_endPlan ASC";
+  tp.col_founderID $query
+ORDER BY tt.col_endFact DESC, tt.col_endPlan ASC";
+
         if(isset($params['min'])){
             $q.=" LIMIT ".$params['min'];
             if(!empty($params['max']))
