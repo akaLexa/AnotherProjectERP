@@ -67,6 +67,7 @@ class Project extends Model
   tps.col_dateEndPlan, 
   tps.col_dateEndFact, 
   tps.col_comment, 
+  tps.col_pstageID,
   tps.col_stageID, 
   tps.col_prevStageID
 $filter
@@ -157,6 +158,10 @@ WHERE
 
         if(!empty($params['stageIds'])){
             $filter.= " AND tps.col_stageID IN ({$params['stageIds']})";
+        }
+
+        if(!empty($params['group'])){
+            $filter.= " AND tp.col_gID = ".$params['group'];
         }
 
         if(!empty($params['isInside']))

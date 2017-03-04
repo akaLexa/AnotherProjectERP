@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\main;
+use build\erp\adm\m\mTaskTypes;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
@@ -14,13 +15,14 @@ use build\erp\inc\TaskComments;
 use build\erp\inc\tPaginate;
 use build\erp\inc\User;
 use build\erp\main\m\mTasks;
+use build\erp\tabs\m\mTabTasks;
 use mwce\Configs;
 use mwce\date_;
 use mwce\Exceptions\ModException;
 use mwce\html_;
 use mwce\router;
 use mwce\Tools;
-use mwce\traits\tInsert;
+
 
 class tasks extends eController
 {
@@ -34,7 +36,7 @@ class tasks extends eController
         'taskResp' => ['type'=>self::INT],
         'curPage' => ['type'=>self::INT],
         'projectName' => ['type'=>self::STR],
-        'taskName' => ['type'=>self::STR],
+        'taskName' => ['type'=>self::STR,'maxLength'=>255],
         'dBegin' => ['type'=>self::DATE],
         'dEnd' => ['type'=>self::DATE],
         'dEndFact' => ['type'=>self::DATE],
@@ -46,6 +48,19 @@ class tasks extends eController
         'taskCurator' => ['type'=>self::INT],
         'finishTo' => ['type'=>self::DATE],
         'finishToTime' => ['type'=>self::STR],
+
+        'tbUserList1' => ['type'=>self::INT],
+        'tbUserCurator' => ['type'=>self::INT],
+        'projectID' => ['type'=>self::INT],
+        'duration' => ['type'=>self::INT],
+        'endDate' => ['type'=>self::DATE],
+        'endTime' => ['type'=>self::STR,'maxLength'=>5],
+        'taskDesc' => ['type'=>self::STR],
+
+        'endPlan' => ['type'=>self::DATE],
+        'dbegin' => ['type'=>self::DATE],
+        'endFact' => ['type'=>self::DATE],
+        'ftaskName' => ['type'=>self::STR,'maxLength'=>255],
     );
 
     protected $getField = array(
@@ -337,6 +352,101 @@ class tasks extends eController
                     $task->newComment(htmlspecialchars($text,ENT_QUOTES));
                 }
             }
+        }
+    }
+
+    public function actionAdd(){
+            if(!empty($_POST)
+                && !empty($_POST['taskName'])
+                && !empty($_POST['tbUserList'])
+                && !empty($_POST['endDate'])
+                && !empty($_POST['endTime'])
+                && !empty($_POST['respGroup'])
+            ){
+
+                $_POST['duration'] = !empty($_POST['duration']) ? $_POST['duration'] : 1;
+
+
+                $groupP = Project::getModels(['group' => $_POST['respGroup'],'isInside' => 1]);
+                if(empty($groupP)){
+                    echo json_encode(['error'=>'В отделе ответственного нет проекта, пожалуйста, сообщите об этой ошибке администратору системы.']);
+                    return;
+                }
+
+                $project = $groupP[0];
+
+                if(empty($project['col_pstageID'])){
+                    echo json_encode(['error'=>'В отделе ответственного нет проекта, пожалуйста, сообщите об этой ошибке администратору системы.']);
+                    return;
+                }
+
+                $params = array(
+                    'col_taskName' => $_POST['taskName'],
+                    'col_respID' => $_POST['tbUserList'],
+                    'col_pstageID' => $project['col_pstageID'],
+                    'col_createDate' => date_::intransDate('now', true),
+                    'col_startFact' => date_::intransDate('now', true),
+                    'col_autoStart' => date_::intransDate('now + ' . $_POST['duration'] . ' DAY', true),
+                    'col_endPlan' => $_POST['endDate'] . ' ' . $_POST['endTime'],
+                    'col_taskDur' => $_POST['duration'],
+                    'col_initID' => Configs::userID(),
+                    'col_StatusID' => 4,
+                );
+
+                if(!empty($_POST['tbUserCurator'])){
+                    $params['col_curatorID'] = $_POST['tbUserCurator'];
+                }
+
+                if(!empty($_POST['taskDesc'])){
+                    $params['col_taskDesc'] = $_POST['taskDesc'];
+                }
+
+                try{
+                    mTabTasks::Add($params);
+                    echo json_encode(['status'=>1]);
+                }
+                catch (ModException $e){
+                    echo json_encode(['error'=>$e->getMessage()]);
+                }
+
+            }
+            else{
+                $types = mTaskTypes::getTypesList();
+                $types[0] = '...';
+
+                $groups = User::getGropList();
+                $groups[0] = '...';
+
+                $this->view
+                    ->set('groupList',html_::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getResp(this.value)"'))
+                    ->set('groupList1',html_::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getCurator(this.value)"'))
+                    ->set('typeTaskList',html_::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
+                    ->out('Add',$this->className);
+            }
+    }
+
+    public function actionGetCurators(){
+        if(!empty($_GET['id'])){
+            $userList = User::getUserGropuList($_GET['id']);
+            if(!empty($userList))
+                echo html_::select($userList,'tbUserCurator',0,'class="form-control inlineBlock"');
+            else
+                echo json_encode(['error'=>'Нет данных!']);
+        }
+    }
+
+    public function actionGetResps(){
+        if(!empty($_GET['id'])){
+            $groupP = Project::getModels(['group' => $_GET['id'],'isInside' => 1]);
+
+            $userList = User::getUserGropuList($_GET['id']);
+
+            if(!empty($userList) && !empty($groupP) && !empty($groupP[0])){
+                echo html_::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
+                return;
+            }
+
+            echo json_encode(['error'=>'В отделе нет людей или персонального проекта.']);
         }
     }
 }

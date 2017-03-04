@@ -548,7 +548,10 @@ function tabProjectPlanAddTask(stageID) {
         },
         buttons:{
             'Добавить':function () {
-                if(document.querySelector('#tbUserList') != undefined){
+                var dn = new Date();
+                var dw = new Date(document.querySelector('#_endDate').value + ' ' + document.querySelector('#_endTime').value);
+
+                if(document.querySelector('#tbUserList') != undefined && dn.getTime() < dw.getTime()){
                     genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=addStageTask',
@@ -565,14 +568,15 @@ function tabProjectPlanAddTask(stageID) {
                                 //console.error(e.message);
                             }
                             finally {
-                                tabProjectPlanGetPlan();
+                                if(currentTab == 'tabTasks')
+                                    filterTask();
                                 $('#forDialogs').dialog('close');
                             }
                         }
                     });
                 }
                 else
-                    mwce_alert('Не выбран ответственный пользователь','Внимание');
+                    mwce_alert('Не выбран ответственный пользователь или дата неадекватна','Внимание');
 
 
             },
