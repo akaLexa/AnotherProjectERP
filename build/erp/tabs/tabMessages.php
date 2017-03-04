@@ -82,7 +82,9 @@ class tabMessages extends AprojectTabs
                         ->set('curuserImg',$di)
                         ->out('message',$this->className);
                 }
-
+            }
+            else{
+                $this->view->out('emptyMessage',$this->className);
             }
         }
     }

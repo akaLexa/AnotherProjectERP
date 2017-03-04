@@ -36,7 +36,9 @@ class tabEvents extends AprojectTabs
                         ->set('curuserImg',2)
                         ->out('message',$this->className);
                 }
-
+            }
+            else{
+                $this->view->out('emptyMessage',$this->className);
             }
         }
     }
