@@ -9,6 +9,7 @@
 namespace build\erp\tabs;
 use build\erp\adm\m\mTaskTypes;
 use build\erp\inc\AprojectTabs;
+use build\erp\inc\PlanStage;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
@@ -32,6 +33,7 @@ class tabProjectPlan extends AprojectTabs
 
         'TaskName' => ['type'=>self::STR,'maxLength'=>255],
         'taskDesc' => ['type'=>self::STR],
+        'tName' => ['type'=>self::STR],
         'taskDur' => ['type'=>self::INT],
         'tbGroupList' => ['type'=>self::INT],
         'TaskRtype' => ['type'=>self::INT],
@@ -41,6 +43,7 @@ class tabProjectPlan extends AprojectTabs
     protected $getField = array(
         'stageID' => ['type'=>self::INT],
         'taskID' => ['type'=>self::INT],
+        'pos' => ['type'=>self::INT],
     );
 
     /**
@@ -64,6 +67,13 @@ class tabProjectPlan extends AprojectTabs
                 else
                     $this->view->set('isDisable','');
 
+                //region шаблоны
+                $tp = PlanStage::getSavedList();
+                $tp[0] = '...';
+                $this->view->set('savedPlansList',html_::select($tp,'planStageTheme',0,'class="form-control inlineBlock" style="width:300px;"'));
+
+                //endregion
+
                 $this->view
                     ->add_dict($this->project)
                     ->out('main',$this->className);
@@ -75,6 +85,31 @@ class tabProjectPlan extends AprojectTabs
                 ->out('error');
         }
 
+    }
+
+    public function AddTheme(){
+        if(!empty($this->project['col_projectID']) && !empty($_POST['tName'])){
+            try{
+                PlanStage::Add($_POST['tName'],$this->project['col_projectID']);
+                echo json_encode(['state'=>1]);
+            }
+            catch (\Exception $e){
+                echo json_encode(['error'=>$e->getMessage()]);
+            }
+
+        }
+    }
+
+    public function DelTheme(){
+        if(!empty($this->project['col_projectID']) && !empty($_GET['pos'])){
+            PlanStage::delPlan($_GET['pos']);
+        }
+    }
+
+    public function addPlan(){
+        if(!empty($this->project['col_projectID']) && !empty($_GET['pos'])){
+            PlanStage::ExportToPlan($_GET['pos'],$this->project['col_projectID']);
+        }
     }
 
     public function getList(){
@@ -104,12 +139,18 @@ class tabProjectPlan extends AprojectTabs
                             $this->view->set('oldDateRed','');
 
                         $this->view->add_dict($item);
+
                         if($curStage != $item['col_pstageID'])
                         {
                             if(empty($item['col_dateStartPlan']))
                                 $this->view->set('isNotPlan','opacity: 0.4');
                             else
                                 $this->view->set('isNotPlan','');
+
+                            if($item['col_statusID'] !=5)
+                                $this->view->set('isDisable',' DISABLED ');
+                            else
+                                $this->view->set('isDisable',' ');
 
                             $curStage = $item['col_pstageID'];
                             $this->view->out('stageCenter',$this->className);
@@ -149,6 +190,11 @@ class tabProjectPlan extends AprojectTabs
                                 $this->view->set('oldDateRed','color:red;');
                             else
                                 $this->view->set('oldDateRed','');
+
+                            if($item['col_taskStatusID'] !=5)
+                                $this->view->set('isDisable',' DISABLED ');
+                            else
+                                $this->view->set('isDisable',' ');
 
                             $this->view->out('taskCenter',$this->className);
                         }

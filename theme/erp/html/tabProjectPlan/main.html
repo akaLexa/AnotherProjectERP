@@ -1,8 +1,17 @@
 <div class="container-fluid">
 
-    <div class="container-fluid" style="margin: 15px 0;">
-         Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
+    <div class="container-fluid" style="margin: 15px 0;vertical-align: middle;">
+        <span style="vertical-align: middle;">
+            Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
+        </span>
 
+        <span style="margin-left: 20px;">
+            Шаблоны плана проекта:
+            |savedPlansList|
+            <button class="btn btn-default glyphicon glyphicon-import" title="Загрузить план из шаблона" onclick="PlanImport()" style="position: relative; top: -1px;"></button>
+            <button class="btn btn-danger glyphicon glyphicon-remove" title="Удалить шаблон" style="position: relative; top: -1px;" onclick="removePlanStage()"></button>
+            <button class="btn btn-default glyphicon glyphicon-export" title="Сохранить текущий план в шаблон" style="position: relative; top: -1px;" onclick="addInPlan(|col_projectID|)"></button>
+        </span>
 
         <button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;" onclick="rebuildProjectPlan(|col_projectID|,document.querySelector('#newStartPlanDate').value)">
             <b class="glyphicon glyphicon-ok"></b> Рассчитать план

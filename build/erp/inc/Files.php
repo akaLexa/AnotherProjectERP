@@ -11,7 +11,6 @@ use build\erp\main\m\mDocs;
 use mwce\Configs;
 use mwce\Connect;
 use mwce\Exceptions\ModException;
-use mwce\Tools;
 use mwce\traits\singleton;
 
 class Files

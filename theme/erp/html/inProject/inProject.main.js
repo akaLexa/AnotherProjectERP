@@ -250,7 +250,7 @@ function genTabContent(tab) {
                 }
             },
             callback:function () {
-
+                currentTab = tab;
                 switch (tab){
                     case 'tabMain':
                             tinymce.init({
@@ -266,25 +266,19 @@ function genTabContent(tab) {
                                 language: 'ru_RU',
                                 browser_spellcheck: true
                             });
-                        currentTab = tab;
                         break;
                     case 'tabProjectPlan':
-                        currentTab = tab;
                         tabProjectPlanGetPlan();
                         break;
                     case 'tabTasks':
-                        currentTab = tab;
                         filterTask();
                         break;
                     case 'tabDocs':
-                        currentTab = tab;
                         filterDocs();
                         break;
                     default:
-                        currentTab = tab;
                         break;
                 }
-
 
             }
         });
@@ -1085,4 +1079,94 @@ function FilesDelete() {
             }
         }
     });
+}
+
+function addInPlan(project) {
+
+    $('#forDialogs').dialog({
+        title:'Добавить Новый шаблон',
+        resizable:true,
+        modal:true,
+        width:400,
+        buttons:{
+            'Добавить':function () {
+                if(document.querySelector('#themName').value.trim().length > 0){
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=AddTheme',
+                        type:'POST',
+                        data:'tName='+document.querySelector('#themName').value,
+                        callback:function (e) {
+                            try{
+                                var receive = JSON.parse(e);
+                                if(receive['error'] != undefined){
+                                    mwce_alert(receive['error'],'Ошибка');
+                                }
+                                else{
+                                    genTabContent('tabProjectPlan');
+                                }
+                            }
+                            catch (error)
+                            {
+                                console.log(error.message);
+                            }
+                            finally {
+                                $('#forDialogs').dialog('close');
+                            }
+                        }
+                    });
+                }
+                else
+                    console.error('пустое имя');
+
+            },
+            'Закрыть':function () {
+                $('#forDialogs').dialog('close');
+            }
+        },
+        open:function () {
+            $('#forDialogs').empty();
+            $('#forDialogs').append('<div class="alert alert-warning" role="alert"><b>Внимание!</b> В шаблон плана проекта будут сохранены <u>только запланированные</u> стадии и задачи!</div><input type="text" class="form-control" name="themName" id="themName" placeholder="Название нового шаблона">');
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function removePlanStage(){
+    mwce_confirm({
+        title:'Требуется решение',
+        text:'Вы дейсвительно хотите удалить позицию из шаблонов плана проекта?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=DelTheme&pos='+document.querySelector('#planStageTheme').value,
+                    callback:function (e) {
+                        genTabContent('tabProjectPlan');
+                        mwce_confirm.close();
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    });
+}
+function PlanImport() {
+    var curPlanPiece = parseInt(document.querySelector('#planStageTheme').value);
+    if(curPlanPiece >0)
+    {
+        genIn({
+            noresponse:true,
+            address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=addPlan&pos='+document.querySelector('#planStageTheme').value,
+            callback:function (e) {
+                tabProjectPlanGetPlan();
+            }
+        });
+    }
+    else{
+        mwce_alert('Прежде следует выбрать шаблон');
+    }
 }
