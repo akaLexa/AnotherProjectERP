@@ -14,9 +14,9 @@ use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
+use lib\RandomColor;
 use mwce\Configs;
 use mwce\html_;
-use mwce\router;
 use mwce\Tools;
 
 
@@ -114,7 +114,6 @@ class tabProjectPlan extends AprojectTabs
 
     public function getList(){
         if(!empty($this->project['col_projectID'])){
-
             if(!empty($this->project)){
                 $stageList = mProjectPlan::getModels($this->project);
 
@@ -199,6 +198,158 @@ class tabProjectPlan extends AprojectTabs
                             $this->view->out('taskCenter',$this->className);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    public function Gant(){
+        if(!empty($this->project['col_projectID'])){
+            $stageList = mProjectPlan::getModels($this->project);
+            if(!empty($stageList)){
+                $endDate = strtotime(date('Y-m-d'));
+                $startDate = strtotime(date('Y-m-d'));
+
+                foreach ($stageList as $id =>$data){
+                    if(!empty($data['col_dateStartPlan']) && !empty($data['col_dateEndPlan']) ||
+                        !empty($data['col_dateStart'])){
+
+                        if (!empty($data['col_dateStart']))
+                            $tmpStart = strtotime($data['col_dateStart']);
+                        else if(!empty($data['col_dateStartPlan']))
+                            $tmpStart = strtotime($data['col_dateStartPlan']);
+
+
+                        if(empty($data['col_dateEndFact']))
+                            $tmpEnd = strtotime($data['col_dateEndPlan']);
+                        else
+                            $tmpEnd = strtotime($data['col_dateEndFact']);
+                    }
+
+
+                    if(!empty($data['col_taskStartPlan']) && !empty($data['col_taskEnd'])){
+                        $tmpStart = strtotime($data['col_taskStartPlan']);
+                        $tmpEnd = strtotime($data['col_taskEnd']);
+                    }
+
+                    if(!empty($tmpStart) && !empty($tmpEnd)){
+                        if($startDate > $tmpStart)
+                            $startDate = $tmpStart;
+
+                        if($endDate < $tmpEnd)
+                            $endDate = $tmpEnd;
+                    }
+                }
+
+                if($startDate != $endDate){
+                    $startDate = (int)$startDate;
+                    $endDate = (int)$endDate;
+
+                    #region шапка
+                    $_startDate = $startDate;
+                    $i = 0;
+
+                    while ($_startDate < $endDate){
+                        $this->view
+                            ->set('date',date('d.m',$_startDate))
+                            ->out('gantHead',$this->className);
+
+                        $_startDate += 86400;
+                        $i++;
+                    }
+                    $i++;
+
+                    $this->view
+                        ->set('date',date('d.m',$_startDate))
+                        ->out('gantHead',$this->className);
+
+                    $this->view->setFContainer('days',true);
+                    #endregion
+
+                    #region центр
+                    $curStage =0;
+                    foreach ($stageList as $id =>$data){
+
+                        if($curStage != $data['col_pstageID']){
+                            $curStage = $data['col_pstageID'];
+
+                            $end = !empty($data['col_dateEndFact']) ? ($data['col_dateEndFact']) : ($data['col_dateEndPlan']);
+                            $end_ = explode(' ',$end);
+                            $end = strtotime($end_[0]);
+
+                            $start = !empty($data['col_dateStart']) ? ($data['col_dateStart']) : ($data['col_dateStartPlan']);
+                            $start_ = explode(' ',$start);
+                            $start = strtotime($start_[0]);
+
+                            $_startDate = $startDate;
+                            $duration = round(($end - $start)/86400) + 1;
+
+                            $days = '';
+                            if($_startDate<$start){
+                                $n = round(($start - $_startDate)/86400)+1;
+                                $days.= str_repeat('<td>&nbsp;</td>',$n);
+                            }
+
+                            $name = ($duration*8) >= strlen($data['col_StageName']) ? $data['col_StageName'] : '';
+
+                            $days.= "<td style='background-color:".RandomColor::one().";vertical-align: middle;cursor: help;padding-top:5px;text-align: center;color:white;text-shadow: 1px 1px 2px black;' title='Стадия: {$data['col_StageName']}' colspan='$duration'><b class='glyphicon glyphicon-arrow-right' style='color:white;text-shadow: 1px 1px 2px black;'></b> $name</td>";
+
+                            if($endDate>$end)
+                            {
+                                $n = round(($endDate - $end)/86400);
+                                $days.= str_repeat('<td>&nbsp;</td>',$n);
+                            }
+
+                            $this->view
+                                ->set('tdContent',$days)
+                                ->out('gantCenter',$this->className)
+                            ;
+                        }
+
+                        if (!empty($data['col_taskName'])){
+
+                            $end = $data['col_taskEnd'];
+                            $end_ = explode(' ',$end);
+                            $end = strtotime($end_[0]);
+
+                            $start = $data['col_taskStart'];
+                            $start_ = explode(' ',$start);
+                            $start = strtotime($start_[0]);
+
+
+                            $duration = round(($end - $start)/86400) + 1;
+
+                            $days = '';
+                            if($startDate<$start){
+                                $n = round(($start - $startDate)/86400)+1;
+                                $days.= str_repeat('<td>&nbsp;</td>',$n);
+                            }
+
+                            $name = ($duration*5) >= strlen($data['col_taskName']) ? $data['col_taskName'] : '';
+                            $days.= "<td style='background-color: ".RandomColor::one().";vertical-align: middle;cursor: help;padding-top:5px;text-align: center;color:white;text-shadow: 1px 1px 2px black;' title='Задача: {$data['col_taskName']}' colspan='$duration'><b class='glyphicon glyphicon-time' style='color:white;text-shadow: 1px 1px 2px black;'></b> $name</td>";
+
+                            if($endDate>$end)
+                            {
+                                $n = round(($endDate - $end)/86400);
+                                $days.= str_repeat('<td>&nbsp;</td>',$n);
+                            }
+
+                            $this->view
+                                ->set('tdContent',$days)
+                                ->out('gantCenter',$this->className)
+                            ;
+                        }
+                    }
+                    $this->view->setFContainer('content',true);
+
+                    #endregion
+
+                    $this->view
+                        ->set('legend', date('d-m-Y',$startDate)." - ".date('d-m-Y',$endDate))
+                        ->out('gantMain',$this->className);
+                }
+                else{
+                    echo 'Мало данных';
                 }
             }
         }

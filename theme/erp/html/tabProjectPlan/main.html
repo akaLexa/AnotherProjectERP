@@ -4,7 +4,10 @@
         <span style="vertical-align: middle;">
             Состояние плана: <span class="projectPlanState|col_ProjectPlanState|">|col_ProjectPlanStateLegend|</span>
         </span>
-
+        <button class="btn btn-default" type="button" onclick="document.querySelector('#onGant').submit();" style="margin-left: 20px;">
+            <b class="glyphicon glyphicon-signal"></b> Диаграмма
+        </button>
+        <form method="POST" style="display: none;" action="|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=Gant" target="_blank" id="onGant"></form>
         <span style="margin-left: 20px;">
             Шаблоны плана проекта:
             |savedPlansList|
@@ -17,12 +20,11 @@
             <b class="glyphicon glyphicon-ok"></b> Рассчитать план
         </button>
         <input type="date" id="newStartPlanDate" |isDisable| class="form-control inlineBlock" style="float: right; margin-right: 15px;">
-        <!--<button class="btn btn-default" type="button"  |isDisable| style="float: right; margin-right: 15px;">
-            <b class="glyphicon glyphicon-remove"></b> Очистить план
-        </button>-->
         <button class="btn btn-default" type="button" onclick="tabProjectPlanAdd();" |isDisable| style="float: right; margin-right: 15px;">
             <b class="glyphicon glyphicon-plus"></b> Добавить стадию
         </button>
+
+
     </div>
 
     <table class="table table-hover table-bordered erpTable">
