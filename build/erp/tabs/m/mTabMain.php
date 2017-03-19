@@ -37,7 +37,7 @@ class mTabMain extends Project
     }
 
     /**
-     * включеиние / отключение автоплана
+     * включение / отключение автоплана
      * @param int $state
      * @param string $descLate причина просрочки стадии
      * @param string $descOff причина выключения автоплана

@@ -193,6 +193,11 @@ class tabMain extends AprojectTabs
 
             $stageInfo = mProjectPlan::getCurModel($this->project['col_pstageID']);
 
+            if($stageInfo['col_respID'] != Configs::userID()){
+                echo json_encode(['error'=>'Только ответственный может сменить стадию.']);
+                return;
+            }
+
             if(!empty($_POST['goNextStage'])){
                 if(strtotime($stageInfo['col_dateEndPlan']) < time() && empty($_POST['descStage'])){
                     echo json_encode(['error'=>'Не указана причина просрочки стадии']);
@@ -236,7 +241,7 @@ class tabMain extends AprojectTabs
                         && !empty($_POST['chosedStageResp'])
                         && !empty($_POST['stageDateTo'])
                     ){
-                        //если просрочена стадия и неот обьяснения или дата окончания след. стадии выставлена неверно, нужно завернуть
+                        //если просрочена стадия и нет обьяснения или дата окончания след. стадии выставлена неверно, нужно завернуть
                         if(
                             (strtotime($stageInfo['col_dateEndPlan']) < time() && empty($_POST['stageFailDesc']) && !in_array($this->project['col_pstageID'],$this->configs['endStagesID']))
                             || (strtotime($_POST['stageDateTo']) < time())

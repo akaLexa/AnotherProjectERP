@@ -284,9 +284,13 @@ WHERE
      * @param string $comment
      */
     public function stageDisagree($comment){
-        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 2,col_dateStart = NOW(),col_dateEndFact=NOW(),col_comment='$comment' WHERE col_pstageID = ".$this['col_pstageID']);
-        $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID)
-SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исполнитель отказался от стадии по причине: $comment',col_stageID,col_prevStageID,col_respID FROM tbl_project_stage WHERE col_pstageID = ".$this['col_pstageID']);
+        $prevStage = $this->db->query("SELECT * FROM tbl_project_stage WHERE col_pstageID = ".$this['col_prevStageID'])->fetch();
+        if(!empty($prevStage)){
+            $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 2,col_dateStart = NOW(),col_dateEndFact=NOW(),col_comment='$comment' WHERE col_pstageID = ".$this['col_pstageID']);
+            $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID)
+SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исполнитель отказался от стадии, см. имторию проекта',{$prevStage['col_stageID']},col_pstageID,{$prevStage['col_respID']} FROM tbl_project_stage WHERE col_pstageID = ".$this['col_pstageID']);
+
+        }
     }
 
     /**
