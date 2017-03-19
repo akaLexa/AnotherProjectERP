@@ -18,20 +18,15 @@ FOR EACH ROW
       FROM tbl_tasks
       WHERE col_taskID = new.col_taskID;
 
-      IF curator IS NOT NULL
-         AND new.col_UserID != curator THEN
+      IF curator IS NOT NULL AND new.col_UserID != curator THEN
         INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment)
           VALUE (19, new.col_taskID, curator, CONCAT(LEFT(new.col_text, 50), '...'));
       END IF;
 
       IF new.col_UserID != init THEN
-        INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment)
-          VALUE (18, new.col_taskID, init, CONCAT(LEFT(new.col_text, 50), '...'));
-      END IF;
-
-      IF new.col_UserID != resp THEN
-        INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment)
-          VALUE (18, new.col_taskID, resp, CONCAT(LEFT(new.col_text, 50), '...'));
+        INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment) VALUE (18, new.col_taskID, init, CONCAT(LEFT(new.col_text, 50), '...'));
+      ELSEIF new.col_UserID != resp AND resp != init THEN
+        INSERT INTO tbl_events (col_etID, col_object, col_userID, col_comment) VALUE (18, new.col_taskID, resp, CONCAT(LEFT(new.col_text, 50), '...'));
       END IF;
 
     END IF;

@@ -140,6 +140,9 @@ WHERE
             case 'col_dateCreate':
                 parent::_adding($name.'Legend', date_::transDate($value,true));
                 break;
+            case 'col_comment':
+                $value = strip_tags(htmlspecialchars_decode($value));
+                break;
         }
         parent::_adding($name, $value);
     }
