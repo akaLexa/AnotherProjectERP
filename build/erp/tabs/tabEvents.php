@@ -31,6 +31,7 @@ class tabEvents extends AprojectTabs
             $list = mTabMessages::getModels(['projectID'=>$this->project['col_projectID'],'isSys'=>1]);
             if(!empty($list)){
                 foreach ($list as $item) {
+
                     $this->view
                         ->add_dict($item)
                         ->set('curuserImg',2)

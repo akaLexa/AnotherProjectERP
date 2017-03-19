@@ -7,6 +7,7 @@
  *
  **/
 namespace build\erp\tabs\m;
+use build\erp\inc\SpecWordParser;
 use mwce\Connect;
 use mwce\date_;
 use mwce\Model;
@@ -84,6 +85,9 @@ order by tpm.col_dateCreate DESC")->fetchAll(static::class);
             case 'col_dateCreate':
                 parent::_adding($name.'Legend', date_::transDate($value));
                 parent::_adding($name.'LegendDT', date_::transDate($value,true));
+                break;
+            case 'col_text':
+                $value = SpecWordParser::check($value);
                 break;
         }
         parent::_adding($name, $value);
