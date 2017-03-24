@@ -7,9 +7,9 @@
  *
  **/
 namespace build\erp\adm\m;
-use mwce\Configs;
-use mwce\Connect;
-use mwce\Model;
+use mwce\Tools\Configs;
+use mwce\db\Connect;
+use mwce\Models\Model;
 
 class mPlugin extends Model
 {

@@ -7,7 +7,7 @@
  * 03.11.2016
  *
  **/
-namespace mwce;
+namespace mwce\Interfaces;
 
 interface iStartable
 {

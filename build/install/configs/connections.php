@@ -14,6 +14,6 @@ return array(
         'db' => '?',
         'user' => '?',
         'password' => '?',
-        'type' => \mwce\Connect::INSTALL
+        'type' => \mwce\db\Connect::INSTALL
     ],
 );

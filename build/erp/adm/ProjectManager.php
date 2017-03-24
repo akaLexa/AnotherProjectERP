@@ -15,10 +15,10 @@ use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
 use build\erp\project\m\m_TabsCfgs;
-use mwce\Configs;
-use mwce\DicBuilder;
+use mwce\Tools\Configs;
+use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
-use mwce\html_;
+use mwce\Tools\html;
 
 
 class ProjectManager extends eController
@@ -124,7 +124,7 @@ class ProjectManager extends eController
                 $grps = User::getGropList();
                 $grps[0] = '...';
                 $this->view
-                    ->set('groupList',html_::select($grps,'curGrp',0,'class="form-control inlineBlock" style="width:280px;" onchange="editStageAccessRole('.$_GET['id'].',this.value)"'))
+                    ->set('groupList',html::select($grps,'curGrp',0,'class="form-control inlineBlock" style="width:280px;" onchange="editStageAccessRole('.$_GET['id'].',this.value)"'))
                     ->out('projectStageEditAccessForm',$this->className);
             }
             else if(!empty($_GET['curGrp'])){
@@ -201,7 +201,7 @@ class ProjectManager extends eController
             if(!empty ($this->types[$cname])){
                 switch ($this->types[$cname][0]){
                     case 'select':
-                        $cval = html_::select(${$this->types[$cname][1]},$cname,$cval,'style="display:inline-block; width:300px;" class="form-control"');
+                        $cval = html::select(${$this->types[$cname][1]},$cname,$cval,'style="display:inline-block; width:300px;" class="form-control"');
                         break;
                     case 'checkGroup':
                         $curStages = explode(',',$cval);
@@ -214,10 +214,10 @@ class ProjectManager extends eController
                             else
                                 $tm_ar[$id][2] = false;
                         }
-                        $cval = html_::checkGroup($cname,$tm_ar," style='height:120px; width:auto; overflow-y:auto;' ");
+                        $cval = html::checkGroup($cname,$tm_ar," style='height:120px; width:auto; overflow-y:auto;' ");
                         break;
                     default:
-                        $cval = html_::input('text',$cname,$cval,'style="display:inline-block; width:300px;" class="form-control"');
+                        $cval = html::input('text',$cname,$cval,'style="display:inline-block; width:300px;" class="form-control"');
                         break;
                 }
             }
@@ -312,7 +312,7 @@ class ProjectManager extends eController
         $tabs = m_inProject::getAllTabs();
 
         $this->view
-            ->set('tabsList',html_::select($tabs,'TabChosen',0,'class="form-control inlineBlock" onchange="showTabsCfg(this.value)"'))
+            ->set('tabsList',html::select($tabs,'TabChosen',0,'class="form-control inlineBlock" onchange="showTabsCfg(this.value)"'))
             ->out('TabsManagementMain',$this->className);
     }
 
@@ -345,7 +345,7 @@ class ProjectManager extends eController
                         {
                             switch ($this->configTypes[$pName][0]){
                                 case 'select':
-                                    $item['value'] = html_::select(${$this->configTypes[$pName][1]},$pName,$item['value'],' class="form-control inlineBlock"');
+                                    $item['value'] = html::select(${$this->configTypes[$pName][1]},$pName,$item['value'],' class="form-control inlineBlock"');
                                     break;
                                 case 'checkGroup':
                                     $curVal = explode(',',$item['value']);
@@ -361,15 +361,15 @@ class ProjectManager extends eController
 
                                     }
 
-                                    $item['value'] = html_::checkGroup($pName,$tmVal," style='height:120px; width:auto; overflow-y:auto;' ");
+                                    $item['value'] = html::checkGroup($pName,$tmVal," style='height:120px; width:auto; overflow-y:auto;' ");
                                     break;
                                 default:
-                                    $item['value'] = html_::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
+                                    $item['value'] = html::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
                                     break;
                             }
                         }
                         else
-                            $item['value'] = html_::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
+                            $item['value'] = html::input('text',$pName,$item['value'],'class="form-control inlineBlock"');
 
 
                         $this->view

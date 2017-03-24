@@ -8,9 +8,8 @@
  **/
 namespace build\erp\tabs;
 use build\erp\inc\AprojectTabs;
-use mwce\Configs;
-use mwce\html_;
-use mwce\router;
+use mwce\Tools\Configs;
+use mwce\Tools\html;
 
 
 class tabDocs extends AprojectTabs
@@ -38,7 +37,7 @@ class tabDocs extends AprojectTabs
         $docs = \build\erp\main\m\mDocs::getDocGroups(Configs::curRole());
         $docs[0] ='Все';
         $this->view
-            ->set('fileGroupList',html_::select($docs,'curChosenDg',0,'class="form-control inlineBlock" onchange="filterDocs();"'))
+            ->set('fileGroupList',html::select($docs,'curChosenDg',0,'class="form-control inlineBlock" onchange="filterDocs();"'))
             ->out('main',$this->className);
     }
 

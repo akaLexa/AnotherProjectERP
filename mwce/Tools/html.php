@@ -1,5 +1,5 @@
 <?php
-namespace mwce;
+namespace mwce\Tools;
 /**
  * MuWebCloneEngine
  * Version: 1.6
@@ -7,7 +7,7 @@ namespace mwce;
  * 21.10.2015
  *
  **/
-class html_
+class html
 {
     /**
      * @param array $args - массив с данными для заполнения элемента

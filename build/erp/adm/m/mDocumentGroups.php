@@ -8,9 +8,9 @@
  **/
 namespace build\erp\adm\m;
 
-use mwce\Connect;
-use mwce\Model;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Models\Model;
+use mwce\Tools\Tools;
 
 class mDocumentGroups extends Model
 {
@@ -19,7 +19,7 @@ class mDocumentGroups extends Model
      * @return mDocumentGroups
      */
     public static function Add($name){
-        $db = Connect::start();
+        $db = \mwce\db\Connect::start();
         $db->exec("INSERT INTO tbl_hb_doc_group (col_docGroupName) VALUE('$name')");
         return self::getCurModel($db->lastId('tbl_hb_doc_group'));
     }

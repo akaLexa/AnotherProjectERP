@@ -7,9 +7,9 @@
  * Пользователи системы
  **/
 namespace build\erp\inc;
-use mwce\Connect;
-use mwce\date_;
-use mwce\Model;
+use mwce\db\Connect;
+use mwce\Tools\Date;
+use mwce\Models\Model;
 
 class User extends Model
 {
@@ -247,7 +247,7 @@ ORDER by tu.col_Sername");
             case 'col_regDate':
             case 'col_blockDate':
                 if(!empty($value)){
-                    parent::_adding($name.'Legend', date_::transDate($value,true));
+                    parent::_adding($name.'Legend', Date::transDate($value,true));
                 }
                 break;
             case 'col_isBaned':

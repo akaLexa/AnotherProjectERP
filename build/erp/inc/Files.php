@@ -8,14 +8,14 @@
  **/
 namespace build\erp\inc;
 use build\erp\main\m\mDocs;
-use mwce\Configs;
-use mwce\Connect;
+use mwce\Tools\Configs;
+use mwce\db\Connect;
 use mwce\Exceptions\ModException;
-use mwce\traits\singleton;
+use mwce\traits\tSingleton;
 
 class Files
 {
-    use singleton;
+    use tSingleton;
 
     /**
      * @var string адрес хранения файлов
@@ -23,7 +23,7 @@ class Files
     protected static $docPath;
 
     /**
-     * @var Connect
+     * @var \mwce\db\Connect
      */
     protected $db;
 

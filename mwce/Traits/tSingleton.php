@@ -1,8 +1,8 @@
 <?php
 
-namespace mwce\traits;
+namespace mwce\Traits;
 
-trait singleton
+trait tSingleton
 {
     /**
      * @var self instance
@@ -12,7 +12,7 @@ trait singleton
     /**
      * точка входа
      * @param null|mixed $params
-     * @return self|singleton
+     * @return self|tSingleton
      */
     public static function start($params = null)
     {

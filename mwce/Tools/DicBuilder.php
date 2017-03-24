@@ -7,7 +7,7 @@
  * 12.04.2016
  * v 0.1
  **/
-namespace mwce;
+namespace mwce\Tools;
 /**
  * Class DicBuilder
  * @package mwce
@@ -40,14 +40,14 @@ class DicBuilder
         if (!is_null($location))
             $this->location = $location;
 
-        $content = '<?php return array(';
+        $content = '<?php return [';
         $ai = new \ArrayIterator($array);
 
         foreach ($ai as $id => $value) {
             $content .= '"' . $id . '"=>"' . $value . '",';
         }
 
-        $content .= ');';
+        $content .= '];';
 
         $this->writeThis($content);
     }

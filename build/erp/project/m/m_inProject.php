@@ -7,8 +7,8 @@
  *
  **/
 namespace build\erp\project\m;
-use mwce\Configs;
-use mwce\Model;
+use mwce\Tools\Configs;
+use mwce\Models\Model;
 
 class m_inProject extends Model
 {

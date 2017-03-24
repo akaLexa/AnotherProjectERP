@@ -13,10 +13,9 @@ use build\erp\inc\eController;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use build\erp\tabs\m\mTabMain;
-use mwce\Configs;
-use mwce\html_;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Tools\content;
+use mwce\Tools\html;
 
 
 class tabMain extends AprojectTabs
@@ -79,7 +78,7 @@ class tabMain extends AprojectTabs
 
             $this->view
                 ->add_dict($this->project)
-                ->set('mngrList',html_::select($users,'curManager',$this->project['col_founderID'],'class="form-control inlineBlock"'))
+                ->set('mngrList',html::select($users,'curManager',$this->project['col_founderID'],'class="form-control inlineBlock"'))
                 ->out('main',$this->className);
         }
     }
@@ -138,7 +137,7 @@ class tabMain extends AprojectTabs
         }
     }
 
-    public function __construct(\mwce\content $view, $pages, $project)
+    public function __construct(content $view, $pages, $project)
     {
         eController::__construct($view, $pages);
         $this->project = mTabMain::getCurModel($project);
@@ -233,7 +232,7 @@ class tabMain extends AprojectTabs
                         }
 
                         $this->view
-                            ->set('groupList',html_::select($groups,'choosedGroup',0,'class="form-control inlineBlock" style="width:230px;" onchange="getStagesByGroup(this.value)"'))
+                            ->set('groupList',html::select($groups,'choosedGroup',0,'class="form-control inlineBlock" style="width:230px;" onchange="getStagesByGroup(this.value)"'))
                             ->out('nextStageForm',$this->className);
                     }
                     else if(
@@ -272,7 +271,7 @@ class tabMain extends AprojectTabs
 
             if(!empty($list)){
                 $list[0] = '...';
-                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите стадию: </span>'.html_::select($list,'chosedStage',0,'class="form-control inlineBlock" style="width:230px;" onchange="getRespByStage(this.value)"');
+                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите стадию: </span>'.html::select($list,'chosedStage',0,'class="form-control inlineBlock" style="width:230px;" onchange="getRespByStage(this.value)"');
             }
         }
     }
@@ -286,7 +285,7 @@ class tabMain extends AprojectTabs
 
             if(!empty($list)){
                 $list[0] = '...';
-                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите ответственного: </span>'.html_::select($list,'chosedStageResp',0,'class="form-control inlineBlock" style="width:230px;"');
+                echo '<span style="display: inline-block; width: 220px;">Пожалуйста, выберите ответственного: </span>'.html::select($list,'chosedStageResp',0,'class="form-control inlineBlock" style="width:230px;"');
             }
         }
     }

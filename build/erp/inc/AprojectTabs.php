@@ -9,7 +9,7 @@
  **/
 namespace  build\erp\inc;
 
-use mwce\Configs;
+use mwce\Tools\Configs;
 
 abstract class AprojectTabs extends eController implements iProjectTabs
 {
@@ -50,11 +50,11 @@ abstract class AprojectTabs extends eController implements iProjectTabs
 
     /**
      * AprojectTabs constructor.
-     * @param \mwce\content $view
+     * @param \mwce\Tools\content $view
      * @param string $pages
      * @param int $project
      */
-    public function __construct(\mwce\content $view, $pages, $project)
+    public function __construct(\mwce\Tools\content $view, $pages, $project)
     {
         parent::__construct($view, $pages);
         $this->project = Project::getCurModel($project);

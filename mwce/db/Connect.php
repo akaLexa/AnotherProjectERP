@@ -1,9 +1,11 @@
 <?php
 
-namespace mwce;
+namespace mwce\db;
 
 use mwce\Exceptions\CfgException;
 use mwce\Exceptions\DBException;
+use mwce\Tools\Configs;
+use mwce\Tools\Logs;
 
 
 /**
@@ -26,7 +28,6 @@ class Connect
     const INSTALL = 4;
     const SQLSRV = 5;
     //endregion
-
 
     /**
      * @var array
@@ -80,7 +81,7 @@ class Connect
      * @param int $conNum номер или название подключения
      * @return mixed|Connect
      */
-    static public function start($conNum = null)
+    public static function start($conNum = null)
     {
         if(is_null($conNum)){
             if(Configs::buildCfg('defConNum') !== FALSE)
@@ -99,22 +100,6 @@ class Connect
         }
 
         return self::$pool[$conNum];
-    }
-
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'type':
-                return $this->curConType;
-                break;
-            case 'suf':
-                if ($this->curConType != self::MYSQL) {
-                    return 'dbo.';
-                }
-                return '';
-            default:
-                return false;
-        }
     }
 
     private function __construct($conNum)
@@ -176,6 +161,8 @@ class Connect
         }
     }
 
+    //region "коннекторы"
+
     /**
      * @param array $params
      */
@@ -202,11 +189,16 @@ class Connect
         $this->resId->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
+    /**
+     * @param $params
+     */
     private function sqlsrv($params)
     {
         $this->resId = new \PDO('sqlsrv:server=' . $params['server'] . ';Database=' . $params['db'], $params['user'], $params['password']);
         $this->resId->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
+
+    //endregions
 
     /**
      * логи в таблицу mwc_logs
@@ -345,6 +337,10 @@ class Connect
     }
 
 
+
+
+    //region magic
+
     public function __call($name, $arguments)
     {
         $ars = '';
@@ -399,5 +395,31 @@ class Connect
         return false;
     }
 
+    public function __get($name)
+    {
+        switch ($name) {
+            case 'type':
+                return $this->curConType;
+                break;
+            case 'suf':
+                if ($this->curConType != self::MYSQL) {
+                    return 'dbo.';
+                }
+                return '';
+            default:
+                return false;
+        }
+    }
 
+    public function __set($name, $value)
+    {
+
+    }
+
+    public function __isset($name)
+    {
+
+    }
+
+    //endregion
 }

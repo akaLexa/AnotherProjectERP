@@ -11,9 +11,9 @@ use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\tPaginate;
 use build\erp\inc\User;
-use mwce\Configs;
-use mwce\html_;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 class projectList extends eController
 {
@@ -54,8 +54,8 @@ class projectList extends eController
         $usrs = User::getUserList();
         $usrs[0] = '...';
         $this->view
-            ->set('userRespList',html_::select($usrs,'UserResponse',Configs::userID(),'class="erpSelect" style="width:100%;"'))
-            ->set('userMngrList',html_::select($usrs,'UserManager',0,'class="erpSelect" style="width:100%;"'))
+            ->set('userRespList',html::select($usrs,'UserResponse',Configs::userID(),'class="erpSelect" style="width:100%;"'))
+            ->set('userMngrList',html::select($usrs,'UserManager',0,'class="erpSelect" style="width:100%;"'))
             ->out('main',$this->className);
     }
 

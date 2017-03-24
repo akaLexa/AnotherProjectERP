@@ -7,7 +7,7 @@
  **/
 return array(
     'availableConnections' => [
-        \mwce\Connect::MYSQL,
+        \mwce\db\Connect::MYSQL,
     ],//список доступных для билда подключений
     'writeFolders' =>[
         '_dat','configs'

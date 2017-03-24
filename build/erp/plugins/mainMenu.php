@@ -8,11 +8,9 @@
  **/
 namespace build\erp\plugins;
 use build\erp\plugins\m\mMainMenu;
-use mwce\Configs;
-use mwce\content;
-use mwce\PluginController;
-use mwce\router;
-
+use mwce\Tools\Configs;
+use mwce\Tools\content;
+use mwce\Controllers\PluginController;
 
 class mainMenu extends PluginController
 {

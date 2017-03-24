@@ -7,10 +7,9 @@
  *
  **/
 namespace build\erp\main\m;
-use mwce\Connect;
-use mwce\date_;
-use mwce\Model;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Tools\Date;
+use mwce\Models\Model;
 
 class mDocs extends Model
 {
@@ -239,7 +238,7 @@ WHERE
         switch ($name){
             case 'col_cDate':
             case 'col_dDate':
-                parent::_adding($name.'Legend', date_::transDate($value,true));
+                parent::_adding($name.'Legend', Date::transDate($value,true));
                 break;
             case 'col_parent':
                 if(empty($value))

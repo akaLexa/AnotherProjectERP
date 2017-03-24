@@ -8,8 +8,7 @@
  **/
 namespace build\erp\main\m;
 use build\erp\inc\Events;
-use mwce\Configs;
-use mwce\router;
+use mwce\Tools\Configs;
 
 class mEventJournal extends Events
 {

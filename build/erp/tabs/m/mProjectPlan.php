@@ -7,10 +7,9 @@
  *
  **/
 namespace build\erp\tabs\m;
-use mwce\Connect;
-use mwce\date_;
-use mwce\Model;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Tools\Date;
+use mwce\Models\Model;
 
 class mProjectPlan extends Model
 {
@@ -139,8 +138,8 @@ WHERE
             case 'col_dateStartPlan':
             case 'col_taskStart':
             case 'col_taskEnd':
-                parent::_adding($name.'Legend', date_::transDate($value));
-                parent::_adding($name.'LegendDT', date_::transDate($value,true));
+                parent::_adding($name.'Legend', Date::transDate($value));
+                parent::_adding($name.'LegendDT', Date::transDate($value,true));
                 break;
         }
         parent::_adding($name, $value);

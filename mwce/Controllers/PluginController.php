@@ -8,7 +8,10 @@
  *
  **/
 
-namespace mwce;
+namespace mwce\Controllers;
+
+use mwce\db\Connect;
+use mwce\Tools\Configs;
 
 class PluginController extends Controller
 {
@@ -26,7 +29,7 @@ class PluginController extends Controller
      */
     protected $showAll = 1;
 
-    public function __construct(\mwce\content $view, $plugins)
+    public function __construct(\mwce\Tools\content $view, $plugins)
     {
         $this->view = $view;
         $this->className = basename(static::class);

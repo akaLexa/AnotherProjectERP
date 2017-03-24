@@ -1,6 +1,8 @@
 <?php
 
-namespace mwce;
+namespace mwce\Tools;
+
+use mwce\db\Connect;
 
 class Logs
 {

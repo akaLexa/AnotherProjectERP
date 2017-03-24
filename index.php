@@ -25,7 +25,7 @@ if (extension_loaded('zlib'))
 else
     ob_start();
 
-$app = mwce\router::start();
+$app = mwce\Routing\router::start();
 $app->startPlugins();
 $app->startModules();
 $app->show();

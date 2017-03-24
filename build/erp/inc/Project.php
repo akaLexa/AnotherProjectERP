@@ -8,11 +8,11 @@
  **/
 namespace build\erp\inc;
 
-use mwce\Configs;
-use mwce\Connect;
-use mwce\date_;
+use mwce\Tools\Configs;
+use mwce\db\Connect;
+use mwce\Tools\Date;
 use mwce\Exceptions\DBException;
-use mwce\Model;
+use mwce\Models\Model;
 
 class Project extends Model
 {
@@ -240,8 +240,8 @@ WHERE
             case 'col_CreateDate':
             case 'col_dateStart':
             case 'col_dateEndPlan':
-                parent::_adding($name.'Legend', date_::transDate($value));
-                parent::_adding($name.'LegendDT', date_::transDate($value,true));
+                parent::_adding($name.'Legend', Date::transDate($value));
+                parent::_adding($name.'LegendDT', Date::transDate($value,true));
                 break;
             case 'col_Desc' :
                 parent::_adding($name.'Legend', htmlspecialchars_decode($value));

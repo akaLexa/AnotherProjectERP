@@ -7,9 +7,8 @@
  *
  **/
 namespace build\erp\adm\m;
-use mwce\Connect;
-use mwce\Model;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Models\Model;
 
 class mStages extends Model
 {
@@ -111,7 +110,7 @@ WHERE
      * @param array $roles
      */
     public function checkRoleAccess($group,$roles){
-        // это не говнокод, это лешкий способ делать выборку по отделам для стадии, когда слишком много пользователей
+        // это не говнокод, это легкий способ делать выборку по отделам для стадии, когда слишком много пользователей
         $roleRelation = $this->db->query("SELECT col_psgID FROM tbl_project_stage_group WHERE col_gID = $group AND col_StageID =".$this['col_StageID'])->fetch();
         $this->db->exec("DELETE FROM tbl_project_stage_role WHERE col_psgID=".$roleRelation['col_psgID']);
         if(!empty($roles)){

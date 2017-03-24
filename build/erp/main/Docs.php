@@ -11,9 +11,8 @@ namespace  build\erp\main;
 use build\erp\inc\eController;
 use build\erp\inc\Files;
 use build\erp\inc\Project;
-use mwce\Configs;
+use mwce\Tools\Configs;
 use mwce\Exceptions\ModException;
-use mwce\router;
 
 class Docs extends eController
 {

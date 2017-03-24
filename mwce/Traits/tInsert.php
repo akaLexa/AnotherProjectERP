@@ -6,7 +6,7 @@
  *
  **/
 
-namespace mwce\traits;
+namespace mwce\Traits;
 
 
 trait tInsert

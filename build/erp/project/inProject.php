@@ -13,10 +13,8 @@ use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
 use build\erp\tabs\m\mProjectPlan;
-use mwce\Configs;
-use mwce\html_;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Tools\html;
 
 class inProject extends eController
 {
@@ -175,7 +173,7 @@ class inProject extends eController
     public function actionUserFromGroup(){
         if(!empty($_GET['id'])){
             $userList = User::getUserGropuList($_GET['id']);
-            echo html_::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
+            echo html::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
         }
     }
 

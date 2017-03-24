@@ -15,9 +15,8 @@ use build\erp\inc\Task;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use lib\RandomColor;
-use mwce\Configs;
-use mwce\html_;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Tools\html;
 
 
 class tabProjectPlan extends AprojectTabs
@@ -70,7 +69,7 @@ class tabProjectPlan extends AprojectTabs
                 //region шаблоны
                 $tp = PlanStage::getSavedList();
                 $tp[0] = '...';
-                $this->view->set('savedPlansList',html_::select($tp,'planStageTheme',0,'class="form-control inlineBlock" style="width:300px;"'));
+                $this->view->set('savedPlansList',html::select($tp,'planStageTheme',0,'class="form-control inlineBlock" style="width:300px;"'));
 
                 //endregion
 
@@ -393,8 +392,8 @@ class tabProjectPlan extends AprojectTabs
 
                     $this->view
                         ->add_dict($this->project)
-                        ->set('stageList',html_::select($stages,'tbStageList',0,'class="form-control inlineBlock"'))
-                        ->set('userList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                        ->set('stageList',html::select($stages,'tbStageList',0,'class="form-control inlineBlock"'))
+                        ->set('userList',html::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                         //->set('userList',html_::select($users,'tbUserList',router::getCurUser(),'class="form-control inlineBlock"'))
                         ->set('curSettings', json_encode($curSettings))
                         ->out('addStageForm',$this->className);
@@ -458,9 +457,9 @@ class tabProjectPlan extends AprojectTabs
                     $this->view
                         ->add_dict($this->project)
                         ->add_dict($stageInfo)
-                        ->set('stageList',html_::select($stages,'tbStageList',$stageInfo['col_stageID'],'class="form-control inlineBlock"'))
-                        ->set('userList',html_::select($users,'tbUserList',$stageInfo['col_respID'],'class="form-control inlineBlock"'))
-                        ->set('groupList',html_::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                        ->set('stageList',html::select($stages,'tbStageList',$stageInfo['col_stageID'],'class="form-control inlineBlock"'))
+                        ->set('userList',html::select($users,'tbUserList',$stageInfo['col_respID'],'class="form-control inlineBlock"'))
+                        ->set('groupList',html::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
                         ->set('curSettings', json_encode($curSettings))
                         ->out('editStageForm',$this->className);
                 }
@@ -497,10 +496,10 @@ class tabProjectPlan extends AprojectTabs
 
 
                 $this->view
-                    ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
-                    ->set('groupList',html_::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
-                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock"'))
-                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($_GET['stageID']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px;"'))
+                    ->set('genTypeTaskList',html::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
+                    ->set('groupList',html::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                    ->set('tRepsList',html::select(Task::$resps,'TaskRtype',0,'class="form-control inlineBlock"'))
+                    ->set('tRepsTaskList',html::select(Task::getParentTasks($_GET['stageID']),'TaskRespID',0,'class="form-control inlineBlock" style="width:180px;"'))
                     ->out('addTaskForm',$this->className);
             }
             else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur'])&& !empty($_POST['tbUserList'])){
@@ -569,11 +568,11 @@ class tabProjectPlan extends AprojectTabs
 
                 $this->view
                     ->add_dict($curTask)
-                    ->set('userList',html_::select($users,'tbUserList',$curTask['col_respID'],'class="form-control inlineBlock"'))
-                    ->set('tRepsTaskList',html_::select(Task::getParentTasks($curTask['col_pstageID'],$_GET['taskID']),'TaskRespID',$curTask['col_nextID'],'class="form-control inlineBlock" style="width:180px;"'))
-                    ->set('genTypeTaskList',html_::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
-                    ->set('groupList',html_::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
-                    ->set('tRepsList',html_::select(Task::$resps,'TaskRtype',$curTask['col_bonding'],'class="form-control inlineBlock"'))
+                    ->set('userList',html::select($users,'tbUserList',$curTask['col_respID'],'class="form-control inlineBlock"'))
+                    ->set('tRepsTaskList',html::select(Task::getParentTasks($curTask['col_pstageID'],$_GET['taskID']),'TaskRespID',$curTask['col_nextID'],'class="form-control inlineBlock" style="width:180px;"'))
+                    ->set('genTypeTaskList',html::select($types,'hbTaskTypes','0',' class="form-control inlineBlock" style="width:300px;" onchange="document.querySelector(\'#_TaskName\').value=this.value"'))
+                    ->set('groupList',html::select($groups,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
+                    ->set('tRepsList',html::select(Task::$resps,'TaskRtype',$curTask['col_bonding'],'class="form-control inlineBlock"'))
                     ->out('editTaskForm',$this->className);
             }
             else if(!empty($_POST['TaskName']) && !empty($_POST['taskDur']) && !empty($_POST['tbUserList'])){

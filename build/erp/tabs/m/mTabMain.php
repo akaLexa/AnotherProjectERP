@@ -9,9 +9,8 @@
 namespace build\erp\tabs\m;
 use build\erp\inc\Project;
 use build\erp\inc\User;
-use mwce\Configs;
-use mwce\date_;
-use mwce\router;
+use mwce\Tools\Configs;
+use mwce\Tools\Date;
 
 class mTabMain extends Project
 {
@@ -66,7 +65,7 @@ class mTabMain extends Project
 
         $next = self::getNextStageID();
 
-        $this->db->exec("CALL sp_CalcProjectPlan({$this['col_projectID']},'".date_::intransDate('now')."');");
+        $this->db->exec("CALL sp_CalcProjectPlan({$this['col_projectID']},'".Date::intransDate('now')."');");
         $this->db->closeCursor();
 
         // нет следующей стадии, ничего не делаем!

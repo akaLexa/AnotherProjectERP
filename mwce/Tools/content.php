@@ -8,9 +8,10 @@
  * шаблонизатор
  **/
 
-namespace mwce;
+namespace mwce\Tools;
 
 use mwce\Exceptions\ContentException;
+use mwce\Models\Model;
 
 /**
  * Class content
@@ -217,7 +218,6 @@ class content
                 return $this->vars[$id];
             return false;
         }
-
         else {
             if (!empty($this->curModule) && !empty($this->vars[$this->curModule][$id])) {
                 return $this->vars[$this->curModule][$id];
@@ -755,6 +755,8 @@ class content
                 return false;
         }
     }
+
+    public function __set($name, $value){ }
 
     public function __isset($name)
     {

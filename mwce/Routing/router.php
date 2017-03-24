@@ -7,19 +7,23 @@
  * 07.04.2016
  *
  **/
-namespace mwce;
+namespace mwce\Routing;
 
 
 use mwce\Exceptions\CfgException;
 use mwce\Exceptions\ModException;
-use mwce\traits\singleton;
+use mwce\Tools\Configs;
+use mwce\Tools\content;
+use mwce\Tools\Logs;
+use mwce\Tools\Tools;
+use mwce\traits\tSingleton;
 
 class router
 {
     /**
-     * mwce/traits
+     * mwce/Traits
      */
-    use singleton;
+    use tSingleton;
 
     /**
      * @var string
@@ -392,4 +396,8 @@ class router
                 return false;
         }
     }
+
+    public function __isset($name){}
+
+    public function __set($name, $value){}
 }

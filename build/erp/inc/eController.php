@@ -1,12 +1,12 @@
 <?php
 namespace build\erp\inc;
 
-use mwce\ModuleController;
+use mwce\Controllers\ModuleController;
 
 class eController extends ModuleController
 {
 
-    public function __construct(\mwce\content $view, $pages)
+    public function __construct(\mwce\Tools\content $view, $pages)
     {
         parent::__construct($view, $pages);
 

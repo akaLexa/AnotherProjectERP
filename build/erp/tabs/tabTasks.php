@@ -12,14 +12,12 @@ use build\erp\inc\AprojectTabs;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
-use build\erp\tabs\m\mProjectPlan;
 use build\erp\tabs\m\mTabTasks;
-use mwce\Configs;
-use mwce\date_;
+use mwce\Tools\Configs;
+use mwce\Tools\Date;
 use mwce\Exceptions\ModException;
-use mwce\html_;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\html;
+
 
 class tabTasks extends AprojectTabs
 {
@@ -61,9 +59,9 @@ class tabTasks extends AprojectTabs
         $taskStates[0] = 'Актвные';
 
         $this->view
-            ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
-            ->set('initList',html_::select($users,'taskInit',0,'style="width:100%" class="erpInput" onchange="filterTask();"'))
-            ->set('respList',html_::select($users,'taskResp',Configs::userID(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
+            ->set('stateList',html::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
+            ->set('initList',html::select($users,'taskInit',0,'style="width:100%" class="erpInput" onchange="filterTask();"'))
+            ->set('respList',html::select($users,'taskResp',Configs::userID(),'style="width:100%" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
     }
 
@@ -131,9 +129,9 @@ class tabTasks extends AprojectTabs
                 'col_taskName' => $_POST['taskName'],
                 'col_respID' => $_POST['tbUserList1'],
                 'col_pstageID' => $this->project['col_pstageID'],
-                'col_createDate' => date_::intransDate('now',true),
-                'col_startFact' => date_::intransDate('now',true),
-                'col_autoStart' => date_::intransDate('now + '.$_POST['duration'].' DAY',true),
+                'col_createDate' => date::intransDate('now',true),
+                'col_startFact' => date::intransDate('now',true),
+                'col_autoStart' => date::intransDate('now + '.$_POST['duration'].' DAY',true),
                 'col_endPlan' => $_POST['endDate'].' '.$_POST['endTime'],
                 'col_taskDur' => $_POST['duration'],
                 'col_initID' => Configs::userID(),
@@ -165,9 +163,9 @@ class tabTasks extends AprojectTabs
             $groups[0] = '...';
 
             $this->view
-                ->set('groupList',html_::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=1&group=\'+this.value})"'))
-                ->set('groupList1',html_::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp1\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=2&group=\'+this.value})"'))
-                ->set('typeTaskList',html_::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
+                ->set('groupList',html::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=1&group=\'+this.value})"'))
+                ->set('groupList1',html::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp1\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=2&group=\'+this.value})"'))
+                ->set('typeTaskList',html::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
                 ->out('Add',$this->className);
         }
     }
@@ -181,7 +179,7 @@ class tabTasks extends AprojectTabs
     public function GenUser(){
         if(!empty($_GET['quenue']) && !empty($_GET['group'])){
             $userList = User::getUserGropuList($_GET['group']);
-            echo html_::select($userList,'tbUserList'.$_GET['quenue'],0,'class="form-control inlineBlock"');
+            echo html::select($userList,'tbUserList'.$_GET['quenue'],0,'class="form-control inlineBlock"');
         }
 
     }

@@ -7,7 +7,7 @@
  * 08.04.2016
  *
  **/
-namespace mwce;
+namespace mwce\Tools;
 
 /**
  * Class Configs
@@ -73,8 +73,7 @@ class Configs
         
         if (file_exists($path))
         {
-            $ar = unserialize(trim(file_get_contents($path)));
-            return $ar;
+            return unserialize(trim(file_get_contents($path)));
         }
         return false;
     }

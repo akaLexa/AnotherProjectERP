@@ -10,11 +10,11 @@
 namespace  build\erp\adm\m;
 
 
-use mwce\Configs;
-use mwce\Connect;
-use mwce\DicBuilder;
-use mwce\Model;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\db\Connect;
+use mwce\Tools\DicBuilder;
+use mwce\Models\Model;
+use mwce\Tools\Tools;
 
 class mMenuManager extends Model
 {

@@ -16,12 +16,11 @@ use build\erp\inc\tPaginate;
 use build\erp\inc\User;
 use build\erp\main\m\mTasks;
 use build\erp\tabs\m\mTabTasks;
-use mwce\Configs;
-use mwce\date_;
+use mwce\Tools\Configs;
+use mwce\Tools\Date;
 use mwce\Exceptions\ModException;
-use mwce\html_;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 
 class tasks extends eController
@@ -76,9 +75,9 @@ class tasks extends eController
         $taskStates[0] = 'Актвные';
 
         $this->view
-            ->set('stateList',html_::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
-            ->set('initList',html_::select($users,'taskInit',0,'style="width:120px;" class="erpInput" onchange="filterTask();"'))
-            ->set('respList',html_::select($users,'taskResp',Configs::userID(),'style="width:120px;" class="erpInput" onchange="filterTask();"'))
+            ->set('stateList',html::select($taskStates,'taskStatus',0,'style="width:150px;" class="erpInput" onchange="filterTask();"'))
+            ->set('initList',html::select($users,'taskInit',0,'style="width:120px;" class="erpInput" onchange="filterTask();"'))
+            ->set('respList',html::select($users,'taskResp',Configs::userID(),'style="width:120px;" class="erpInput" onchange="filterTask();"'))
             ->out('main',$this->className);
     }
 
@@ -206,7 +205,7 @@ class tasks extends eController
 
                                 $status[0] = 'Выберите...';
                                 $this->view
-                                    ->set('stateList',html_::select($status,'stageChoose',0,'style="width:120px;" class="form-control inlineBlock" onchange="choseAction(this.value);"'))
+                                    ->set('stateList',html::select($status,'stageChoose',0,'style="width:120px;" class="form-control inlineBlock" onchange="choseAction(this.value);"'))
                                     ->out('actionForm',$this->className);
                                 $this->view->setFContainer('inTaskProperties',true);
                             }
@@ -217,7 +216,7 @@ class tasks extends eController
                                 $status = array();
                                 $status[99] = 'Перезапустить';
                                 $this->view
-                                    ->set('stateList',html_::select($status,'stageChoose',0,'style="width:120px;" class="form-control inlineBlock" onchange="choseAction(this.value);"'))
+                                    ->set('stateList',html::select($status,'stageChoose',0,'style="width:120px;" class="form-control inlineBlock" onchange="choseAction(this.value);"'))
                                     ->out('actionForm',$this->className);
                                 $this->view->setFContainer('inTaskProperties',true);
                             }
@@ -318,11 +317,11 @@ class tasks extends eController
                     $users = User::getUserList();
                     $curUsers = $users;
                     $curUsers[0]='...';
-                    $task['col_endPlan_'] = date_::intransDate( $task['col_endPlan']);
+                    $task['col_endPlan_'] = date::intransDate( $task['col_endPlan']);
                     $this->view
                         ->add_dict($task)
-                        ->set('respList',html_::select($users,'taskResp',$task['col_respID'],'class="form-control inlineBlock"'))
-                        ->set('curatorList',html_::select($curUsers,'taskCurator',$task['col_curatorID'],'class="form-control inlineBlock"'))
+                        ->set('respList',html::select($users,'taskResp',$task['col_respID'],'class="form-control inlineBlock"'))
+                        ->set('curatorList',html::select($curUsers,'taskCurator',$task['col_curatorID'],'class="form-control inlineBlock"'))
                         ->out('reStart',$this->className);
                 }
                 else if(
@@ -342,7 +341,7 @@ class tasks extends eController
                         $params['col_curatorID'] = $_POST['taskCurator'];
                     }
                     $task->edit($params);
-                    $newDate = date_::transDate($params['col_endPlan'],true);
+                    $newDate = date::transDate($params['col_endPlan'],true);
 
                     $text = "<b style=\"color:red;\">Задача была перезапущена с {$task['col_endPlanLegendTD']} на $newDate. </b>";
 
@@ -384,9 +383,9 @@ class tasks extends eController
                     'col_taskName' => $_POST['taskName'],
                     'col_respID' => $_POST['tbUserList'],
                     'col_pstageID' => $project['col_pstageID'],
-                    'col_createDate' => date_::intransDate('now', true),
-                    'col_startFact' => date_::intransDate('now', true),
-                    'col_autoStart' => date_::intransDate('now + ' . $_POST['duration'] . ' DAY', true),
+                    'col_createDate' => date::intransDate('now', true),
+                    'col_startFact' => date::intransDate('now', true),
+                    'col_autoStart' => date::intransDate('now + ' . $_POST['duration'] . ' DAY', true),
                     'col_endPlan' => $_POST['endDate'] . ' ' . $_POST['endTime'],
                     'col_taskDur' => $_POST['duration'],
                     'col_initID' => Configs::userID(),
@@ -418,9 +417,9 @@ class tasks extends eController
                 $groups[0] = '...';
 
                 $this->view
-                    ->set('groupList',html_::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getResp(this.value)"'))
-                    ->set('groupList1',html_::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getCurator(this.value)"'))
-                    ->set('typeTaskList',html_::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
+                    ->set('groupList',html::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getResp(this.value)"'))
+                    ->set('groupList1',html::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="getCurator(this.value)"'))
+                    ->set('typeTaskList',html::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
                     ->out('Add',$this->className);
             }
     }
@@ -429,7 +428,7 @@ class tasks extends eController
         if(!empty($_GET['id'])){
             $userList = User::getUserGropuList($_GET['id']);
             if(!empty($userList))
-                echo html_::select($userList,'tbUserCurator',0,'class="form-control inlineBlock"');
+                echo html::select($userList,'tbUserCurator',0,'class="form-control inlineBlock"');
             else
                 echo json_encode(['error'=>'Нет данных!']);
         }
@@ -442,7 +441,7 @@ class tasks extends eController
             $userList = User::getUserGropuList($_GET['id']);
 
             if(!empty($userList) && !empty($groupP) && !empty($groupP[0])){
-                echo html_::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
+                echo html::select($userList,'tbUserList',0,'class="form-control inlineBlock"');
                 return;
             }
 

@@ -8,7 +8,7 @@
  **/
 namespace build\erp\tabs\m;
 use build\erp\inc\Task;
-use mwce\Connect;
+use mwce\db\Connect;
 
 class mTabTasks extends Task
 {

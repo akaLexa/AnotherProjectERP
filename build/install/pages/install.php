@@ -7,15 +7,13 @@
  *
  **/
 namespace build\install\pages;
+
 use build\install\inc\iController;
-use mwce\Configs;
-use mwce\Connect;
-use mwce\content;
-use mwce\DicBuilder;
-use mwce\Exceptions\DBException;
-use mwce\Exceptions\ModException;
-use mwce\html_;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Tools\Configs;
+use mwce\Tools\DicBuilder;
+use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 class install extends iController
 {
@@ -32,7 +30,7 @@ class install extends iController
 
     private $allowableBulds;
 
-    public function __construct(\mwce\content $view, $pages)
+    public function __construct(\mwce\Tools\content $view, $pages)
     {
         parent::__construct($view, $pages);
         $this->allowableBulds = Tools::getAllBuilds(false);
@@ -56,7 +54,7 @@ class install extends iController
         $bList['-1'] = '...';
 
         $this->view
-            ->set('buildList',html_::select($bList,'choseBuild','-1','class="form-control inlineBlock" onchange="chosenBuild()"'))
+            ->set('buildList',html::select($bList,'choseBuild','-1','class="form-control inlineBlock" onchange="chosenBuild()"'))
             ->out('main',$this->className);
     }
 
@@ -114,7 +112,7 @@ class install extends iController
 
                 $this->view
                     ->set('desc', !empty($params['description'])?$params['description']:$this->view->getVal('lng_aboutErr'))
-                    ->set('bdList', html_::select($avc,'choseConnection',0,'class="form-control inlineBlock"'))
+                    ->set('bdList', html::select($avc,'choseConnection',0,'class="form-control inlineBlock"'))
                     ->out('buildInfo',$this->className);
 
 
@@ -236,7 +234,7 @@ class install extends iController
      */
     private function writeCfg($build, $array,$notOne = false)
     {
-        $content = '<?php return array(' . PHP_EOL;
+        $content = '<?php return [' . PHP_EOL;
 
         if(!$notOne)
         {
@@ -266,7 +264,7 @@ class install extends iController
         }
 
 
-        $content .= ');';
+        $content .= '];';
         file_put_contents(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . $build . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php', $content, LOCK_EX);
 
     }

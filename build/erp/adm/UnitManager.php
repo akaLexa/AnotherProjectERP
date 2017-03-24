@@ -17,11 +17,11 @@ use build\erp\adm\m\mUserRole;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\User;
-use mwce\Configs;
-use mwce\DicBuilder;
+use mwce\Tools\Configs;
+use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
-use mwce\html_;
-use mwce\Tools;
+use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 class UnitManager extends eController
 {
@@ -132,7 +132,7 @@ class UnitManager extends eController
 
                 $this->view
                     ->add_dict($item)
-                    ->set('controlList',html_::select($users,'cList_'.$item['col_gID'],!empty($item['col_founder'])?$item['col_founder']:0,'class="form-control inlineBlock" style="width:140px;" onchange="setGroupFounder('.$item['col_gID'].',this.value)"'))
+                    ->set('controlList',html::select($users,'cList_'.$item['col_gID'],!empty($item['col_founder'])?$item['col_founder']:0,'class="form-control inlineBlock" style="width:140px;" onchange="setGroupFounder('.$item['col_gID'].',this.value)"'))
                     ->out('groupCenter',$this->className);
             }
         }
@@ -360,7 +360,7 @@ class UnitManager extends eController
         $list = mModules::getAddressList();
 
         $this->view
-            ->set('adrList',html_::select($list,'AddressList',current($list),'class="form-control" style="width:200px; display:inline-block;" onchange="moduleFiltr();"'))
+            ->set('adrList',html::select($list,'AddressList',current($list),'class="form-control" style="width:200px; display:inline-block;" onchange="moduleFiltr();"'))
             ->out('ModulesForm',$this->className);
     }
 
@@ -392,7 +392,7 @@ class UnitManager extends eController
             $titles['0'] = '...';
 
             $this->view
-                ->set('titleList',html_::select($titles,'titleList','0','class="form-control form-inline-element" style="width:200px;"'))
+                ->set('titleList',html::select($titles,'titleList','0','class="form-control form-inline-element" style="width:200px;"'))
                 ->out('AddModuleForm', $this->className);
         }
         else {
@@ -507,7 +507,7 @@ class UnitManager extends eController
 
                 $this->view
                     ->add_dict($info)
-                    ->set('titleList',html_::select($titles,'titleList',$info['col_title'],'class="form-control form-inline-element" style="width:200px;"'))
+                    ->set('titleList',html::select($titles,'titleList',$info['col_title'],'class="form-control form-inline-element" style="width:200px;"'))
                     ->out('editModule', $this->className);
             }
             else{
@@ -604,7 +604,7 @@ class UnitManager extends eController
         self::actionGetMenuList();
         $this->view
             ->setFContainer('menu_Body',true)
-            ->set('mList',html_::select(mMenuManager::getMenuList(),'menuList',0,'class="form-control" style="display:inline-block;width:200px;" onchange="mfilter();"'))
+            ->set('mList',html::select(mMenuManager::getMenuList(),'menuList',0,'class="form-control" style="display:inline-block;width:200px;" onchange="mfilter();"'))
             ->out('MenuForm',$this->className);
     }
 
@@ -658,8 +658,8 @@ class UnitManager extends eController
                 asort($lang);
 
                 $this->view
-                    ->set("titlest",html_::select($lang,"mtitel",$info['col_mtitle'],"class=\"form-control\" style='display:inline-block;width:200px;'"))
-                    ->set("modullist",html_::select($info->pageList(),"pagesList",$info['col_modul'],"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("titlest",html::select($lang,"mtitel",$info['col_mtitle'],"class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("modullist",html::select($info->pageList(),"pagesList",$info['col_modul'],"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
                     ->add_dict($info)
                     ->out("menueditPos",$this->className);
             }
@@ -712,8 +712,8 @@ class UnitManager extends eController
                 asort($mlist);
 
                 $this->view
-                    ->set("titlest",html_::select($lang,"mtitel",1,"class=\"form-control\" style='display:inline-block;width:200px;'"))
-                    ->set("modullist",html_::select($mlist,"pagesList",-1,"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("titlest",html::select($lang,"mtitel",1,"class=\"form-control\" style='display:inline-block;width:200px;'"))
+                    ->set("modullist",html::select($mlist,"pagesList",-1,"onchange='getlink();' class=\"form-control\" style='display:inline-block;width:200px;'"))
                     ->add_dict($info)
                     ->out("menuaddPos",$this->className);
             }
@@ -832,7 +832,7 @@ class UnitManager extends eController
         self::actionGetPluginList();
         $this->view
             ->setFContainer('pluginsBodyTable',true)
-            ->set('unregisteredList', html_::select(mPlugin::getNonRegPlugins(),'unregPl',0,'style="display:inline-block;width:250px;" class="form-control"'))
+            ->set('unregisteredList', html::select(mPlugin::getNonRegPlugins(),'unregPl',0,'style="display:inline-block;width:250px;" class="form-control"'))
             ->out('PluginsForm',$this->className);
     }
 
@@ -938,7 +938,7 @@ class UnitManager extends eController
 
                 $this->view
                     ->add_dict($plugin)
-                    ->set('stateList',html_::select($this->state,'stateList',$plugin['col_pluginState'],' style="width:200px; display:inline-block;" class="form-control"'))
+                    ->set('stateList',html::select($this->state,'stateList',$plugin['col_pluginState'],' style="width:200px; display:inline-block;" class="form-control"'))
                     ->out('editPlugins',$this->className);
             }
             else{
@@ -1025,8 +1025,8 @@ class UnitManager extends eController
 
         $this->view
             ->setFContainer('UserFormContent',true)
-            ->set('groupList',html_::select($group,'uGroupList',0,'style="width:100%;display:inline-block;" class="form-control"'))
-            ->set('roleList',html_::select($role,'uRoleList',0,'style="width:100%;display:inline-block;" class="form-control"'))
+            ->set('groupList',html::select($group,'uGroupList',0,'style="width:100%;display:inline-block;" class="form-control"'))
+            ->set('roleList',html::select($role,'uRoleList',0,'style="width:100%;display:inline-block;" class="form-control"'))
             ->out('UserForm',$this->className);
     }
 
@@ -1116,7 +1116,7 @@ class UnitManager extends eController
             $role = User::getRoleList();
 
             $this->view
-                ->set('roleList',html_::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
+                ->set('roleList',html::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
                 ->out('AddUser',$this->className);
         }
     }
@@ -1181,8 +1181,8 @@ class UnitManager extends eController
             $role = User::getRoleList();
 
             $this->view
-                ->set('roleList',html_::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
-                ->set('blockList',html_::select([0=>'Нет',1=>'Да'],'uBlockList',$info['col_isBaned'],'style="width:250px;display:inline-block;" class="form-control"'))
+                ->set('roleList',html::select($role,'uAddRoleList',0,'style="width:250px;display:inline-block;" class="form-control"'))
+                ->set('blockList',html::select([0=>'Нет',1=>'Да'],'uBlockList',$info['col_isBaned'],'style="width:250px;display:inline-block;" class="form-control"'))
                 ->add_dict($info)
                 ->out('EditUser',$this->className);
         }
@@ -1229,3 +1229,4 @@ class UnitManager extends eController
     }
     //endregion
 }
+//TODO: разбить на классы

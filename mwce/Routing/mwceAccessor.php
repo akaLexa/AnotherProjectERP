@@ -6,7 +6,11 @@
  * 25.11.2016
  *
  **/
-namespace mwce;
+namespace mwce\Routing;
+
+use mwce\db\Connect;
+use mwce\Interfaces\ImwceAccessor;
+use mwce\Tools\content;
 
 abstract class mwceAccessor implements ImwceAccessor
 {

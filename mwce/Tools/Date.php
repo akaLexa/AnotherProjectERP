@@ -7,8 +7,8 @@
  * 16.11.2015
  * работа с датой
  **/
-namespace mwce;
-class date_
+namespace mwce\Tools;
+class Date
 {
     /**
      * @param string $date

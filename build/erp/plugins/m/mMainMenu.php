@@ -7,10 +7,10 @@
  *
  **/
 namespace build\erp\plugins\m;
-use mwce\Configs;
-use mwce\Connect;
-use mwce\Model;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\db\Connect;
+use mwce\Models\Model;
+use mwce\Tools\Tools;
 
 class mMainMenu extends Model
 {

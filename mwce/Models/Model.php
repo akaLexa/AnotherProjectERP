@@ -7,9 +7,11 @@
  *
  **/
 
-namespace mwce;
+namespace mwce\Models;
 
+use mwce\db\Connect;
 use mwce\Exceptions\ModException;
+use mwce\Interfaces\Imodel;
 
 abstract class Model implements Imodel, \ArrayAccess, \Iterator
 {

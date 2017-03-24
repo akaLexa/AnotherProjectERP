@@ -7,9 +7,9 @@
  *
  **/
 namespace build\erp\project\m;
-use mwce\Configs;
-use mwce\DicBuilder;
-use mwce\Model;
+use mwce\Tools\Configs;
+use mwce\Tools\DicBuilder;
+use mwce\Models\Model;
 
 class m_TabsCfgs extends Model
 {

@@ -8,10 +8,10 @@
  **/
 namespace build\erp\plugins;
 use build\erp\plugins\m\mLogin;
-use mwce\Configs;
-use mwce\PluginController;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Controllers\PluginController;
+use mwce\Routing\router;
+use mwce\Tools\Tools;
 
 class Login extends PluginController
 {

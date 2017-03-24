@@ -7,9 +7,9 @@
  * модель эвентов
  **/
 namespace build\erp\inc;
-use mwce\Connect;
-use mwce\date_;
-use mwce\Model;
+use mwce\db\Connect;
+use mwce\Tools\Date;
+use mwce\Models\Model;
 
 
 class Events extends Model
@@ -138,7 +138,7 @@ WHERE
     {
         switch ($name){
             case 'col_dateCreate':
-                parent::_adding($name.'Legend', date_::transDate($value,true));
+                parent::_adding($name.'Legend', Date::transDate($value,true));
                 break;
             case 'col_comment':
                 $value = strip_tags(htmlspecialchars_decode($value));

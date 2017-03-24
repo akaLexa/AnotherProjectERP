@@ -8,7 +8,7 @@
  **/
 namespace mwce\Exceptions;
 
-use mwce\Logs;
+use mwce\Tools\Logs;
 
 /**
  * Class DBException

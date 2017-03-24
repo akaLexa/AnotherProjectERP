@@ -8,11 +8,11 @@
  **/
 namespace build\install\inc;
 
-use mwce\Configs;
-use mwce\content;
+use mwce\Tools\Configs;
+use mwce\Tools\content;
 use mwce\Exceptions\ModException;
-use mwce\Logs;
-use mwce\mwceAccessor;
+use mwce\Tools\Logs;
+use mwce\Routing\mwceAccessor;
 
 
 class AccessRouter extends mwceAccessor

@@ -8,14 +8,13 @@
  **/
 namespace build\erp\inc;
 
-use mwce\Configs;
-use mwce\content;
-use mwce\DicBuilder;
+use mwce\Tools\Configs;
+use mwce\Tools\content;
+use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
-use mwce\Logs;
-use mwce\mwceAccessor;
-use mwce\PluginController;
-use mwce\Tools;
+use mwce\Tools\Logs;
+use mwce\Routing\mwceAccessor;
+use mwce\Controllers\PluginController;
 
 
 class AccessRouter extends mwceAccessor

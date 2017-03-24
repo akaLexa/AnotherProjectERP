@@ -10,11 +10,10 @@ namespace build\erp\main;
 use build\erp\inc\eController;
 use build\erp\inc\tPaginate;
 use build\erp\main\m\mEventJournal;
-use mwce\Configs;
-use mwce\date_;
-use mwce\html_;
-use mwce\router;
-use mwce\Tools;
+use mwce\Tools\Configs;
+use mwce\Tools\Date;
+use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 
 class EventJournal extends eController
@@ -40,9 +39,9 @@ class EventJournal extends eController
         $types = mEventJournal::getType();
         $types[0]='...';
         $this->view
-            ->set('dFrom', date_::intransDate('now - 5 day'))
-            ->set('dTo', date_::intransDate('now + 1 day'))
-            ->set('typeList',html_::select($types,'typeEv',0,'class="form-control inlineBlock" onchange="evFilter()"'))
+            ->set('dFrom', Date::intransDate('now - 5 day'))
+            ->set('dTo', Date::intransDate('now + 1 day'))
+            ->set('typeList',html::select($types,'typeEv',0,'class="form-control inlineBlock" onchange="evFilter()"'))
             ->out('main',$this->className);
     }
 

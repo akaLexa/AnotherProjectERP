@@ -7,9 +7,8 @@
  *
  **/
 namespace build\erp\inc;
-use mwce\Connect;
-use mwce\Model;
-use mwce\Tools;
+use mwce\db\Connect;
+use mwce\Models\Model;
 
 class PlanStage extends Model
 {

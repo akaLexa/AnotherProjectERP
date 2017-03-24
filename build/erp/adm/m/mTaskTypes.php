@@ -7,8 +7,8 @@
  *
  **/
 namespace build\erp\adm\m;
-use mwce\Connect;
-use mwce\Model;
+use mwce\db\Connect;
+use mwce\Models\Model;
 
 class mTaskTypes extends Model
 {

@@ -6,11 +6,16 @@
  * 09.04.2016
  *
  **/
-namespace mwce;
+namespace mwce\Controllers;
+use mwce\Tools\content;
+use mwce\Tools\Date;
+use mwce\Tools\Logs;
+use mwce\Tools\Tools;
+
 class Controller
 {
     /**
-     * @var Model
+     * @var Tools
      * инстанс класса модели
      */
     protected $model;
@@ -365,7 +370,7 @@ class Controller
                     $param = NULL;
                 }
                 else {
-                    $param = intval($param);
+                    $param = (int)$param;
                 }
                 break;
             case "str":
@@ -376,21 +381,21 @@ class Controller
             case "bool":
             case self::BOOL:
             case "boolean":
-                $param = boolval($param);
+                $param = (bool)$param;
                 break;
             case "array":
             case self::_ARRAY:
                 break;
             case "date":
             case self::DATE:
-                $param = date_::intransDate($param);
+                $param = Date::intransDate($param);
                 if ($param == '-/-') {
                     $param = '';
                 }
                 break;
             case "datetime":
             case self::DATETIME:
-                $param = date_::intransDate($param, true);
+                $param = Date::intransDate($param, true);
                 if ($param == '-/-') {
                     $param = '';
                 }

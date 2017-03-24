@@ -7,8 +7,12 @@
  * 08.04.2016
  *
  **/
-namespace mwce;
-use mwce\traits\singleton;
+namespace mwce\Routing;
+use mwce\db\Connect;
+use mwce\Interfaces\iStartable;
+use mwce\Tools\Configs;
+use mwce\Tools\Logs;
+use mwce\Traits\tSingleton;
 
 /**
  * Class pageBuilder
@@ -29,7 +33,7 @@ class pageBuilder implements iStartable
      */
     protected $lang;
 
-    use singleton;
+    use tSingleton;
 
     protected function __construct($lang)
     {

@@ -7,10 +7,10 @@
  *
  **/
 namespace  build\erp\adm\m;
-use mwce\Connect;
+use mwce\db\Connect;
 use mwce\Exceptions\DBException;
-use mwce\Model;
-use mwce\Tools;
+use mwce\Models\Model;
+use mwce\Tools\Tools;
 
 class mUserGroup extends Model
 {

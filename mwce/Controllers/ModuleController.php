@@ -6,7 +6,12 @@
  * 10.04.2016
  *
  **/
-namespace mwce;
+namespace mwce\Controllers;
+
+use mwce\db\Connect;
+use mwce\Tools\Configs;
+use mwce\Tools\content;
+use mwce\Tools\Logs;
 
 class ModuleController extends Controller
 {
@@ -27,7 +32,7 @@ class ModuleController extends Controller
      * @param content $view
      * @param string $pages
      */
-    public function __construct(\mwce\content $view, $pages)
+    public function __construct(\mwce\Tools\content $view, $pages)
     {
         $this->view = $view;
         $this->pages = $pages;

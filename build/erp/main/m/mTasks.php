@@ -8,7 +8,7 @@
  **/
 namespace build\erp\main\m;
 use build\erp\inc\Task;
-use mwce\Connect;
+use mwce\db\Connect;
 
 class mTasks extends Task
 {

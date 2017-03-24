@@ -8,7 +8,7 @@
  **/
 namespace build\erp\adm\m;
 use build\erp\inc\User;
-use mwce\Connect;
+use mwce\db\Connect;
 
 class mUser extends User
 {

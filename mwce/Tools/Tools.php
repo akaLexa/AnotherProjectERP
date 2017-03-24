@@ -7,7 +7,7 @@
  * 07.04.2016
  *
  **/
-namespace mwce;
+namespace mwce\Tools;
 
 class Tools
 {
@@ -54,6 +54,7 @@ class Tools
      */
     public static function getAddress($isHttps = false)
     {
+        //TODO сделать авто проверку на secure layer
         $list = explode("/",$_SERVER["PHP_SELF"]);
         array_pop($list);
         if($isHttps)
@@ -123,44 +124,13 @@ class Tools
     }
 
     /**
-     *
-     * @param array $collect:
-     * [0] запись перед чекбоксом
-     * [1] имя = id
-     * [2] значение
-     * [3] функции js
-     * [4] нажат? (1/0)
-     * [5] css класс
-     * @return string сгенерированный html код
-     */
-    public static function bChbx($collect)
-    {
-        $return = "";
-        foreach ($collect as $array)
-        {
-            if (isset($array[4]) && $array[4]>0)
-                $array[4]="CHECKED";
-            else
-                $array[4]="";
-            if(!isset($array[3]))
-                $array[3] = "";
-            if(!isset($array[5]))
-                $array[5] = "";
-
-            $return.= " <label for='$array[1]' style=' width: auto; display: inline-block;'> $array[0]</label> <input style='margin-right: 4px;' type='checkbox' name='$array[1]' id='$array[1]' value='$array[2]' $array[3]  $array[4] class='$array[5]'>";
-        }
-
-        return $return;
-    }
-
-    /**
      * возвращает массив с месяцами, если
      * $isCurMonth = true, тогла в 0 ячейке будет номер текущего месяца
      * @param bool $isCurMonth
      * @return array
      */
     public static function getMonth($isCurMonth = true){
-        $months = array(
+        $months = [
             1 => 'Январь',
             2 => 'Ферваль',
             3 => 'Март',
@@ -173,7 +143,7 @@ class Tools
             10 => 'Октябрь',
             11 => 'Ноябрь',
             12 => 'Декабрь'
-        );
+        ];
 
         if($isCurMonth){
             $m = date('n');
@@ -194,18 +164,17 @@ class Tools
      * @param int $to
      * @return array
      */
-    public static function getYear($isCur = true, $from = 2015,$to = 2020){
+    public static function getYear($isCur = true, $from = 2015, $to = 2020)
+    {
+        $years = [];
 
-        $years=[];
-
-        for ($i = $from;$i<=$to; $i++){
+        for ($i = $from; $i <= $to; $i++) {
             $years[$i] = $i;
         }
 
-        if($isCur){
+        if ($isCur) {
             $m = date('Y');
-            if(!empty($years[$m]))
-            {
+            if (!empty($years[$m])) {
                 $years[0] = $m;
             }
         }
