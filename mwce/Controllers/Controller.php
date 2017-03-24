@@ -7,7 +7,7 @@
  *
  **/
 namespace mwce\Controllers;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 use mwce\Tools\Date;
 use mwce\Tools\Logs;
 use mwce\Tools\Tools;
@@ -21,7 +21,7 @@ class Controller
     protected $model;
 
     /**
-     * @var content
+     * @var Content
      * инстанс класса шаблонизатора
      */
     protected $view;

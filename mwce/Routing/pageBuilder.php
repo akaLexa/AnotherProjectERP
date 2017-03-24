@@ -19,7 +19,7 @@ use mwce\Traits\tSingleton;
  * @package mwce
  *
  * отвечает за генерацию списка зарегистрированных
- * плагинов и страниц
+ * плагинов и страниц по default
  */
 class pageBuilder implements iStartable
 {

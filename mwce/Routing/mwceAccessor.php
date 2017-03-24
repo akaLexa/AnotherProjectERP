@@ -10,7 +10,7 @@ namespace mwce\Routing;
 
 use mwce\db\Connect;
 use mwce\Interfaces\ImwceAccessor;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 
 abstract class mwceAccessor implements ImwceAccessor
 {
@@ -25,7 +25,7 @@ abstract class mwceAccessor implements ImwceAccessor
     protected $plugins = [];
 
     /**
-     * @var content
+     * @var Content
      */
     protected $view;
 
@@ -36,10 +36,10 @@ abstract class mwceAccessor implements ImwceAccessor
 
     /**
      * mwceAccessor constructor.
-     * @param content $view
+     * @param Content $view
      * @param int $conNum
      */
-    public function __construct(content $view,$conNum = 0)
+    public function __construct(Content $view,$conNum = 0)
     {
         $this->db = Connect::start($conNum);
         $this->view = $view;

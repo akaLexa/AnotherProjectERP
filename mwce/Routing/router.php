@@ -13,7 +13,7 @@ namespace mwce\Routing;
 use mwce\Exceptions\CfgException;
 use mwce\Exceptions\ModException;
 use mwce\Tools\Configs;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 use mwce\Tools\Logs;
 use mwce\Tools\Tools;
 use mwce\traits\tSingleton;
@@ -46,7 +46,7 @@ class router
     protected $isBg = false;
 
     /**
-     * @var content
+     * @var Content
      */
     protected $view;
 
@@ -267,7 +267,7 @@ class router
 
             $this->defController = '\\build\\' . Configs::currentBuild() . '\\inc\\' . Configs::buildCfg('defController');
 
-            $this->view = new content(Tools::getAddress(), Configs::buildCfg('theme'), Configs::buildCfg('dlang'));
+            $this->view = new Content(Tools::getAddress(), Configs::buildCfg('theme'), Configs::buildCfg('dlang'));
 
             //region запуск роутинга доступов для плагинов и модулей
 
@@ -280,7 +280,7 @@ class router
                 if(!(self::$accessor instanceof mwceAccessor)){
                     $e = new ModException('AccessRouter does not extends mwceAccessor!');
                     Logs::log($e);
-                    content::errorException($e);
+                    Content::errorException($e);
                     die();
                 }
             }
@@ -288,7 +288,7 @@ class router
 
                 $e = new ModException('AccessRouter does not exists!');
                 Logs::log($e);
-                content::errorException($e);
+                Content::errorException($e);
                 die();
             }
 
@@ -312,7 +312,7 @@ class router
         }
         catch (\Exception $e) {
             Logs::log($e);
-            content::errorException($e);            
+            Content::errorException($e);
             die();
         }
     }

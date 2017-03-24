@@ -9,12 +9,12 @@
 namespace build\erp\plugins;
 use build\erp\plugins\m\mMainMenu;
 use mwce\Tools\Configs;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 use mwce\Controllers\PluginController;
 
 class mainMenu extends PluginController
 {
-    public function __construct(content $view, $plugins)
+    public function __construct(Content $view, $plugins)
     {
         parent::__construct($view, $plugins);
         if(!empty($this->configs)){

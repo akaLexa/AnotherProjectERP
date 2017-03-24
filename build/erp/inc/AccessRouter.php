@@ -9,7 +9,7 @@
 namespace build\erp\inc;
 
 use mwce\Tools\Configs;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\Tools\Logs;
@@ -19,7 +19,7 @@ use mwce\Controllers\PluginController;
 
 class AccessRouter extends mwceAccessor
 {
-    public function __construct(content $view, $conNum=0)
+    public function __construct(Content $view, $conNum=0)
     {
         parent::__construct($view, $conNum);
 

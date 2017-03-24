@@ -14,7 +14,7 @@ use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
 use build\erp\tabs\m\mTabMain;
 use mwce\Tools\Configs;
-use mwce\Tools\content;
+use mwce\Tools\Content;
 use mwce\Tools\html;
 
 
@@ -137,7 +137,7 @@ class tabMain extends AprojectTabs
         }
     }
 
-    public function __construct(content $view, $pages, $project)
+    public function __construct(Content $view, $pages, $project)
     {
         eController::__construct($view, $pages);
         $this->project = mTabMain::getCurModel($project);

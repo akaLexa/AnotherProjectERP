@@ -12,7 +12,7 @@ use mwce\Controllers\ModuleController;
 
 class iController extends ModuleController
 {
-    public function __construct(\mwce\Tools\content $view, $pages)
+    public function __construct(\mwce\Tools\Content $view, $pages)
     {
         parent::__construct($view, $pages);
 

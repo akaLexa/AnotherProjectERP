@@ -29,7 +29,7 @@ class PluginController extends Controller
      */
     protected $showAll = 1;
 
-    public function __construct(\mwce\Tools\content $view, $plugins)
+    public function __construct(\mwce\Tools\Content $view, $plugins)
     {
         $this->view = $view;
         $this->className = basename(static::class);

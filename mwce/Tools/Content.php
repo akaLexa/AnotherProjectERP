@@ -14,10 +14,10 @@ use mwce\Exceptions\ContentException;
 use mwce\Models\Model;
 
 /**
- * Class content
+ * Class Content
  * шаблонизатор.
  */
-class content
+class Content
 {
     /**
      * @var array
@@ -154,7 +154,7 @@ class content
     /**
      * выставить имя текущего контейнера
      * @param string $name
-     * @return content
+     * @return Content
      * @throws /Exception
      */
     public function setName($name)
@@ -178,7 +178,7 @@ class content
     /**
      * затереть текущий контроллер
      * @param int $clearAll совсем затереть или не очень
-     * @return content
+     * @return Content
      */
     public function emptyName($clearAll = 1)
     {
@@ -245,7 +245,7 @@ class content
      *
      * @param  string $file - название файла "словаря"
      * @param  bool $isJSON - json ворфмат или нет
-     * @return content
+     * @return Content
      */
     public function add_dict($file, $isJSON = false)
     {
@@ -315,7 +315,7 @@ class content
      *     заресервированное слово, а значение, то, на что нужно слово заменить
      * @param mixed $val - значение зарезервированного слова
      * @param int $isJSON
-     * @return  content
+     * @return  Content
      */
     public function set($name, $val = NULL, $isJSON = 0)
     {
@@ -337,7 +337,7 @@ class content
     /**
      * создать пустое значение
      * @param string $name
-     * @return content $this
+     * @return Content $this
      */
     public function setEmpty($name){
 
@@ -354,7 +354,7 @@ class content
      * заменяет название элемента в "словаре" (!в словаре должно присутствовать выражение $where)
      * @param string $what - что вставить
      * @param string $where - за место чего
-     * @return content
+     * @return Content
      */
     public function replace($what, $where)
     {
@@ -416,7 +416,7 @@ class content
      *
      * @param string $cname - название переменной
      * @param int $isClean - если >0 то после добавления в словарь данные из контерена будут удалены
-     * @return content
+     * @return Content
      */
     public function setFContainer($cname, $isClean = 0)
     {
@@ -510,7 +510,7 @@ class content
      * @param array $data словарь
      * @param string $content адрес
      * @param string $folder папка, где искать шаблон
-     * @return content
+     * @return Content
      */
     public function loops($tag, $data, $content, $folder = 'public')
     {

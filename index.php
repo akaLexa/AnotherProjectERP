@@ -1,24 +1,13 @@
 <?php
 /**
  * MuWebCloneEngine
- * Version: 1.6.3
+ * Version: 1.6.4
  * User: epmak
  * 18.02.2017
  * ->
  **/
-if (PHP_VERSION_ID < 50604)
-    die('PHP version must be >= 5.6.4');
 
-
-define('baseDir',__DIR__);
-
-spl_autoload_register(function($class){
-
-    $filename = baseDir . '/' .str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-
-    if(file_exists($filename))
-        include $filename;
-});
+require __DIR__ . DIRECTORY_SEPARATOR . 'mwce' . DIRECTORY_SEPARATOR . 'Routing' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 if (extension_loaded('zlib'))
     ob_start('ob_gzhandler');
