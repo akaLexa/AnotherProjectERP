@@ -54,8 +54,8 @@ class projectList extends eController
         $usrs = User::getUserList();
         $usrs[0] = '...';
         $this->view
-            ->set('userRespList',html::select($usrs,'UserResponse',Configs::userID(),'class="erpSelect" style="width:100%;"'))
-            ->set('userMngrList',html::select($usrs,'UserManager',0,'class="erpSelect" style="width:100%;"'))
+            ->set('userRespList',html::select($usrs,'UserResponse',Configs::userID(),'class="erpSelect" style="width:100%;" onchange="projectFilter();"'))
+            ->set('userMngrList',html::select($usrs,'UserManager',0,'class="erpSelect" style="width:100%;" onchange="projectFilter();"'))
             ->out('main',$this->className);
     }
 

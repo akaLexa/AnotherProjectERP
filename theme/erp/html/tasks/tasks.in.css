@@ -31,3 +31,51 @@
 #taskFiles::-webkit-scrollbar-thumb:window-inactive{
     background: rgba(255,0,0,0.4);
 }
+.fail{
+    background-color: rgba(255,0,0,0.29);
+    padding: 3px;
+
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.success{
+    background-color: rgba(0, 128, 0, 0.29);
+    padding: 3px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+
+.TaskLateFinishDesc{
+    background-color: rgba(255, 135, 1, 0.08);
+}
+
+.TaskContinueDes{
+    background-color: rgba(133, 90, 40, 0.08);
+}
+
+.TaskFailDes{
+    background-color: rgba(255, 0, 0, 0.08);
+}
+
+.notes{
+    margin-top:5px;
+    padding: 5px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+
+.continueDesNotice {
+}
+
+.failDesNotice{
+
+}
+.FinishDescNotice{
+
+}
+.noOne{
+    color: gray;
+}

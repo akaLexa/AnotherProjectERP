@@ -35,6 +35,7 @@ class tasks extends eController
         'taskResp' => ['type'=>self::INT],
         'curPage' => ['type'=>self::INT],
         'projectName' => ['type'=>self::STR],
+        'continueDesc' => ['type'=>self::STR],
         'taskName' => ['type'=>self::STR,'maxLength'=>255],
         'dBegin' => ['type'=>self::DATE],
         'dEnd' => ['type'=>self::DATE],
@@ -151,8 +152,24 @@ class tasks extends eController
                     ->out('error');
             }
             else{
+                if(!empty($_REQUEST['acceptCon'])
+                    && $task['col_initID'] == Configs::userID()
+                    && !$task->mayContinue()
+                    && $task['col_StatusID'] == 1){ //согласование продления задачи
 
-                if(!empty($_POST['stageChoose'])){
+                    $task->ContinueAccept(!empty($_POST['acceptReason']) ? $_POST['acceptReason'] : null);
+                    Tools::go();
+                }
+                else if(!empty($_REQUEST['rejectCon'])
+                    && $task['col_initID'] == Configs::userID()
+                    && !$task->mayContinue()
+                    && $task['col_StatusID'] == 1){ //отказ от продления задачи
+
+                    $task->ContinueReject(!empty($_POST['acceptReason']) ? $_POST['acceptReason'] : null);
+                    Tools::go();
+                }
+
+                else if(!empty($_POST['stageChoose'])){
                     if($_POST['stageChoose'] == 2 && !empty($_POST['acceptReason']) && $task['col_StatusID'] == 1){ //отказ после принятия в работу
                         $task->fail($_POST['acceptReason']);
                         Tools::go();
@@ -171,11 +188,13 @@ class tasks extends eController
                     }
                     Tools::go();
                 }
-                else if(isset($_POST['taskActionAccept']) && $task['col_StatusID'] == 4){ // запуск в работу
+                // запуск в работу
+                else if(isset($_POST['taskActionAccept']) && $task['col_StatusID'] == 4){
                     $task->accept();
                     Tools::go();
                 }
-                elseif (!empty($_POST['acceptReason'])){//отказ
+                //отказ от задачи
+                else if (!empty($_POST['acceptReason'])){
                     $task->decent($_POST['acceptReason']);
                     Tools::go();
                 }
@@ -198,15 +217,21 @@ class tasks extends eController
                     switch ($task['col_StatusID']){
                         case 1: //работа
                             if($task['col_respID'] == Configs::userID()){
-                               /* if(!empty($task['col_startPlan'])) //если
-                                    unset($status[1],$status[2],$status[4],$status[5]);
-                                else*/
-                                    unset($status[1],$status[2],$status[4],$status[5]);
+
+                                unset($status[1],$status[2],$status[4],$status[5]);
+                                if($task['col_respID'] == Configs::userID())
+                                    $status[9] = 'Запросить продления';
 
                                 $status[0] = 'Выберите...';
                                 $this->view
                                     ->set('stateList',html::select($status,'stageChoose',0,'style="width:120px;" class="form-control inlineBlock" onchange="choseAction(this.value);"'))
                                     ->out('actionForm',$this->className);
+                                $this->view->setFContainer('inTaskProperties',true);
+                            }
+                            //если есть запрос на продление
+                            else if ($task['col_initID'] == Configs::userID() && !$task->mayContinue()){
+                                echo 'qq';
+                                $this->view->out('continueForm',$this->className);
                                 $this->view->setFContainer('inTaskProperties',true);
                             }
                             break;
@@ -447,5 +472,23 @@ class tasks extends eController
 
             echo json_encode(['error'=>'В отделе нет людей или персонального проекта.']);
         }
+    }
+
+    public function actionBeContinue(){
+        if(!empty($_POST['task']) && !empty($_POST['continueDesc']) && !empty($_POST['dEnd'])){
+            $task = mTasks::getCurModel($_POST['task']);
+            if(!empty($task)){
+
+                if($task->mayContinue()){
+                    $task->ContinueRequest($_POST['continueDesc'],$_POST['dEnd']);
+                    echo json_encode(['success'=>1]);
+                }
+                else{
+                    echo json_encode(['error'=>'Инициатор еще не ответил на предыдущий запрос.']);
+                }
+                return;
+            }
+        }
+        echo json_encode(['error'=>'Указаны неверные данные, пожалуйста, попробуйте еще раз']);
     }
 }

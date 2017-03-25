@@ -108,6 +108,47 @@ function choseAction(type) {
     else if(type == 2){
         document.querySelector('#acceptReason').style.display = 'block';
     }
+    else if (type == 9) {
+
+        mwce_confirm({
+            title: 'Запрос на продление',
+            text: '<div class="alert alert-danger" style="width: 80%;margin: 10px auto;"><b>Внимание!</b> Пока запрос не будет обработан, все последующие запросы будут проигнорированы. О результате запроса можно узнать из комментариев.</div><form id="toContinue"><input type="text" class="form-control inlineBlock" style="width:480px;" name="continueDesc" id="_continueDesc" placeholder="Причина продления"> <input type="date" name="dEnd" id="_dEnd" class="form-control inlineBlock"></form>',
+            width: 700,
+            buttons: {
+                'Запросить': function () {
+                    if (document.querySelector('#_continueDesc').value.trim().length > 0
+                        && document.querySelector('#_dEnd').value != '') {
+                        genIn({
+                            noresponse: true,
+                            address: '|site|page/|currentPage|/BeContinue',
+                            type: 'POST',
+                            data: $('#toContinue').serialize() + '&task=|col_taskID|',
+                            callback:function (r) {
+                                try{
+                                    var receive = JSON.parse(r);
+                                    if(receive['error'] !== undefined){
+                                        mwce_alert(receive['error'],'Ошибка');
+                                        mwce_confirm.close();
+                                    }
+                                    else{
+                                        mwce_confirm.close();
+                                        loadComments();
+                                    }
+                                }
+                                catch (e)
+                                {
+                                    console.error(e.message);
+                                }
+                            }
+                        });
+                    }
+                },
+                'Отмена': function () {
+                    mwce_confirm.close();
+                }
+            }
+        });
+    }
 }
 
 function sendMessage() {
@@ -121,12 +162,16 @@ function sendMessage() {
             callback:function () {
                 document.querySelector("#_taskComment").value='';
                 tinyMCE.get('_taskComment').setContent('');
-                genIn({
-                    element:'commentsList',
-                    address:'|site|page/|currentPage|/ShowComment?id=|col_taskID|',
-                    loadicon:'Загружаю...'
-                });
+                loadComments();
             }
         });
     }
+}
+
+function loadComments() {
+    genIn({
+        element:'commentsList',
+        address:'|site|page/|currentPage|/ShowComment?id=|col_taskID|',
+        loadicon:'Загружаю...'
+    });
 }

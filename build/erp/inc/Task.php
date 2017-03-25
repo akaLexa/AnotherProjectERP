@@ -258,6 +258,10 @@ WHERE
         self::newComment(htmlspecialchars('<b style="color: red;">Отклонено по причине:</b> ',ENT_QUOTES).$reason,false);
     }
 
+    /**
+     * отколонение задачи
+     * @param string $reason
+     */
     public function fail($reason){
         $this->db->exec("UPDATE tbl_tasks SET col_endFact = NOW(), col_failDes='$reason', col_StatusID = 2 WHERE col_taskID = ".$this['col_taskID']);
         self::newComment(htmlspecialchars('<b style="color: red;">Отклонено по причине:</b> ',ENT_QUOTES).$reason,false);
@@ -265,7 +269,7 @@ WHERE
 
     public function finish($reason = null){
         if(!is_null($reason))
-            $reason = "col_lateFinishDesc='<strong>Причина просрочки:</strong><hr style=\"margin: 0 3px;\">$reason',";
+            $reason = "col_lateFinishDesc='$reason',";
         else
             $reason = '';
 
@@ -341,6 +345,15 @@ WHERE
             case 'col_taskDesc':
                 if(!empty($value))
                     parent::_adding($name.'Legend', htmlspecialchars_decode($value));
+                break;
+            case 'col_continueDes':
+                    parent::_adding($name.'Legend', '<b class="continueDesNotice">Последняя причина запроса на продления задачи:</b> '.(!empty($value) ? htmlspecialchars_decode($value) : '<i class="noOne">-</i>'));
+                break;
+            case 'col_failDes':
+                    parent::_adding($name.'Legend', '<b class="failDesNotice">Последняя причина отказа от задачи:</b> '. (!empty($value) ? htmlspecialchars_decode($value) : '<i class="noOne">-</i>'));
+                break;
+            case 'col_lateFinishDesc':
+                    parent::_adding($name.'Legend', '<b class="FinishDescNotice">Причина просрочки:</b> '. (!empty($value) ? htmlspecialchars_decode($value) : '<i class="noOne">-</i>'));
                 break;
         }
         parent::_adding($name, $value);

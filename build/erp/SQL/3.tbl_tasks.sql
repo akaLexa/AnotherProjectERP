@@ -1,4 +1,4 @@
-CREATE TABLE erp_db.tbl_tasks (
+CREATE TABLE tbl_tasks (
   col_taskID int(11) NOT NULL AUTO_INCREMENT,
   col_taskName varchar(255) DEFAULT NULL,
   col_StatusID int(11) DEFAULT NULL,
@@ -21,12 +21,13 @@ CREATE TABLE erp_db.tbl_tasks (
   col_continueDes text DEFAULT NULL COMMENT 'причина последнего запроса на продление',
   col_failDes text DEFAULT NULL COMMENT 'причина отказа от задачи',
   col_lateFinishDesc text DEFAULT NULL COMMENT 'причина просрочки выполнения задачи',
+  col_conToDate date DEFAULT NULL COMMENT 'дата, к которой нужно продлить',
   PRIMARY KEY (col_taskID),
   CONSTRAINT FK_tbl_tasks_col_pstageID FOREIGN KEY (col_pstageID)
-  REFERENCES erp_db.tbl_project_stage (col_pstageID) ON DELETE NO ACTION ON UPDATE RESTRICT
+  REFERENCES tbl_project_stage (col_pstageID) ON DELETE NO ACTION ON UPDATE RESTRICT
 )
   ENGINE = INNODB
-  AUTO_INCREMENT = 25
+  AUTO_INCREMENT = 1
   AVG_ROW_LENGTH = 1820
   CHARACTER SET utf8
   COLLATE utf8_general_ci
