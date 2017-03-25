@@ -2,6 +2,7 @@ CREATE TABLE tbl_project (
   col_projectID int(11) NOT NULL AUTO_INCREMENT,
   col_projectName varchar(200) DEFAULT NULL,
   col_pnID int(11) DEFAULT NULL,
+  col_repeat char(3) DEFAULT '1' COMMENT 'повторения',
   col_founderID int(11) DEFAULT NULL,
   col_CreateDate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   col_Desc text DEFAULT NULL,

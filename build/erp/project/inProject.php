@@ -15,6 +15,7 @@ use build\erp\project\m\m_inProject;
 use build\erp\tabs\m\mProjectPlan;
 use mwce\Tools\Configs;
 use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 class inProject extends eController
 {
@@ -39,6 +40,7 @@ class inProject extends eController
         }
         else{
             $project = Project::getCurModel($_GET['id']);
+
             if(empty($project)){
                 $this->view
                     ->set(['errTitle'=>'Сообщение','msg_desc'=>'Такого проекта не существует'])

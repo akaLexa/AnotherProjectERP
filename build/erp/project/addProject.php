@@ -9,6 +9,8 @@
 namespace build\erp\project;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
+use mwce\Tools\Content;
+use mwce\Tools\Tools;
 
 
 class addProject extends eController
@@ -25,9 +27,14 @@ class addProject extends eController
             $this->view->out('main',$this->className);
         }
         else if(!empty($_POST['projectName'])){
-            $isSerial = !empty($_POST['isSerial']) && !empty($_POST['projectNum']) ? $_POST['projectNum'] : 0;
-            $result = Project::Add($_POST['projectName'],$_SESSION['mwcuid'],$isSerial);
-            echo 'Тут должен быть редирект на проект '.$result['col_projectID'];
+
+            $result = Project::Add($_POST['projectName'],$_SESSION['mwcuid'],!empty($_POST['projectNum']) ? $_POST['projectNum'] : 0);
+            if(!empty($result)){
+                Tools::go($this->view->getAdr() . 'page/inProject.html?id='.$result['col_projectID']);
+            }
+            else{
+                Content::showError('Создание проекта завершилось ошибкой','Если данная ошибка повторится, пожалуйста, оповестите об этом администратора системы');
+            }
         }
         else{
             $this->view
@@ -35,6 +42,21 @@ class addProject extends eController
                 ->out('error');
         }
     }
-    //todo: не забыть добавить опцию проверки на серийный проект и заполнение формы!
 
+    public function actionCheckProjectNum(){
+        if(!empty($_POST['projectNum'])){
+            $project = Project::getModels([
+                'projectNum'=>$_POST['projectNum'],
+                'pageFrom'=> 0,
+                'pageTo'=> 1,
+            ]);
+
+            if(!empty($project)){
+                echo json_encode(['name'=>$project[0]['col_projectName']]);
+            }
+            else{
+                echo json_encode(['error'=>'Такого проекта не существует']);
+            }
+        }
+    }
 }

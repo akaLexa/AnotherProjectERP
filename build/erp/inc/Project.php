@@ -256,6 +256,12 @@ WHERE
                 if(empty($value))
                     $value = 'Комментраиев к стадии нет';
                 break;
+            case 'col_repeat':
+                if($value > 1)
+                    parent::_adding($name.'Legend', '.'.$value);
+                else
+                    parent::_adding($name.'Legend', '');
+                break;
         }
         parent::_adding($name, $value);
     }
