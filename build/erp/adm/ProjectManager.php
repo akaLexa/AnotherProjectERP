@@ -193,7 +193,7 @@ class ProjectManager extends eController
             $stagesGroup[] = array($name,$num);
         }
 
-        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'cfg_project.php');
+        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'cfg_project.php');
         $cfg = Configs::readCfg('project',Configs::currentBuild());
 
         foreach ($cfg as $cname=>$cval){

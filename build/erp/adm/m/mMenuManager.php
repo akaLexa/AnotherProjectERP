@@ -205,7 +205,7 @@ ORDER BY mm.col_Seq");
         $array = array(-1=>"...");
         $q = $this->db->query("SELECT col_moduleName,col_title FROM tbl_modules ORDER BY col_moduleName");
 
-        $lpath = "build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR."titles.php";
+        $lpath = "build".DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR."lang".DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR."titles.php";
         $lang = DicBuilder::getLang($lpath);
 
         while ($r = $q->fetch())

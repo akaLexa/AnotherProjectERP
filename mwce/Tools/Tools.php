@@ -49,15 +49,13 @@ class Tools
     }
 
     /**
-     * @param bool $isHttps
      * @return string
      */
-    public static function getAddress($isHttps = false)
+    public static function getAddress()
     {
-        //TODO сделать авто проверку на secure layer
         $list = explode("/",$_SERVER["PHP_SELF"]);
         array_pop($list);
-        if($isHttps)
+        if(isset($_SERVER['HTTPS']))
             $gaddress ="https://".getenv("HTTP_HOST").implode("/",$list)."/";
         else
             $gaddress ="http://".getenv("HTTP_HOST").implode("/",$list)."/";

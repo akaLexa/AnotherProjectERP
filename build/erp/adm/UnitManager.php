@@ -616,7 +616,7 @@ class UnitManager extends eController
 
         if(!empty($list)){
 
-            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'titles.php');
             foreach ($list as $item) {
                 if(!empty($lang[$item['mtitle']])){
                     $item['mtitle'] = $lang[$item['mtitle']];
@@ -653,7 +653,7 @@ class UnitManager extends eController
                 return;
 
             if(empty($_POST)){
-                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'titles.php';
                 $lang = DicBuilder::getLang($lpath);
                 asort($lang);
 
@@ -667,7 +667,7 @@ class UnitManager extends eController
 
                 if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
                     if(!empty($_POST['newtitle'])) {
-                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'titles.php');
                         $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
                     }
                     elseif(empty($_POST["mtitel"])){
@@ -705,7 +705,7 @@ class UnitManager extends eController
                 return;
 
             if(empty($_POST)){
-                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php';
+                $lpath = baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'titles.php';
                 $lang = DicBuilder::getLang($lpath);
                 asort($lang);
                 $mlist = $info->pageList();
@@ -721,7 +721,7 @@ class UnitManager extends eController
 
                 if(empty($_POST["mtitel"]) || !empty($_POST['newtitle'])){
                     if(!empty($_POST['newtitle'])) {
-                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'titles.php');
+                        $db = new DicBuilder(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'titles.php');
                         $mtytle = $db->add2Dic($_POST['newtitle'],'auto_title');
                     }
                     elseif(empty($_POST["mtitel"])){

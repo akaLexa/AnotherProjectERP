@@ -33,7 +33,7 @@ class AccessRouter extends mwceAccessor
      */
     protected function getModuleList(){
 
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_pages.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . Configs::buildCfg('dlang') .'_pages.php';
 
         if(file_exists($path)){
             $pages = require $path;
@@ -53,7 +53,7 @@ ORDER BY
 
         $pages = array();
         $inFile = '';
-        $dict = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . curLang . DIRECTORY_SEPARATOR . 'titles.php');
+        $dict = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::buildCfg('dlang') . DIRECTORY_SEPARATOR . 'titles.php');
 
         while ($res = $q->fetch()){
             $pages[$res['col_moduleName']] = array(
@@ -75,7 +75,7 @@ ORDER BY
     }
 
     protected function getPluginsList(){
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . curLang .'_plugins.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . '_dat' . DIRECTORY_SEPARATOR . Configs::buildCfg('dlang') .'_plugins.php';
 
         if(file_exists($path)){
             $plugins = require $path;

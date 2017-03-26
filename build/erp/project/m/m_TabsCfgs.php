@@ -32,7 +32,7 @@ class m_TabsCfgs extends Model
         $cfg = DicBuilder::getLang($path);
         if(!empty($cfg)){
             $obj = new m_TabsCfgs();
-            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.curLang.DIRECTORY_SEPARATOR.'tab_cfgs.php');
+            $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::currentBuild().DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'tab_cfgs.php');
 
             foreach ($cfg as $id_=> $item) {
 
