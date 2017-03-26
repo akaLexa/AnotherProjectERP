@@ -31,6 +31,11 @@ class Configs
      */
     private static $instance = null;
 
+    protected function __construct($params)
+    {
+        $this->Cfgs = $params;
+    }
+
     /**
      * @param array $config  - массив с параметрами
      * @param string $filename  - название конфига (без расширения)
@@ -132,11 +137,6 @@ class Configs
         return false;
     }
 
-    protected function __construct($params)
-    {
-        $this->Cfgs = $params;
-    }
-
     /**
      * @param $name
      * @param $arguments
@@ -145,5 +145,27 @@ class Configs
     public static function __callStatic($name, $arguments)
     {
         return self::getParam($name,!empty($arguments[0]) ? $arguments[0] : null);
+    }
+
+    /**
+     * @param mixed $name
+     * @param mixed $value
+     */
+    public static function addParams($name, $value)
+    {
+        if (is_null(self::$instance)) {
+            self::initConfigs([$name => $value]);
+        } else {
+
+            if (empty(self::$instance->Cfgs[$name])) {
+                self::$instance->Cfgs[$name] = $value;
+            } else if (is_array(self::$instance->Cfgs[$name])) {
+                if (is_array($value)) {
+                    self::$instance->Cfgs[$name] = array_merge(self::$instance->Cfgs[$name], $value);
+                }
+            } else {
+                self::$instance->Cfgs[$name] = $value;
+            }
+        }
     }
 }

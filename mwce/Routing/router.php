@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MuWebCloneEngine
  * Version: 1.6
@@ -7,8 +6,8 @@
  * 07.04.2016
  *
  **/
-namespace mwce\Routing;
 
+namespace mwce\Routing;
 
 use mwce\Exceptions\CfgException;
 use mwce\Exceptions\ModException;
@@ -176,41 +175,41 @@ class router
         try {
             session_start();
 
-            $cfg_params['globalCfg'] = require_once baseDir . '/configs/configs.php';
+            Configs::addParams('globalCfg',require_once baseDir . '/configs/configs.php');
 
             $data = $this->parseURL();
 
-            if (empty($data) || empty($cfg_params['globalCfg']['defaultABuild']) || trim($data['type']) != 'control') //обычные страницы
+            if (empty($data) || !Configs::globalCfg('defaultABuild') || trim($data['type']) != 'control') //обычные страницы
             {
                 if (empty($_SESSION['mwcbuild'])) {
-                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultBuild'];
-                    $_SESSION['mwcbuild'] = $cfg_params['globalCfg']['defaultBuild'];
+                    Configs::addParams('currentBuild',Configs::globalCfg('defaultBuild'));
+                    $_SESSION['mwcbuild'] = Configs::globalCfg('defaultBuild');
                 }
                 else{
-                    $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];
+                    Configs::addParams('currentBuild',$_SESSION['mwcbuild']);
                 }
 
                 if (empty($_SESSION['mwcGroup'])) {
-                    $cfg_params['curGroup'] = 2;
+                    Configs::addParams('curGroup',2);
                     $_SESSION['mwcGroup'] = 2;
                 }
                 else {
-                    $cfg_params['curGroup'] = $_SESSION['mwcGroup'];
+                    Configs::addParams('curGroup',$_SESSION['mwcGroup']);
                 }
 
                 if (!empty($_SESSION['mwcRole'])) {
-                    $cfg_params['curRole'] = $_SESSION['mwcRole'];
+                    Configs::addParams('curRole',$_SESSION['mwcRole']);
                 }
                 else {
-                    $cfg_params['curRole'] = 0;
+                    Configs::addParams('curRole',0);
                     $_SESSION['mwcRole'] = 0;
                 }
 
                 if (!empty($_SESSION['mwcuid'])) {
-                    $cfg_params['userID'] = $_SESSION['mwcuid'];
+                    Configs::addParams('userID',$_SESSION['mwcuid']);
                 }
                 else{
-                    $cfg_params['userID'] = 0;
+                    Configs::addParams('userID',0);
                     $_SESSION['mwcuid'] = 0;
                 }
 
@@ -218,50 +217,50 @@ class router
             else //админка
             {
                 if (empty($_SESSION['mwcabuild'])) {
-                    $_SESSION['mwcabuild'] = $cfg_params['globalCfg']['defaultABuild'];
-                    $cfg_params['currentBuild'] = $cfg_params['globalCfg']['defaultABuild'];
+                    $_SESSION['mwcabuild'] = Configs::globalCfg('defaultABuild');
+                    Configs::addParams('currentBuild',Configs::globalCfg('defaultABuild'));
                 }
                 else{
-                    $cfg_params['currentBuild'] = $_SESSION['mwcbuild'];
+                    Configs::addParams('currentBuild',$_SESSION['mwcbuild']);
                 }
 
                 if (empty($_SESSION['mwcaGroup'])) {
-                    $cfg_params['curGroup'] = 2;
+                    Configs::addParams('curGroup',2);
                     $_SESSION['mwcaGroup'] = 2;
                 }
                 else {
-                    $cfg_params['curGroup'] = $_SESSION['mwcaGroup'];
+                    Configs::addParams('curGroup',$_SESSION['mwcaGroup']);
                 }
 
                 if (!empty($_SESSION['mwcaRole'])) {
-                    $cfg_params['curRole'] = $_SESSION['mwcaRole'];
+                    Configs::addParams('curRole',$_SESSION['mwcaRole']);
                 }
                 else {
-                    $cfg_params['curRole'] = 0;
+                    Configs::addParams('curRole',0);
                     $_SESSION['mwcaRole'] = 0;
                 }
 
                 if (!empty($_SESSION['mwcauid'])) {
-                    $cfg_params['userID'] = $_SESSION['mwcauid'];
+                    Configs::addParams('userID',$_SESSION['mwcauid']);
                 }
                 else{
-                    $cfg_params['userID'] = 0;
+                    Configs::addParams('userID',0);
                     $_SESSION['mwcauid'] = 0;
                 }
             }
+            Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
 
-            $cfg_params['buildCfg'] = Configs::readCfg('main', $cfg_params['currentBuild']);
 
-            if (empty($cfg_params['buildCfg'])) {
+
+            if (!Configs::buildCfg()) {
                 session_destroy();
-                throw new CfgException ('Can\'t read build config: main.cfg in ' . $cfg_params['currentBuild']);
+                throw new CfgException ('Can\'t read build config: main.cfg in ' .  Configs::currentBuild());
             }
 
             if (empty($_SESSION['mwclang'])) {
-                $_SESSION['mwclang'] = $cfg_params['buildCfg']['dlang'];
+                $_SESSION['mwclang'] = Configs::buildCfg('dlang');
             }
 
-            Configs::initConfigs($cfg_params); //собираем все логи в 1 кучу
 
             define('curLang',Configs::buildCfg('dlang'));//todo: проверить, зачем они нужны и выпилить
 
