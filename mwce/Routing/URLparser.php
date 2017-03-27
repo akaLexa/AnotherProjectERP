@@ -113,6 +113,4 @@ class URLparser
             $this->parserData['isBg'] = false;
         }
     }
-
-
 }

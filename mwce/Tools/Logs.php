@@ -24,6 +24,9 @@ class Logs
                 $errf = 'router';
             }
 
+            if(empty($_SERVER['REQUEST_URI']))
+                $_SERVER['REQUEST_URI'] = 'under cmd';
+
             $dbh->SQLog($text . '<br> Uri:' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES), $errf, $ec);
         }
         catch (\Exception $e){
