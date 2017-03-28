@@ -8,8 +8,6 @@
  **/
 namespace mwce\Routing;
 
-use mwce\Tools\Tools;
-
 class URLparser
 {
     protected static $inst = null;
@@ -26,6 +24,14 @@ class URLparser
         return self::$inst->parserData;
     }
 
+    /**
+     * URLparser constructor.
+     * формирование запроса для командрой строки происходит следующим образом:
+     * php path\to\index.php build=chatServer page\Chat get=1
+     * build=chatServer означает, что нужно вызвать билд chatServer
+     * где page\Chat - как в вызове в браузере - адрес контроллера
+     * get=1 перечень параметров, может быть, например: a=1,c=5, которые будут вставлены в $_GET-массив
+     */
     protected function __construct()
     {
         $url = '';
@@ -38,17 +44,28 @@ class URLparser
             // вызов из командной строки
             $this->parserData['isCmd'] = true;
 
-            if (!empty($_SERVER['argv'][1])) {
-                $url = $_SERVER['argv'][1];
+            if(empty($_SERVER['argv'][1]))
+                die('type build is undefined!');
+
+            //выставляем build или что-то заместо него
+            $data_ = explode("=", $_SERVER['argv'][1]);
+            $this->parserData[$data_[0]] = $data_[1];
+            //endregion
+
+            if (!empty($_SERVER['argv'][2])) {
+                $url = $_SERVER['argv'][2];
             } else {
                 $url = '';
             }
 
-            if ($_SERVER['argc'] > 2) {
-                for ($i = 2; $i < $_SERVER['argc']; $i++) {
-                    $data_ = explode("=", $_SERVER['argv'][$i]);
+            if (!empty($_SERVER['argv'][3])) {
+                //region данные в GET массив
+                $params = explode(',',$_SERVER['argv'][3]);
+                foreach ($params as $item) {
+                    $data_ = explode("=", $item);
                     $_GET[trim($data_[0])] = trim($data_[1]);
                 }
+                //endregion
             }
         }
 

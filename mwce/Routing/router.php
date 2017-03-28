@@ -61,113 +61,6 @@ class router
     protected static $accessor;
 
     /**
-     * узнает контрллер и экшен (если есть)
-     * @return array|mixed
-     */
-    protected function parseURL()
-    {
-
-        if(empty($_SERVER['argc'])){
-            $url = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI']:'';
-        }
-        else {
-            if ($_SERVER['argc'] > 0) {
-
-                if (!empty($_SERVER['argv'][1])) {
-                    $url = $_SERVER['argv'][1];
-                }
-                else {
-                    $url = '';
-                }
-
-                if($_SERVER['argc']>2){
-                    for ($i=2;$i<$_SERVER['argc'];$i++){
-                        $data_ = explode("=",$_SERVER['argv'][$i]);
-                        $_GET[trim($data_[0])] = trim($data_[1]);
-                    }
-                }
-            }
-            else {
-                $url = '';
-            }
-        }
-
-        $path = trim(parse_url($url, PHP_URL_PATH), '/');
-
-        $list = explode("/", $_SERVER["PHP_SELF"]);
-        unset($list[0]);
-        array_pop($list);
-
-        if (!empty($list)) {
-            $toemp = implode("/", $list) . "/";
-            $path = str_replace($toemp, '', $path);
-        }
-
-
-        if (strripos($path, '.html') === false && strripos($path, '.php') === false) //если запрос для бекграунда (ajax, наример)
-        {
-            $this->isBg = true;
-        }
-
-        $path_array = explode('/', $path);
-
-        if (empty($path_array)) //нет данных в строке
-        {
-            return false;
-        }
-
-        $parsed['type'] = $path_array[0];
-        $parsed['type'] = explode('.', $parsed['type']);
-        $parsed['type'] = strtolower($parsed['type'][0]);
-
-        if ($parsed['type'] != 'index' && $parsed['type'] != 'control') {
-            $parsed['type'] = '';
-            if (empty($path_array[1])) //нет выражения типа site.ru/page/controller
-            {
-                $parsed['controller'] = false;
-            }
-            else {
-                $parsed['controller'] = $path_array[1];
-                $parsed['controller'] = explode('.', $parsed['controller']);
-                $parsed['controller'] = $parsed['controller'][0];
-            }
-
-            if (empty($path_array[2]))  //нет выражения типа site.ru/page/controller/action...
-            {
-                $parsed['action'] = false;
-            }
-            else {
-                $parsed['action'] = $path_array[2];
-                $parsed['action'] = explode('.', $parsed['action']);
-                $parsed['action'] = $parsed['action'][0];
-            }
-        }
-        else {
-            if (empty($path_array[2])) //нет выражения типа site.ru/page/controller
-            {
-                $parsed['controller'] = false;
-            }
-            else {
-                $parsed['controller'] = $path_array[2];
-                $parsed['controller'] = explode('.', $parsed['controller']);
-                $parsed['controller'] = $parsed['controller'][0];
-            }
-
-            if (empty($path_array[3]))  //нету выражения типа site.ru/page/controller/action
-            {
-                $parsed['action'] = false;
-            }
-            else {
-                $parsed['action'] = $path_array[3];
-                $parsed['action'] = explode('.', $parsed['action']);
-                $parsed['action'] = $parsed['action'][0];
-            }
-        }
-
-        return $parsed;
-    }
-
-    /**
      * router constructor.
      */
     private function __construct()
@@ -175,10 +68,16 @@ class router
         try {
             session_start();
 
-            Configs::addParams('globalCfg',require_once baseDir . '/configs/configs.php');
-
             $data = URLparser::Parse();
             $this->isBg = $data['isBg'];
+
+            $tmp_ = require_once baseDir . '/configs/configs.php';
+
+            if(!empty($data['build'])){
+                $tmp_['defaultBuild'] = $data['build'];
+            }
+
+            Configs::addParams('globalCfg',$tmp_);
 
             //region проверка на основной билд и альтернативный (админка)
             if($data['type'] == 1){
