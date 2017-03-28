@@ -48,8 +48,12 @@ class URLparser
                 die('type build is undefined!');
 
             //выставляем build или что-то заместо него
-            $data_ = explode("=", $_SERVER['argv'][1]);
-            $this->parserData[$data_[0]] = $data_[1];
+            $tmp = explode(',',$_SERVER['argv'][1]);
+            foreach ($tmp as $item) {
+                $data_ = explode("=", $item);
+                $this->parserData[$data_[0]] = $data_[1];
+            }
+
             //endregion
 
             if (!empty($_SERVER['argv'][2])) {
