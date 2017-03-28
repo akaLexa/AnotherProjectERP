@@ -48,6 +48,23 @@ class Tools
         }
     }
 
+    public static function debugCmd ($obj)
+    {
+        $numargs = func_num_args();
+        if ($numargs > 1) {
+            $arg_list = func_get_args();
+            for ($i = 0; $i < $numargs; $i++) {
+                print chr(10);
+                print_r($arg_list[$i]);
+                print chr(10);
+            }
+        } else {
+            print chr(10);
+            print_r($obj);
+            print chr(10);
+        }
+    }
+
     /**
      * @return string
      */
