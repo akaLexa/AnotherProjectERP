@@ -8,4 +8,5 @@ INSERT INTO tbl_modules VALUES
   (7, 'auto_title8', 'adm/hbTaskTypes', 0, '1', 'hbTaskTypes'),
   (8, 'auto_title9', 'main/EventJournal', 0, '1', 'EventJournal'),
   (9, 'auto_title10', 'main/tasks', 0, '1', 'tasks'),
-  (10, 'auto_title11', 'main/Docs', 0, '1', 'Docs');
+  (10, 'auto_title11', 'main/Docs', 0, '1', 'Docs'),
+  (11, 'auto_title12', 'adm/Logs', 0, '1', 'Logs');
