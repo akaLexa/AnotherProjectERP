@@ -7,7 +7,7 @@
  * ->
  **/
 
-require __DIR__ . DIRECTORY_SEPARATOR . 'mwce' . DIRECTORY_SEPARATOR . 'Routing' . DIRECTORY_SEPARATOR . 'autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR;
 
 $app = mwce\Routing\Router::start();
 $app->startPlugins();
