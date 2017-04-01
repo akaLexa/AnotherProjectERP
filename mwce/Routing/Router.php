@@ -82,6 +82,9 @@ class router
                 session_start();
                 self::sessionParams($data);
             }
+            else{
+                Configs::addParams('curLang',Configs::buildCfg('dlang'));
+            }
 
             Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
 
@@ -197,6 +200,9 @@ class router
 
         if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
             $_SESSION['mwclang'] = Configs::buildCfg('dlang');
+        }
+        else if(!empty($_SESSION['mwclang'])) {
+            Configs::addParams('curLang', $_SESSION['mwclang']);
         }
     }
 
