@@ -17,6 +17,7 @@ namespace mwce\Tools;
  * @method static int userID()
  * @method static int curRole()
  * @method static int curGroup()
+ * @method static string curLang()
  * @method static string currentBuild()
  */
 class Configs

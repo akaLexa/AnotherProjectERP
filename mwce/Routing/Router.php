@@ -38,11 +38,10 @@ class router
     protected static $curAction;
 
     /**
-     * @var bool
-     * идентификатор,
-     * нужно ли запускать механизм плагинов
+     * результат парсинга входящих параметров (URL или из cmd)
+     * @var array
      */
-    protected $isBg = false;
+    protected $parseData = [];
 
     /**
      * @var Content
@@ -66,62 +65,26 @@ class router
     private function __construct()
     {
         try {
-            session_start();
+
 
             $data = URLparser::Parse();
-            $this->isBg = $data['isBg'];
+            $this->parseData = $data;
 
             $tmp_ = require_once baseDir . '/configs/configs.php';
 
-            if(!empty($data['build'])){
-                $tmp_['defaultBuild'] = $data['build'];
+            if(!empty($this->parseData['build'])){
+                $tmp_['defaultBuild'] = $this->parseData['build'];
             }
 
             Configs::addParams('globalCfg',$tmp_);
 
-            //region проверка на основной билд и альтернативный (админка)
-            if($data['type'] == 1){
-                $a ='';
-                $upA ='';
+            if(!$this->parseData['isCmd']){
+                session_start();
+                self::sessionParams($data);
             }
             else{
-                $a ='a';
-                $upA ='A';
+                Configs::addParams('curLang',Configs::buildCfg('dlang'));
             }
-
-            if (empty($_SESSION['mwc'.$a.'build'])) {
-                Configs::addParams('currentBuild',Configs::globalCfg('defaultBuild'));
-                $_SESSION['mwc'.$a.'build'] = Configs::globalCfg('default'.$upA.'Build');
-            }
-            else{
-                Configs::addParams('currentBuild',$_SESSION['mwc'.$a.'build']);
-            }
-
-            if (empty($_SESSION['mwc'.$a.'Group'])) {
-                Configs::addParams('cur'.$a.'Group',2);
-                $_SESSION['mwc'.$a.'Group'] = 2;
-            }
-            else {
-                Configs::addParams('cur'.$a.'Group',$_SESSION['mwc'.$a.'Group']);
-            }
-
-            if (!empty($_SESSION['mwc'.$a.'Role'])) {
-                Configs::addParams('cur'.$a.'Role',$_SESSION['mwc'.$a.'Role']);
-            }
-            else {
-                Configs::addParams('cur'.$a.'Role',0);
-                $_SESSION['mwc'.$a.'Role'] = 0;
-            }
-
-            if (!empty($_SESSION['mwc'.$a.'uid'])) {
-                Configs::addParams('userID',$_SESSION['mwc'.$a.'uid']);
-            }
-            else{
-                Configs::addParams('userID',0);
-                $_SESSION['mwc'.$a.'uid'] = 0;
-            }
-
-            //endregion
 
             Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
 
@@ -130,9 +93,6 @@ class router
                 throw new CfgException ('Can\'t read build config: main.cfg in ' .  Configs::currentBuild());
             }
 
-            if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
-                $_SESSION['mwclang'] = Configs::buildCfg('dlang');
-            }
 
             $this->defController = '\\build\\' . Configs::currentBuild() . '\\inc\\' . Configs::buildCfg('defController');
 
@@ -179,9 +139,70 @@ class router
 
         }
         catch (\Exception $e) {
+
             Logs::log($e);
-            Content::errorException($e);
+
+            if($this->parseData['isCmd'])
+                Content::cmdMessage($e->getMessage().' in file: '.$e->getFile().' in line: '.$e->getLine().' trace: '.$e->getTraceAsString(),true);
+            else
+                Content::errorException($e);
+
             die();
+        }
+    }
+
+    /**
+     * актуализация параметров с сессии и в сессию
+     * @param array $data
+     */
+    private function sessionParams($data){
+
+        if($data['type'] == 1){
+            $a ='';
+            $upA ='';
+        }
+        else{
+            $a ='a';
+            $upA ='A';
+        }
+
+        if (empty($_SESSION['mwc'.$a.'build'])) {
+            Configs::addParams('currentBuild',Configs::globalCfg('defaultBuild'));
+            $_SESSION['mwc'.$a.'build'] = Configs::globalCfg('default'.$upA.'Build');
+        }
+        else{
+            Configs::addParams('currentBuild',$_SESSION['mwc'.$a.'build']);
+        }
+
+        if (empty($_SESSION['mwc'.$a.'Group'])) {
+            Configs::addParams('cur'.$a.'Group',2);
+            $_SESSION['mwc'.$a.'Group'] = 2;
+        }
+        else {
+            Configs::addParams('cur'.$a.'Group',$_SESSION['mwc'.$a.'Group']);
+        }
+
+        if (!empty($_SESSION['mwc'.$a.'Role'])) {
+            Configs::addParams('cur'.$a.'Role',$_SESSION['mwc'.$a.'Role']);
+        }
+        else {
+            Configs::addParams('cur'.$a.'Role',0);
+            $_SESSION['mwc'.$a.'Role'] = 0;
+        }
+
+        if (!empty($_SESSION['mwc'.$a.'uid'])) {
+            Configs::addParams('userID',$_SESSION['mwc'.$a.'uid']);
+        }
+        else{
+            Configs::addParams('userID',0);
+            $_SESSION['mwc'.$a.'uid'] = 0;
+        }
+
+        if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
+            $_SESSION['mwclang'] = Configs::buildCfg('dlang');
+        }
+        else if(!empty($_SESSION['mwclang'])) {
+            Configs::addParams('curLang', $_SESSION['mwclang']);
         }
     }
 
@@ -232,7 +253,7 @@ class router
      */
     public function startPlugins()
     {
-        if (!$this->isBg) //если в бекграунде, то плагины не включаем.
+        if (!$this->parseData['isBg']) //если в бекграунде, то плагины не включаем.
         {
            self::$accessor->renderPlugin(Configs::curGroup(),Configs::curRole(),Configs::userID());
         }
@@ -247,7 +268,7 @@ class router
          * выводим на экран сгенеренные данные модулей в ключевое
          * слово "page" в шаблон "index.html" в папке "theme/тема/html/public"
          */
-        if (!$this->isBg) {
+        if (!$this->parseData['isBg']) {
             $this->view->global_out($this->view->defHtml, 'public','page');
         }
         else {
@@ -259,7 +280,7 @@ class router
     {
         switch (strtolower($name)) {
             case 'isbg':
-                return $this->isBg;
+                return $this->parseData['isBg'];
             default:
                 return false;
         }

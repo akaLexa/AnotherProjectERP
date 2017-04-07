@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <table class="table erpTable table-hover">
+        <thead>
+        <tr id="filterTr">
+            <td></td>
+            <td>|errorList|</td>
+            <td>с <input type="date" name="dFrom" class="form-control inlineBlock" value="|dFrom|"> по <input type="date" name="dTo" class="form-control inlineBlock" value="|dTo|">
+
+            </td>
+            <td></td>
+            <td><button type="button" class="btn btn-default glyphicon glyphicon-filter" title="Фильтр" onclick="logFilter();"></button></td>
+        </tr>
+        <tr>
+            <th style="width: 3%">#</th>
+            <th style="width: 10%">Ошибка</th>
+            <th style="width: 70%">Текст</th>
+            <th style="width: 10%">Файл</th>
+            <th style="width: 7%">Билд</th>
+        </tr>
+        </thead>
+        <tbody id="logContent"></tbody>
+    </table>
+</div>

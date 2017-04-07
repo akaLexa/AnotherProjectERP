@@ -736,6 +736,16 @@ class Content
         }
     }
 
+    /**
+     * @param string $msg
+     * @param bool $showTime
+     * @param string $timeFormat
+     */
+    public static function cmdMessage($msg,$showTime = false,$timeFormat = 'H:i:s d-m-Y'){
+
+        print ($showTime ? '['.date($timeFormat).']' : '').' '.$msg.chr(10).chr(13);
+    }
+
     //region magic
     public function __get($name)
     {
@@ -782,5 +792,4 @@ class Content
         }
     }
     //endregion
-
 }
