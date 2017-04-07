@@ -74,6 +74,12 @@ class tabMessages extends AprojectTabs
                     else{
                         $di = 'default';
                     }
+
+                    if(!empty($item['col_requested']))
+                        $item['peopleExists'] = '';
+                    else
+                        $item['peopleExists'] = 'display:none;';
+
                     $this->view
                         ->add_dict($item)
                         ->set('curuserImg',$di)

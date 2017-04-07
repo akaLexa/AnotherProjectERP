@@ -188,7 +188,7 @@ class RandomColor
         }
         else if (is_numeric($hue))
         {
-          $hue = intval($hue);
+          $hue = (int)$hue;
 
           if ($hue <= 360 && $hue >= 0)
           {

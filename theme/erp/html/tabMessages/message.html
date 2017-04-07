@@ -7,8 +7,12 @@
                 </a>
             </div>
             <div class="media-body">
-                <h4 class="media-heading">|col_Author| <small>|col_dateCreateLegendDT|</small></h4>
+                <h4 class="media-heading"><span title="Нажмите чтобы пометить в списке оповещения" style="cursor: pointer" onclick="if(document.querySelector('#_fio_|col_AuthorID|') != undefined){ document.querySelector('#_fio_|col_AuthorID|').checked=true; }">|col_Author|</span> <small>|col_dateCreateLegendDT|</small></h4>
                 |col_text|
+                <details style="cursor: pointer;|peopleExists|">
+                    <summary>Обратился к</summary>
+                    <p>|col_requested|</p>
+                </details>
             </div>
         </div>
     </div>

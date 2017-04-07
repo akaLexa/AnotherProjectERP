@@ -33,7 +33,8 @@ class mTabMessages extends Model
   f_getUserFIO(tpm.col_AuthorID) AS col_Author,
   tpm.col_AuthorID,
   tpm.col_text,
-  tpm.col_dateCreate
+  tpm.col_dateCreate,
+  (SELECT GROUP_CONCAT(f_getUserFIO(tpmi.col_userID)) FROM tbl_project_messages_interlocutor tpmi  WHERE tpmi.col_pmID = tpm.col_pmID) AS col_requested
 FROM 
   tbl_project_messages tpm
 WHERE
@@ -56,15 +57,25 @@ order by tpm.col_dateCreate DESC")->fetchAll(static::class);
         $db = Connect::start();
         $db->exec("INSERT INTO tbl_project_messages (col_AuthorID,col_text,col_projectID) VALUE($user,'$text',$project)");
         if(!empty($listeners) && is_array($listeners)){
-            //$lid = $db->lastId('tbl_project_messages');
+            $lid = $db->lastId('tbl_project_messages');
             $q = '';
+            $q1 = '';
             foreach ($listeners as $listener){
                 if(!empty($q))
                     $q.=',';
                 $q.="(11,$project,$listener, CONCAT('Проект [',f_GetProjectNum($project),'], написал [',f_getUserFIO($user),']: ',LEFT('$text',50),'...'))";
+
+                if(!empty($q1))
+                    $q1.=',';
+                $q1.="($lid,$listener)";
             }
+
             if(!empty($q)){
                 $db->exec("INSERT INTO tbl_events (col_etID,col_object,col_userID,col_comment) VALUES $q");
+            }
+
+            if(!empty($q1)){
+                $db->exec("INSERT INTO tbl_project_messages_interlocutor (col_pmID,col_UserID) VALUES $q1");
             }
         }
     }
