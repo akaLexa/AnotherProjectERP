@@ -146,8 +146,8 @@ class mail extends mailController
                 self::mail($login.'@'.$this->domenTo,$letterContent,'Категория - '.$curType);
             }
 
-            /*if(!empty($toUpdate))
-                lettersList::updateEvents($toUpdate);*/
+            if(!empty($toUpdate))
+                lettersList::updateEvents($toUpdate);
         }
     }
 
