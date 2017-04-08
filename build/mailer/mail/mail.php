@@ -72,10 +72,8 @@ class mail extends mailController
         }
 
         $list = lettersList::getModels([
-            /*'start' => date("d-m-Y H:i:00",strtotime('last sunday')),
-            'end' => date("d-m-Y H:i:59",strtotime('first monday'))*/
-            'start' => '2017-03-01 00:00:00',
-            'end' => '2017-05-01 00:00:00'
+            'start' => date("d-m-Y H:i:00",strtotime('last sunday')),
+            'end' => date("d-m-Y H:i:59",strtotime('first monday'))
         ]);
 
         if(!empty($list)){
