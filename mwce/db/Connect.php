@@ -117,16 +117,14 @@ class Connect
         }
         else {
 
-            $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php';
-            if (file_exists($path)) {
-                $configs = require $path;
-            }
-            else {
-                throw new CfgException($path . ' no such config file!');
+            $configs = Configs::loadConnectionCfg();
+
+            if (empty($configs) || !is_array($configs)) {
+                throw new CfgException('Connections config is empty or wrong! Build: '.Configs::currentBuild());
             }
 
             if (empty($configs[$conNum]) && $conNum == 'siteBase') //если нет отдельно выделенного конфига под базу(с настройками) сайта, то переключаем в умолчание
-                $conNum = Configs::globalCfg('defaultConNum');
+                $conNum = (int)Configs::globalCfg('defaultConNum');
 
             if (empty($configs[$conNum])) {
                 throw new CfgException('Config file corrupted');

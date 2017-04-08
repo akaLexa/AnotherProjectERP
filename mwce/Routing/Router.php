@@ -64,9 +64,8 @@ class router
      */
     private function __construct()
     {
-        try {
-
-
+        try
+        {
             $data = URLparser::Parse();
             $this->parseData = $data;
 
@@ -84,12 +83,16 @@ class router
             }
             else{
                 Configs::addParams('curLang',Configs::buildCfg('dlang'));
+                Configs::addParams('currentBuild',$data['build']);
             }
 
             Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
 
             if (!Configs::buildCfg()) {
-                session_destroy();
+
+                if(!$this->parseData['isCmd'])
+                    session_destroy();
+
                 throw new CfgException ('Can\'t read build config: main.cfg in ' .  Configs::currentBuild());
             }
 

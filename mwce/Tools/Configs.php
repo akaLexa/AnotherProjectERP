@@ -169,4 +169,18 @@ class Configs
             }
         }
     }
+
+    /**
+     * @return array|mixed
+     */
+    public static function loadConnectionCfg(){
+
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php';
+        if (file_exists($path)) {
+            return require $path;
+        }
+        else {
+            return [];
+        }
+    }
 }
