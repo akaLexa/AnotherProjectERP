@@ -61,7 +61,7 @@ class ModuleController extends Controller
      */
     public function actionTitle()
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $_SESSION['mwclang'] . DIRECTORY_SEPARATOR . 'titles.php';
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'titles.php';
 
         if (file_exists($path)) {
             $lang = include $path;

@@ -77,13 +77,21 @@ class router
 
             Configs::addParams('globalCfg',$tmp_);
 
+
             if(!$this->parseData['isCmd']){
                 session_start();
                 self::sessionParams($data);
+                if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
+                    $_SESSION['mwclang'] = Configs::buildCfg('dlang');
+                    Configs::addParams('curLang', $_SESSION['mwclang']);
+                }
+                else if(!empty($_SESSION['mwclang'])) {
+                    Configs::addParams('curLang', $_SESSION['mwclang']);
+                }
             }
             else{
-                Configs::addParams('curLang',Configs::buildCfg('dlang'));
                 Configs::addParams('currentBuild',$data['build']);
+                Configs::addParams('curLang', Configs::buildCfg('dlang'));
             }
 
             Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
@@ -199,13 +207,6 @@ class router
         else{
             Configs::addParams('userID',0);
             $_SESSION['mwc'.$a.'uid'] = 0;
-        }
-
-        if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
-            $_SESSION['mwclang'] = Configs::buildCfg('dlang');
-        }
-        else if(!empty($_SESSION['mwclang'])) {
-            Configs::addParams('curLang', $_SESSION['mwclang']);
         }
     }
 

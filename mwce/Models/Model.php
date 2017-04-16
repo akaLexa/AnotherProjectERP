@@ -12,6 +12,7 @@ namespace mwce\Models;
 use mwce\db\Connect;
 use mwce\Exceptions\ModException;
 use mwce\Interfaces\Imodel;
+use mwce\Tools\Configs;
 
 abstract class Model implements Imodel, \ArrayAccess, \Iterator
 {
@@ -177,7 +178,7 @@ abstract class Model implements Imodel, \ArrayAccess, \Iterator
     //region чистка кешей 
     public static function dellCurPageCache()
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . $_SESSION["mwccfgread"] . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . $_SESSION["mwclang"] . "_pages.php";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . $_SESSION["mwccfgread"] . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . Configs::curLang() . "_pages.php";
         if (file_exists($path)) {
             unlink($path);
         }
@@ -185,7 +186,7 @@ abstract class Model implements Imodel, \ArrayAccess, \Iterator
 
     public static function dellCurMenuCache($menuName)
     {
-        $path = baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.$_SESSION["mwccfgread"].DIRECTORY_SEPARATOR."_dat".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR.$_SESSION["mwclang"]."_plugin_".$menuName;
+        $path = baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.$_SESSION["mwccfgread"].DIRECTORY_SEPARATOR."_dat".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR.Configs::curLang()."_plugin_".$menuName;
 
         if (file_exists($path))
         {
