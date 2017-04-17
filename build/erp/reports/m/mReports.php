@@ -41,7 +41,7 @@ FROM
 WHERE 
   LOCATE('reports',tm.col_path) > 0
    AND tm.col_moduleName !='Reports'
-   AND (tmg.col_gID IN (".Configs::curGroup().",2) OR tmr.col_roleID IN(".Configs::curRole().",2))
+   AND (tmg.col_gID IN (".Configs::curGroup().",3) OR tmr.col_roleID IN(".Configs::curRole().",2))
  GROUP BY tm.col_modID");
 
         $listLegend = [];
