@@ -1,0 +1,43 @@
+<table class="table erpTable table-hover">
+    <thead>
+    <tr id="reportFilter">
+        <td style="padding: 0;"><input type="text" class="form-control inlineBlock" style="width: 100%" name="prNum" onkeyup="filterPSR();"></td>
+        <td style="padding: 0;"><input type="text" class="form-control inlineBlock" style="width: 100%" name="prName" onkeyup="filterPSR();"></td>
+        <td style="padding: 0;">|mList|</td>
+        <td style="padding: 0;">|stList|</td>
+        <td style="padding: 0;">|respList|</td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dBegin" onchange="filterPSR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndPlan" onchange="filterPSR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndFact" onchange="filterPSR();"></td>
+        <td style="padding: 0;"></td>
+    </tr>
+    <tr>
+        <th style="width: 60px;">#</th>
+        <th>Проект</th>
+        <th style="width: 150px;">Менеджер</th>
+        <th style="width: 250px;">Стадия</th>
+        <th style="width: 150px;">Ответственный</th>
+        <th style="width: 150px;">Дата начала</th>
+        <th style="width: 150px;">Плановое завершение</th>
+        <th style="width: 150px;">Фактическое завершение</th>
+        <th style="width: 50px;">Разница</th>
+    </tr>
+    </thead>
+    <tbody id="PSRbody"></tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        filterPSR();
+    });
+
+    function filterPSR() {
+        genIn({
+            element:'PSRbody',
+            address:'|site|page/ProjectStageReport/GetList',
+            type:'POST',
+            data:$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize(),
+            loadicon:'<tr><td colspan="7" style="color: gray; text-align: center;">Загрузка...</td></tr>'
+        });
+    }
+</script>
