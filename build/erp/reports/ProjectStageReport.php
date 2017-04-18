@@ -28,6 +28,17 @@ class ProjectStageReport extends eController
         'dEndFact' => ['type'=>self::DATE],
     );
 
+    protected $getField = array(
+        'prName' => ['type'=>self::STR],
+        'prNum' => ['type'=>self::INT],
+        'curManager' => ['type'=>self::INT],
+        'curStage' => ['type'=>self::INT],
+        'curResp' => ['type'=>self::INT],
+        'dBegin' => ['type'=>self::DATE],
+        'dEndPlan' => ['type'=>self::DATE],
+        'dEndFact' => ['type'=>self::DATE],
+    );
+
     public function actionIndex()
     {
         $stages = Project::getStagesList();
@@ -53,6 +64,11 @@ class ProjectStageReport extends eController
         }
         else
             $this->view->out('empty',$this->className);
+    }
+
+    public function actionExcel(){
+        $obj = new mProjectStageReport();
+        $obj->getExcel($_GET);
     }
 
 }
