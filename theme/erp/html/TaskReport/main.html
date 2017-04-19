@@ -10,7 +10,7 @@
         <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndPlan" onchange="filterTR();"></td>
         <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndFact" onchange="filterTR();"></td>
         <td style="padding: 0; text-align: right;" title="Экспорт в эксель">
-            <button class="btn btn-default glyphicon glyphicon-export" onclick="document.querySelector('#exportForm').action='|site|page/TaskReport/Excel?'+$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize(); document.querySelector('#exportForm').submit();"></button>
+            <button class="btn btn-default glyphicon glyphicon-export" onclick="document.querySelector('#exportForm').action='|site|page/TaskReport/Excel?'+$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize()+'&curRole='+document.querySelector('#curRole').value; document.querySelector('#exportForm').submit();"></button>
         </td>
     </tr>
     <tr>
