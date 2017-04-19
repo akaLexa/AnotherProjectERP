@@ -1,0 +1,45 @@
+<label style="font-weight: normal;width: auto;"> Отдел |roleList|</label>
+<table class="table erpTable table-hover">
+    <thead>
+    <tr id="reportFilter">
+        <td style="padding: 0;"><input type="text" class="form-control inlineBlock" style="width: 100%" name="inTname" onkeyup="filterTR();"></td>
+        <td style="padding: 0;">|stList|</td>
+        <td style="padding: 0;">|initList|</td>
+        <td style="padding: 0;">|respList|</td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dBegin" onchange="filterTR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndPlan" onchange="filterTR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndFact" onchange="filterTR();"></td>
+        <td style="padding: 0; text-align: right;" title="Экспорт в эксель">
+            <button class="btn btn-default glyphicon glyphicon-export" onclick="document.querySelector('#exportForm').action='|site|page/TaskReport/Excel?'+$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize(); document.querySelector('#exportForm').submit();"></button>
+        </td>
+    </tr>
+    <tr>
+        <th>Задача</th>
+        <th style="width: 100px;">Состояние</th>
+        <th style="width: 150px;">Инициатор</th>
+        <th style="width: 150px;">Ответственный</th>
+        <th style="width: 150px;">Начало</th>
+        <th style="width: 150px;">Плановое завршение</th>
+        <th style="width: 150px;">Фактическое завершение</th>
+        <th style="width: 50px;">Разница</th>
+    </tr>
+    </thead>
+    <tbody id="TRbody"></tbody>
+</table>
+<form method="get" style="display: none;" target="_blank" id="exportForm"></form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        filterTR();
+    });
+
+    function filterTR() {
+        genIn({
+            element:'TRbody',
+            address:'|site|page/TaskReport/GetList',
+            type:'POST',
+            data:$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize()+'&curRole='+document.querySelector('#curRole').value,
+            loadicon:'<tr><td colspan="8" style="color: gray; text-align: center;">Загрузка...</td></tr>'
+        });
+    }
+</script>

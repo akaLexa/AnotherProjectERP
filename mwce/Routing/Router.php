@@ -81,6 +81,8 @@ class router
             if(!$this->parseData['isCmd']){
                 session_start();
                 self::sessionParams($data);
+                Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
+
                 if (empty($_SESSION['mwclang']) && !empty(Configs::buildCfg('dlang'))) {
                     $_SESSION['mwclang'] = Configs::buildCfg('dlang');
                     Configs::addParams('curLang', $_SESSION['mwclang']);
@@ -91,10 +93,10 @@ class router
             }
             else{
                 Configs::addParams('currentBuild',$data['build']);
+                Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
                 Configs::addParams('curLang', Configs::buildCfg('dlang'));
             }
 
-            Configs::addParams('buildCfg',Configs::readCfg('main', Configs::currentBuild()));
 
             if (!Configs::buildCfg()) {
 
