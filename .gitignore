@@ -5,4 +5,5 @@ build/erp/_dat/ru_plugins.php
 build/erp/_dat/documents/projects/
 log/
 .idea/
+configs/configs.php
 

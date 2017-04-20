@@ -78,7 +78,8 @@ ORDER BY tu.col_Sername")->fetchAll(static::class);
         return $db->query("SELECT 
  tu.*,
  ur.*,
- tug.*
+ tug.*,
+ if(tu.col_deputyID is not NULL ,f_getUserFIO(tu.col_deputyID),'-') as col_deputy
 FROM 
 tbl_user tu,
 tbl_user_roles ur 
@@ -246,6 +247,7 @@ ORDER by tu.col_Sername");
         switch ($name){
             case 'col_regDate':
             case 'col_blockDate':
+            case 'col_banDate':
                 if(!empty($value)){
                     parent::_adding($name.'Legend', Date::transDate($value,true));
                 }

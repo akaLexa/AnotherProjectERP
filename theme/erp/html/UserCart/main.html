@@ -1,0 +1,41 @@
+<div class="container">
+
+        <div class="container col-md-6" style="padding:5px;height: 170px;float: left;">
+            <div class="media" style="margin: 25px auto;">
+            <div class="media-left">
+                <a href="#" onclick="return false;">
+                    <img class="media-object" src="|site|theme/imgs/users/|imgNum|.png" alt="photo">
+                </a>
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">|col_Sername| |col_Name| |col_Lastname|</h4>
+                <h4><small>|col_gName| : |col_roleName|</small></h4>
+                <h5><small>Работает с: |col_regDateLegend|</small></h5>
+                <h5 style="|vizDepStyle|"><small style="color: orange;">Замещается: <a href="|site|page/UserCart.html?user=|col_deputyID|" target="_blank">|col_deputy|</a></small></h5>
+                <h5 style="|vizStyle|"><small>Уволился: |col_banDateLegend|</small></h5>
+            </div>
+            </div>
+        </div>
+    <div class="container col-md-6" style="padding:5px;height: 170px;float: left;">
+        <div class="media" style="margin: 25px auto;">
+            <div class="media-body" style="padding-left: 20px;">
+                <h4><small style="width: 160px;display: inline-block;">Всего задач за месяц:</small> <span  style="width: 30px;display: inline-block;" class="badge alert-info">|total|</span> <small>Выполнено:</small> <span class="badge alert-success" style="width: 30px;display: inline-block;">|success|</span> <small>Просрочено:</small> <span class="badge alert-warning" style="width: 30px;display: inline-block;">|outOfDate|</span></h4>
+                <h4><small style="width: 160px;display: inline-block;">Всего стадий за месяц:</small> <span style="width: 30px;display: inline-block;" class="badge alert-info">|totalStage|</span> <small>Выполнено:</small> <span class="badge alert-success" style="width: 30px;display: inline-block;">|successStage|</span> <small>Просрочено:</small> <span class="badge alert-warning" style="width: 30px;display: inline-block;">|outOfDateStage|</span></h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<details class="panel panel-info" style="width: 80%; margin: 10px auto;" open>
+    <summary class="panel-heading">Текущие задачи <b class="glyphicon glyphicon-refresh" style="float: right; margin-right: 15px;cursor: pointer; display: none;" onclick="return false;" title="Обновить данные"></b></summary>
+    <div class="panel-body" id="taskListPanel" style="height: 200px; overflow-y: auto;">
+        |TLContent|
+    </div>
+</details>
+
+<details class="panel panel-info" style="width: 80%; margin: 10px auto;" open>
+    <summary class="panel-heading">Текущие стадии <b class="glyphicon glyphicon-refresh" style="float: right; margin-right: 15px;cursor: pointer; display: none;" onclick="return false;" title="Обновить данные"></b></summary>
+    <div class="panel-body" id="stagesListPanel" style="height: 200px; overflow-y: auto;">
+        |SLContent|
+    </div>
+</details>
