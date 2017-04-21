@@ -52,6 +52,8 @@ class TaskReport extends eController
         $roles[0] = '...';
 
         $this->view
+            ->set('dateBegin',date('Y-m-01'))
+            ->set('dateEnd',date('Y-m-t'))
             ->set('roleList',html::select($roles,'curRole',0,'class="form-control inlineBlock" onchange="filterTR();"'))
             ->set('initList',html::select($users,'curInit',0,'class="form-control inlineBlock" onchange="filterTR();"'))
             ->set('respList',html::select($users,'curResp',0,'class="form-control inlineBlock" onchange="filterTR();"'))

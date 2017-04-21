@@ -6,8 +6,8 @@
         <td style="padding: 0;">|mList|</td>
         <td style="padding: 0;">|stList|</td>
         <td style="padding: 0;">|respList|</td>
-        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dBegin" onchange="filterPSR();"></td>
-        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndPlan" onchange="filterPSR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" value="|dateBegin|" name="dBegin" onchange="filterPSR();"></td>
+        <td style="padding: 0;"><input type="date" class="form-control inlineBlock" value="|dateEnd|" name="dEndPlan" onchange="filterPSR();"></td>
         <td style="padding: 0;"><input type="date" class="form-control inlineBlock" name="dEndFact" onchange="filterPSR();"></td>
         <td style="padding: 0; text-align: right;" title="Экспорт в эксель">
             <button class="btn btn-default glyphicon glyphicon-export" onclick="document.querySelector('#exportForm').action='|site|page/ProjectStageReport/Excel?'+$('#reportFilter select,#reportFilter input[type=date],#reportFilter input[type=text]').serialize(); document.querySelector('#exportForm').submit();"></button>
@@ -17,7 +17,7 @@
         <th style="width: 60px;">#</th>
         <th>Проект</th>
         <th style="width: 150px;">Менеджер</th>
-        <th style="width: 250px;">Стадия</th>
+        <th style="width: 300px;">Стадия</th>
         <th style="width: 150px;">Ответственный</th>
         <th style="width: 150px;">Дата начала</th>
         <th style="width: 150px;">Плановое завершение</th>

@@ -46,6 +46,8 @@ class ProjectStageReport extends eController
         $users = User::getUserList();
         $users[0] = '...';
         $this->view
+            ->set('dateBegin',date('Y-m-01'))
+            ->set('dateEnd',date('Y-m-t'))
             ->set('stList',html::select($stages,'curStage',0,'class="form-control inlineBlock" onchange="filterPSR();"'))
             ->set('mList',html::select($users,'curManager',0,'class="form-control inlineBlock" onchange="filterPSR();"'))
             ->set('respList',html::select($users,'curResp',0,'class="form-control inlineBlock" onchange="filterPSR();"'))

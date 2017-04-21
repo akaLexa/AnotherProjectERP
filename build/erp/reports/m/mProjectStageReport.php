@@ -44,11 +44,17 @@ class mProjectStageReport extends Model
         }
 
         if(!empty($params['dBegin'])){
-            $filter.= " AND tps.col_dateStart BETWEEN '{$params['dBegin']} 00:00:00' AND '{$params['dBegin']} 23:59:59'";
+            if(empty($params['dEndPlan']))
+                $filter.= " AND tps.col_dateStart BETWEEN '{$params['dBegin']} 00:00:00' AND '{$params['dBegin']} 23:59:59'";
+            else
+                $filter.= " AND tps.col_dateStart BETWEEN '{$params['dBegin']} 00:00:00' AND '{$params['dEndPlan']} 23:59:59'";
         }
 
         if(!empty($params['dEndPlan'])){
-            $filter.= " AND tps.col_dateEndPlan BETWEEN '{$params['dEndPlan']} 00:00:00' AND '{$params['dEndPlan']} 23:59:59'";
+            if(empty($params['dBegin']))
+                $filter.= " AND tps.col_dateEndPlan BETWEEN '{$params['dEndPlan']} 00:00:00' AND '{$params['dEndPlan']} 23:59:59'";
+            else
+                $filter.= " AND tps.col_dateEndPlan BETWEEN '{$params['dBegin']} 00:00:00' AND '{$params['dEndPlan']} 23:59:59'";
         }
 
         if(!empty($params['dEndFact'])){
