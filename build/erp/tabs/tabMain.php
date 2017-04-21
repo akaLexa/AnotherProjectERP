@@ -223,7 +223,12 @@ class tabMain extends AprojectTabs
                     }
                 }
                 else{ //не по плану
+                    if($stageInfo['col_statusID'] == 4){
+                        echo json_encode(['error'=>'Стадия находится в состоянии принятия решения. До момента, пока не будет принято решение, осуществлять движение проекта нельзя.']);
+                        return;
+                    }
                     if(empty($_POST)){
+
                         $groups = User::getGropList();
                         $groups[0] = '...';
                         //если нет просрочки стадии
