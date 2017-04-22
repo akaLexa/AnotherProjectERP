@@ -227,6 +227,7 @@ class tabMain extends AprojectTabs
                         echo json_encode(['error'=>'Стадия находится в состоянии принятия решения. До момента, пока не будет принято решение, осуществлять движение проекта нельзя.']);
                         return;
                     }
+
                     if(empty($_POST)){
 
                         $groups = User::getGropList();

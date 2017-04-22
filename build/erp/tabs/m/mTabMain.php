@@ -78,7 +78,7 @@ class mTabMain extends Project
             $descLate = "CONCAT(COALESCE(col_comment,''),'')";
 
         $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 3, col_comment = $descLate, col_dateEndFact = NOW() WHERE  col_pstageID = ".$this['col_pstageID']);
-        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1, col_dateStart = NOW(),col_prevStageID={$this['col_pstageID']} WHERE col_pstageID = {$next['col_pstageID']}");
+        $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 1, col_dateStart = NOW(),col_prevStageID={$this['col_pstageID']},col_respID = f_checkDeputy(col_respID) WHERE col_pstageID = {$next['col_pstageID']}");
         $this->db->exec("UPDATE tbl_project SET col_ProjectPlanState = 1 WHERE col_projectID = ".$this['col_projectID']);
         $this->db->exec("CALL sp_StartTaskPlan({$next['col_pstageID']})");
         $this->db->closeCursor();
@@ -93,7 +93,7 @@ class mTabMain extends Project
         $result = $this->db->query("SELECT
   tps.col_pstageID,
   htps.col_StageName,
-  tps.col_respID,
+  f_checkDeputy(tps.col_respID) as col_respID,
   f_getUserFIO(tps.col_respID) as col_resp
 FROM
   tbl_project_stage tps,

@@ -253,7 +253,7 @@ class tasks extends eController
                             }
                             break;
                         case 5: //план
-                            $this->view->set('inTaskProperties','Ожидпние запуска');
+                            $this->view->set('inTaskProperties','Ожидание запуска');
                             break;
                     }
                 }

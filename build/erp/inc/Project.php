@@ -282,7 +282,7 @@ WHERE
 
         $this->db->exec("UPDATE tbl_project_stage SET col_statusID = 3,col_dateEndFact=NOW(),col_comment = CONCAT(COALESCE (col_comment,''),'$failDesc') WHERE col_pstageID = {$this['col_pstageID']}"); //завершаем старую
 
-        $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID) VALUE ({$this['col_projectID']},4,NOW(),NOW(),NOW(),'$toDate',$comment,$stage,{$this['col_pstageID']},$receiver)");
+        $this->db->exec("INSERT INTO tbl_project_stage(col_projectID,col_statusID,col_dateCreate,col_dateStartPlan,col_dateStart,col_dateEndPlan,col_comment,col_stageID,col_prevStageID,col_respID) VALUE ({$this['col_projectID']},4,NOW(),NOW(),NOW(),'$toDate',$comment,$stage,{$this['col_pstageID']},f_checkDeputy($receiver))");
     }
 
     /**
