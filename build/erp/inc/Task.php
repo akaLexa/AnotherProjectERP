@@ -293,7 +293,7 @@ WHERE
                     }
                     //завершилася главная, началась зависимая
                     elseif ($childTask['col_bonding'] == 1){
-                        $pool.=" UPDATE tbl_tasks SET col_startFact = NOW(), col_StatusID = 1 WHERE col_taskID = {$childTask['col_taskID']} OR (col_seq = {$childTask['col_seq']} AND col_bonding = 2); ";
+                        $pool.=" UPDATE tbl_tasks SET col_startFact = NOW(), col_StatusID = 1, col_respID = f_checkDeputy(col_respID) WHERE col_taskID = {$childTask['col_taskID']} OR (col_seq = {$childTask['col_seq']} AND col_bonding = 2); ";
                     }
                 }
 

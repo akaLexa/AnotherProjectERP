@@ -406,7 +406,7 @@ class tasks extends eController
 
                 $params = array(
                     'col_taskName' => $_POST['taskName'],
-                    'col_respID' => $_POST['tbUserList'],
+                    'col_respID' => "f_checkDeputy({$_POST['tbUserList']})",
                     'col_pstageID' => $project['col_pstageID'],
                     'col_createDate' => date::intransDate('now', true),
                     'col_startFact' => date::intransDate('now', true),
