@@ -21,7 +21,7 @@ use mwce\Tools\Configs;
 use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\Tools\html;
-use mwce\Tools\Tools;
+use build\erp\adm\m\mConfigurator;
 
 class UnitManager extends eController
 {
@@ -1226,6 +1226,30 @@ class UnitManager extends eController
             }
         }
 
+    }
+    //endregion
+
+    //region Настройки
+    public function actionGetConfigurator(){
+        self::actionGetCfgList();
+
+        $this->view
+            ->setFContainer('bodyCfg',true)
+            ->out('Configurator',$this->className);
+    }
+
+    public function actionGetCfgList(){
+        $list = mConfigurator::getModels();
+        if(empty($list)){
+            $this->view->out('emptyConfig',$this->className);
+        }
+        else{
+            foreach ($list as $item){
+                $this->view
+                    ->add_dict($item)
+                    ->out('centerConfig',$this->className);
+            }
+        }
     }
     //endregion
 }
