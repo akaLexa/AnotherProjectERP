@@ -15,10 +15,12 @@ use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
 use build\erp\project\m\m_TabsCfgs;
+use build\erp\adm\m\mConfigurator;
 use mwce\Tools\Configs;
 use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\Tools\html;
+use mwce\Tools\Tools;
 
 
 class ProjectManager extends eController
@@ -516,6 +518,30 @@ class ProjectManager extends eController
                         $curGroup->editAccess($acs);
                     }
                 }
+            }
+        }
+    }
+    //endregion
+
+    //region Настройки
+    public function actionConfigurator(){
+        self::actionGetCfgList();
+
+        $this->view
+            ->setFContainer('bodyCfg',true)
+            ->out('Configurator',$this->className);
+    }
+
+    public function actionGetCfgList(){
+        $list = mConfigurator::getModels();
+        if(empty($list)){
+            $this->view->out('emptyConfig',$this->className);
+        }
+        else{
+            foreach ($list as $item){
+                $this->view
+                    ->add_dict($item)
+                    ->out('centerConfig',$this->className);
             }
         }
     }
