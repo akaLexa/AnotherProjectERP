@@ -7,10 +7,10 @@
  *
  **/
 namespace build\erp\tabs;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use build\erp\tabs\m\mTabHistory;
 
-class tabHistory extends AprojectTabs
+class tabHistory extends AProjectTabs
 {
 
     /**

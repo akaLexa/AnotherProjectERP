@@ -8,7 +8,7 @@
  **/
 namespace build\erp\tabs;
 use build\erp\adm\m\mTaskTypes;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\User;
@@ -19,7 +19,7 @@ use mwce\Exceptions\ModException;
 use mwce\Tools\html;
 
 
-class tabTasks extends AprojectTabs
+class tabTasks extends AProjectTabs
 {
     protected $getField = array(
         'id' => ['type'=>self::INT],

@@ -9,7 +9,7 @@
 namespace build\erp\project;
 use build\erp\inc\eController;
 use build\erp\inc\Project;
-use build\erp\inc\tPaginate;
+use build\erp\inc\traits\tPaginate;
 use build\erp\inc\User;
 use mwce\Tools\Configs;
 use mwce\Tools\html;

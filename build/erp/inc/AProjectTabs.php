@@ -9,9 +9,10 @@
  **/
 namespace  build\erp\inc;
 
+use build\erp\inc\interfaces\iProjectTabs;
 use mwce\Tools\Configs;
 
-abstract class AprojectTabs extends eController implements iProjectTabs
+abstract class AProjectTabs extends eController implements iProjectTabs
 {
     /**
      * настройки вкладки
@@ -49,7 +50,7 @@ abstract class AprojectTabs extends eController implements iProjectTabs
     }
 
     /**
-     * AprojectTabs constructor.
+     * AProjectTabs constructor.
      * @param \mwce\Tools\Content $view
      * @param string $pages
      * @param int $project

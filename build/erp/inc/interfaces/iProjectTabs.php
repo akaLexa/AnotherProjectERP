@@ -6,7 +6,7 @@
  * интерфейс для вкладок
  **/
 
-namespace build\erp\inc;
+namespace build\erp\inc\interfaces;
 
 /**
  * Interface iProjectTabs

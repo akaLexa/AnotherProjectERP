@@ -4,7 +4,7 @@
  * Time: 12:50
  */
 
-namespace build\erp\inc;
+namespace build\erp\inc\traits;
 
 
 /**

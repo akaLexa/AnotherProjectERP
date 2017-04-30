@@ -8,7 +8,7 @@
  **/
 namespace build\erp\tabs;
 use build\erp\adm\m\mStages;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use build\erp\inc\eController;
 use build\erp\inc\User;
 use build\erp\tabs\m\mProjectPlan;
@@ -18,7 +18,7 @@ use mwce\Tools\Content;
 use mwce\Tools\html;
 
 
-class tabMain extends AprojectTabs
+class tabMain extends AProjectTabs
 {
     /**
      * @var mTabMain

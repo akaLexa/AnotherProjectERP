@@ -7,12 +7,12 @@
  *
  **/
 namespace build\erp\tabs;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use mwce\Tools\Configs;
 use mwce\Tools\html;
 
 
-class tabDocs extends AprojectTabs
+class tabDocs extends AProjectTabs
 {
     protected $postField = array(
         'curChosenDg'=>['type'=>self::INT],

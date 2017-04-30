@@ -7,10 +7,10 @@
  *
  **/
 namespace build\erp\tabs;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use build\erp\tabs\m\mTabMessages;
 
-class tabEvents extends AprojectTabs
+class tabEvents extends AProjectTabs
 {
 
     /**

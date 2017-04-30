@@ -8,7 +8,7 @@
  **/
 namespace build\erp\tabs;
 use build\erp\adm\m\mTaskTypes;
-use build\erp\inc\AprojectTabs;
+use build\erp\inc\AProjectTabs;
 use build\erp\inc\PlanStage;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
@@ -19,7 +19,7 @@ use mwce\Tools\Configs;
 use mwce\Tools\html;
 
 
-class tabProjectPlan extends AprojectTabs
+class tabProjectPlan extends AProjectTabs
 {
 
     protected $props;

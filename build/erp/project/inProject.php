@@ -8,14 +8,13 @@
  **/
 namespace build\erp\project;
 use build\erp\inc\eController;
-use build\erp\inc\iProjectTabs;
+use build\erp\inc\interfaces\iProjectTabs;
 use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\project\m\m_inProject;
 use build\erp\tabs\m\mProjectPlan;
 use mwce\Tools\Configs;
 use mwce\Tools\html;
-use mwce\Tools\Tools;
 
 class inProject extends eController
 {

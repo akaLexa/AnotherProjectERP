@@ -12,7 +12,7 @@ use build\erp\inc\eController;
 use build\erp\inc\Project;
 use build\erp\inc\Task;
 use build\erp\inc\TaskComments;
-use build\erp\inc\tPaginate;
+use build\erp\inc\traits\tPaginate;
 use build\erp\inc\User;
 use build\erp\main\m\mTasks;
 use build\erp\tabs\m\mTabTasks;

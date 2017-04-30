@@ -8,7 +8,7 @@
  **/
 namespace build\erp\main;
 use build\erp\inc\eController;
-use build\erp\inc\tPaginate;
+use build\erp\inc\traits\tPaginate;
 use build\erp\main\m\mEventJournal;
 use mwce\Tools\Configs;
 use mwce\Tools\Date;
