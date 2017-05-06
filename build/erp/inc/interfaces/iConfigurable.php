@@ -6,7 +6,7 @@
  * интерфейс, гарантрующий, что есть списки для настроек
  */
 
-namespace erp\inc\interfaces;
+namespace build\erp\inc\interfaces;
 
 
 interface iConfigurable
@@ -25,8 +25,8 @@ interface iConfigurable
      * массив для генерации списка, где можно
      * выбрать несколько значений
      * [
-     *   [0]=>[1,'Позиция 1'],
-     *   [1]=>[2,'Позиция 2'],
+     *   [0]=>['id' => 1,'item' => 'Позиция 1'],
+     *   [1]=>['id' => 2,'item' => 'Позиция 2'],
      * ]
      * @return mixed
      */

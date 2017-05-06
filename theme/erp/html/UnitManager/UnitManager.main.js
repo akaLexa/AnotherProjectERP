@@ -1023,7 +1023,6 @@ function menuRefresh() {
 
 }
 
-
 function saveMainCfg() {
     genIn({
         noresponse:true,
@@ -1032,6 +1031,47 @@ function saveMainCfg() {
         data:$('#MainCfgForm').serialize(),
         callback:function () {
             mwce_alert('Сохранено','Сообщение');
+        }
+    });
+}
+
+function addNewCfg() {
+    $('#forDialogs').dialog({
+        title:'Добавить новую конфигурацию',
+        modal:true,
+        width:500,
+        resizable:false,
+        buttons:{
+            'Добавить':function () {
+                if(document.querySelector('#cfgName_').value.trim().length<1){
+                    mwce_alert('Не заполнено служебное название конфига','Внимание!');
+                }
+                else{
+                    genIn({
+                        noresponse: true,
+                        address:'|site|page/|currentPage|/GetFormCfg',
+                        type:'POST',
+                        data:$('#cfgAdder').serialize(),
+                        callback:function () {
+                            $('#forDialogs').dialog('close');
+                            genTabContent('Configurator');
+                        }
+                    });
+                }
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        open:function () {
+            genIn({
+                element:'forDialogs',
+                address:'|site|page/|currentPage|/GetFormCfg',
+                loadicon:'Загрузка...'
+            });
+        },
+        close: function () {
+            $(this).dialog('destroy');
         }
     });
 }

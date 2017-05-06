@@ -22,6 +22,7 @@ use mwce\Tools\DicBuilder;
 use mwce\Exceptions\ModException;
 use mwce\Tools\html;
 use build\erp\adm\m\mConfigurator;
+use mwce\Tools\Tools;
 
 class UnitManager extends eController
 {
@@ -66,6 +67,11 @@ class UnitManager extends eController
         'defgrp' => ['type'=>self::INT],
         'defConNum' => ['type'=>self::INT],
         'defLogConNum' => ['type'=>self::INT],
+
+
+        'cfgName' => ['type'=>self::STR],
+        'cfgLegendName' => ['type'=>self::STR],
+        'cfgDesc' => ['type'=>self::STR],
     );
 
     protected $getField = array(
@@ -1249,6 +1255,20 @@ class UnitManager extends eController
                     ->add_dict($item)
                     ->out('centerConfig',$this->className);
             }
+        }
+    }
+
+    /**
+     * показать форму, для набива менюх
+     */
+    public function actionGetFormCfg(){
+        if(!empty($_POST) && !empty($_POST['cfgName'])){
+
+            Tools::debug($_POST);
+        }
+        else{
+            $this->view
+                ->out('main','configAdder');
         }
     }
     //endregion

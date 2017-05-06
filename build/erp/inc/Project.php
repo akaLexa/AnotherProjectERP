@@ -8,13 +8,14 @@
  **/
 namespace build\erp\inc;
 
+use build\erp\inc\interfaces\iConfigurable;
 use mwce\Tools\Configs;
 use mwce\db\Connect;
 use mwce\Tools\Date;
 use mwce\Exceptions\DBException;
 use mwce\Models\Model;
 
-class Project extends Model
+class Project extends Model implements iConfigurable
 {
     /**
      * конфиг проекта
@@ -319,5 +320,42 @@ SELECT col_projectID,1,NOW(),NOW(),NOW(),DATE_ADD(NOW(), INTERVAL 1 DAY),'Исп
         catch (DBException $e){
             return false;
         }
+    }
+
+    /**
+     * массив для генерации выпадающего списка
+     * [
+     *  [1] => позиция 1
+     *  [2] => позиция 2
+     * ]
+     * @return array
+     */
+    public static function getSelectList()
+    {
+        return self::getStagesList();
+    }
+
+    /**
+     * массив для генерации списка, где можно
+     * выбрать несколько значений
+     * [
+     *   [0]=>['id' => 1,'item' => 'Позиция 1'],
+     *   [1]=>['id' => 2,'item' => 'Позиция 2'],
+     * ]
+     * @return mixed
+     */
+    public static function getMultiSelectList()
+    {
+        $_ = self::getStagesList();
+        $return = [];
+
+        foreach ($_ as $id => $stage){
+            $return[] = array(
+                'id' => $id,
+                'item' => $stage
+            );
+        }
+
+        return $return;
     }
 }

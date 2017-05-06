@@ -23,6 +23,13 @@ class mConfigurator extends Model
     private static $curNamesDic = array();
     private static $curDescDic = array();
 
+    public static $avaliableCfgTypeList = array(
+        1 => 'Пользователь',
+        2 => 'Стадии',
+        3 => 'Список да/нет',
+        4 => 'Текст/Цифры',
+    );
+
     /**
      * @param null $params
      * @return array|mConfigurator
@@ -47,6 +54,13 @@ class mConfigurator extends Model
             }
         }
         return $configs;
+    }
+
+    public static function addNewCfg($name,$legend,$desc){
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR;
+        if(file_exists($path.$name.'cfg')){
+            return ['error'=>'Название файла не подх'];
+        }
     }
 
     /**

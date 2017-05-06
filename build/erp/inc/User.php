@@ -7,11 +7,12 @@
  * Пользователи системы
  **/
 namespace build\erp\inc;
+use build\erp\inc\interfaces\iConfigurable;
 use mwce\db\Connect;
 use mwce\Tools\Date;
 use mwce\Models\Model;
 
-class User extends Model
+class User extends Model implements iConfigurable
 {
     /**
      * @param null|array $params
@@ -262,5 +263,42 @@ ORDER by tu.col_Sername");
                 break;
         }
         parent::_adding($name, $value);
+    }
+
+    /**
+     * массив для генерации выпадающего списка
+     * [
+     *  [1] => позиция 1
+     *  [2] => позиция 2
+     * ]
+     * @return array
+     */
+    public static function getSelectList()
+    {
+        return self::getUserList();
+    }
+
+    /**
+     * массив для генерации списка, где можно
+     * выбрать несколько значений
+     * [
+     *   [0]=>['id' => 1,'item' => 'Позиция 1'],
+     *   [1]=>['id' => 2,'item' => 'Позиция 2'],
+     * ]
+     * @return mixed
+     */
+    public static function getMultiSelectList()
+    {
+        $_ = self::getUserList();
+        $return = [];
+
+        foreach ($_ as $id => $user){
+            $return[] = array(
+                'id' => $id,
+                'item' => $user
+            );
+        }
+
+        return $return;
     }
 }
