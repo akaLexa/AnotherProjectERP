@@ -1270,6 +1270,12 @@ class UnitManager extends eController
                 ->out('main','configAdder');
         }
     }
+
+    public function actionDelCfg(){
+        if(!empty($_POST['cfgName'])){
+            echo json_encode(mConfigurator::deleteCfg($_POST['cfgName']));
+        }
+    }
     //endregion
 }
 //TODO: разбить на классы

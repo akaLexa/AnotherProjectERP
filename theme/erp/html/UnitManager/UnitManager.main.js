@@ -1087,6 +1087,41 @@ function addNewCfg() {
         }
     });
 }
+function delCfg(name){
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы дейсвтительно хотите удалить файл конфигураций?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelCfg',
+                    type:'POST',
+                    data:'cfgName='+name,
+                    callback:function (r) {
+                        try{
+                            var rec = JSON.parse(r);
+                            if(rec['error'] != undefined){
+                                mwce_alert(rec['error'],'Внимание!');
+                            }
+                            else{
+                                mwce_confirm.close();
+                                genTabContent('Configurator');
+                            }
+                        }
+                        catch (e){
+                            mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                            console.log(e.message);
+                        }
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    })
+}
 
 $(document).ready(function(){
     genTabContent('Group');

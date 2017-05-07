@@ -60,7 +60,7 @@ class mConfigurator extends Model
      * создание файла конфигурации
      * @param string $name
      * @param string|null $legend
-     * @param string|null $desc
+     * @param string|null $descr
      * @return array
      */
     public static function addNewCfg($name,$legend,$descr){
@@ -74,13 +74,33 @@ class mConfigurator extends Model
 
         if(!is_null($legend) && !empty($legend)){
             $names = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_names.php');
-            $names->add2Dic($name,$legend);
+            $names->add2Dic($legend,$name);
         }
         if(!is_null($descr) && !empty($descr)) {
             $desc = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_desc.php');
-            $desc->add2Dic($name,$descr);
+            $desc->add2Dic($descr,$name);
         }
         return ['state'=>1];
+    }
+
+    /**
+     * удалить конфиг
+     * @param string $name
+     * @return array
+     */
+    public static function deleteCfg($name){
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR;
+        if(file_exists($path.$name.'.cfg')){
+            unlink($path.$name.'.cfg');
+            $names = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_names.php');
+            $names->delFromDic($name);
+
+            $desc = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_desc.php');
+            $desc->delFromDic($name);
+            return ['state'=>1];
+        }
+        else
+            return ['error'=>'конфига не существует'];
     }
 
     /**

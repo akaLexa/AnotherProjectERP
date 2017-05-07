@@ -113,4 +113,23 @@ class DicBuilder
         return $preffix . $i;
 
     }
+
+    /**
+     * удалить
+     * @param string|mixed $id
+     * @return bool
+     */
+    public function delFromDic($id){
+        if(!file_exists($this->location))
+            return false;
+
+        $container = include $this->location;
+
+        if(!empty($container[$id])){
+            unset($container[$id]);
+            self::buildDic($container);
+            return true;
+        }
+        return false;
+    }
 }
