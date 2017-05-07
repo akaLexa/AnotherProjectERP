@@ -1052,9 +1052,21 @@ function addNewCfg() {
                         address:'|site|page/|currentPage|/GetFormCfg',
                         type:'POST',
                         data:$('#cfgAdder').serialize(),
-                        callback:function () {
-                            $('#forDialogs').dialog('close');
-                            genTabContent('Configurator');
+                        callback:function (r) {
+                            try{
+                                var rec = JSON.parse(r);
+                                if(rec['error'] != undefined){
+                                    mwce_alert(rec['error'],'Внимание!');
+                                }
+                                else{
+                                    $('#forDialogs').dialog('close');
+                                    genTabContent('Configurator');
+                                }
+                            }
+                            catch (e){
+                                mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                                console.log(e.message);
+                            }
                         }
                     });
                 }

@@ -1263,8 +1263,7 @@ class UnitManager extends eController
      */
     public function actionGetFormCfg(){
         if(!empty($_POST) && !empty($_POST['cfgName'])){
-
-            Tools::debug($_POST);
+            echo json_encode(mConfigurator::addNewCfg($_POST['cfgName'],(!empty($_POST['cfgLegendName']) ? $_POST['cfgLegendName'] : null),(!empty($_POST['cfgDesc']) ? $_POST['cfgDesc'] : null)));
         }
         else{
             $this->view

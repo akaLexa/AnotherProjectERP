@@ -91,9 +91,14 @@ class DicBuilder
             return false;
 
         $container = include $this->location;
+
+        if(empty($container)){
+            $container = [];
+        }
+
         $i=0;
 
-        if (!empty($container[$preffix]) || $isIterate) {
+        if (empty($container) || empty($container[$preffix]) || $isIterate) {
             $container[$preffix] = $value;
             self::buildDic($container);
             return $preffix;

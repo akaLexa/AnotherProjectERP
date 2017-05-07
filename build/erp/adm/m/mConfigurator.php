@@ -56,11 +56,31 @@ class mConfigurator extends Model
         return $configs;
     }
 
-    public static function addNewCfg($name,$legend,$desc){
+    /**
+     * создание файла конфигурации
+     * @param string $name
+     * @param string|null $legend
+     * @param string|null $desc
+     * @return array
+     */
+    public static function addNewCfg($name,$legend,$descr){
         $path = baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR;
-        if(file_exists($path.$name.'cfg')){
-            return ['error'=>'Название файла не подх'];
+        if(file_exists($path.$name.'.cfg')){
+            return ['error'=>'Название файла уже используется.'];
         }
+
+        $fH = fopen($path . $name .'.cfg','w');
+        fclose($fH);
+
+        if(!is_null($legend) && !empty($legend)){
+            $names = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_names.php');
+            $names->add2Dic($name,$legend);
+        }
+        if(!is_null($descr) && !empty($descr)) {
+            $desc = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_desc.php');
+            $desc->add2Dic($name,$descr);
+        }
+        return ['state'=>1];
     }
 
     /**
