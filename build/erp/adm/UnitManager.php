@@ -76,6 +76,7 @@ class UnitManager extends eController
 
     protected $getField = array(
         'id' => ['type' => self::INT],
+        'cfgName' => ['type' => self::STR],
     );
 
     private $state = array(
@@ -1274,6 +1275,30 @@ class UnitManager extends eController
     public function actionDelCfg(){
         if(!empty($_POST['cfgName'])){
             echo json_encode(mConfigurator::deleteCfg($_POST['cfgName']));
+        }
+    }
+
+    public function actionCfgStruct(){
+        if(!empty($_GET['cfgName'])){
+            $cfg = mConfigurator::getCurModel($_GET['cfgName']);
+            if(!empty($cfg)){
+                $types = mConfigurator::$avaliableCfgTypeList;
+
+                self::actionCfgStructList();
+
+                $this->view
+                    ->setFContainer('cfgStrctContent',true)
+                    ->set('typeList',html::select($types,'cfg_type_1',4,['class'=>'form-control inlineBlock']))
+                    ->out('structMain','configAdder');
+            }
+            else
+                echo json_encode(['error'=>'Такого файла конфигурации нет']);
+        }
+    }
+
+    public function actionCfgStructList(){
+        if(!empty($_GET['cfgName'])){
+            $this->view->out('structEmpty','configAdder');
         }
     }
     //endregion

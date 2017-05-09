@@ -1122,7 +1122,50 @@ function delCfg(name){
         }
     })
 }
+function editStruct(cfgName) {
+    $('<div/>').dialog({
+        title:'Редактирование структуры ' + cfgName + '.cfg',
+        modal:true,
+        resizable:false,
+        width:500,
+        heght:500,
+        buttons:{
+            'Добавить':function () {
 
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        position:{
+            my:'center',
+            at:'top'
+        },
+        open:function () {
+            var obj = this;
+            genIn({
+                noresponse:true,
+                address:'|site|page/|currentPage|/CfgStruct?cfgName='+cfgName,
+                before:function () {
+                    obj.innerHTML = 'Загрузка...';
+                },
+                callback:function (r) {
+                    try{
+                        var rec = JSON.parse(r);
+                        if(rec['error'] != undefined)
+                            mwce_alert(rec['error'],'Внимание!');
+                    }
+                    catch (e){
+                        obj.innerHTML = r;
+                    }
+                }
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
 $(document).ready(function(){
     genTabContent('Group');
 });
