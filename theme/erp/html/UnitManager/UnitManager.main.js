@@ -1122,6 +1122,44 @@ function delCfg(name){
         }
     })
 }
+
+function deleteStructCfg(cfgName,paramName){
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы дейсвтительно хотите удалить данную настройку?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelCfgStruct?cfgName='+cfgName+'&pName='+paramName,
+                    callback:function (r) {
+                        try{
+                            var rec = JSON.parse(r);
+                            if(rec['error'] != undefined){
+                                mwce_alert(rec['error'],'Внимание!');
+                            }
+                            else{
+                                genIn({
+                                    element:'structList',
+                                    address:'|site|page/|currentPage|/CfgStructList?cfgName='+cfgName,
+                                    loadicon:'Загружаю...'
+                                });
+                                mwce_confirm.close();
+                            }
+                        }
+                        catch (e){
+                            mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                            console.log(e.message);
+                        }
+                    }
+                });
+            },
+            'Нет':function () {
+                mwce_confirm.close();
+            }
+        }
+    })
+}
 function editStruct(cfgName) {
     $('<div/>').dialog({
         title:'Редактирование структуры ' + cfgName + '.cfg',
@@ -1131,7 +1169,29 @@ function editStruct(cfgName) {
         heght:500,
         buttons:{
             'Добавить':function () {
-
+                if(document.querySelector('#cfg_name_1').value.trim().length>0
+                && document.querySelector('#cfg_type_1').value>0
+                ){
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/AddCfgStructParams?cfgName='+cfgName,
+                        type:'POST',
+                        data:$("#adderForm").serialize(),
+                        callback:function () {
+                            document.querySelector('#cfg_name_1').value ='';
+                            document.querySelector('#cfg_legend_1').value ='';
+                            document.querySelector('#cfg_desc_1').value ='';
+                            genIn({
+                                element:'structList',
+                                address:'|site|page/|currentPage|/CfgStructList?cfgName='+cfgName,
+                                loadicon:'Загружаю...'
+                            });
+                        }
+                    })
+                }
+                else{
+                    mwce_alert('Не заполнено поле с названием переменной','Внимание!');
+                }
             },
             'Закрыть':function () {
                 $(this).dialog('close');

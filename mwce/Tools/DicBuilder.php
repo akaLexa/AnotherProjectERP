@@ -29,6 +29,8 @@ class DicBuilder
     public function __construct($location = null)
     {
         $this->location = $location;
+        if(!file_exists($location) && !is_null($location))
+            self::writeThis('<?php');
     }
 
     /**
@@ -37,14 +39,16 @@ class DicBuilder
      */
     public function buildDic($array, $location = null)
     {
-        if (!is_null($location))
-            $this->location = $location;
 
-        $content = '<?php return [';
+        if (!is_null($location)){
+            $this->location = $location;
+        }
+
+        $content = '<?php return ['.PHP_EOL;
         $ai = new \ArrayIterator($array);
 
         foreach ($ai as $id => $value) {
-            $content .= '"' . $id . '"=>"' . $value . '",';
+            $content .= '\'' . $id . '\' => \'' . $value . '\','.PHP_EOL;
         }
 
         $content .= '];';
@@ -55,10 +59,14 @@ class DicBuilder
     /**
      * запись словаря
      * @param string $content
+     * @throws \Exception
      */
     private function writeThis($content)
     {
-        file_put_contents($this->location, $content, LOCK_EX);
+        if(!is_null($this->location))
+            file_put_contents($this->location, $content, LOCK_EX);
+        else
+            throw new \Exception('location parameter is empty!');
     }
 
     /**
@@ -92,7 +100,7 @@ class DicBuilder
 
         $container = include $this->location;
 
-        if(empty($container)){
+        if(empty($container) || !is_array($container)){
             $container = [];
         }
 

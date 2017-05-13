@@ -1,3 +1,7 @@
 .tabIn{
     padding: 20px;
 }
+
+.cfgStructCenter:hover {
+    background-color: rgba(159,149,255,0.08);
+}

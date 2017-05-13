@@ -68,15 +68,20 @@ class UnitManager extends eController
         'defConNum' => ['type'=>self::INT],
         'defLogConNum' => ['type'=>self::INT],
 
-
         'cfgName' => ['type'=>self::STR],
         'cfgLegendName' => ['type'=>self::STR],
         'cfgDesc' => ['type'=>self::STR],
+
+        'cfg_name_1' => ['type'=>self::STR],
+        'cfg_legend_1' => ['type'=>self::STR],
+        'cfg_type_1' => ['type'=>self::INT],
+        'cfg_desc_1' => ['type'=>self::STR],
     );
 
     protected $getField = array(
         'id' => ['type' => self::INT],
         'cfgName' => ['type' => self::STR],
+        'pName' => ['type' => self::STR],
     );
 
     private $state = array(
@@ -1296,9 +1301,62 @@ class UnitManager extends eController
         }
     }
 
+    /**
+     * структура текущего конфига
+     */
     public function actionCfgStructList(){
         if(!empty($_GET['cfgName'])){
-            $this->view->out('structEmpty','configAdder');
+            $cfg = mConfigurator::getCurModel($_GET['cfgName']);
+            $params = $cfg->getParams();
+
+            if(empty($params))
+                $this->view->out('structEmpty','configAdder');
+            else{
+                foreach ($params as $item){
+                    $key = array_keys($item)[0];
+                    //Tools::debug($key);
+                    $this->view
+                        ->set($item[$key])
+                        ->set('vlName',$key)
+                        ->set('cfgName',$_GET['cfgName'])
+                        ->out('structCenter','configAdder');
+                }
+            }
+        }
+    }
+
+    /**
+     * добавление структуры в конфиг
+     */
+    public function actionAddCfgStructParams(){
+        if(!empty($_GET['cfgName']) && !empty($_POST['cfg_name_1'])&& !empty($_POST['cfg_type_1'])){
+            $cfg = mConfigurator::getCurModel($_GET['cfgName']);
+            if(empty($cfg)){
+                echo json_encode(['error'=>'Не существующий конфиг']);
+            }
+            else{
+                $cfg->addNewParameter([
+                    'name' => $_POST['cfg_name_1'],
+                    'legend' => (!empty($_POST['cfg_legend_1']) ? $_POST['cfg_legend_1'] : null),
+                    'type' => $_POST['cfg_type_1'],
+                    'desc' => (!empty($_POST['cfg_desc_1']) ? $_POST['cfg_desc_1'] : null),
+                    'value' => 1
+                ]);
+                echo json_encode(['state'=>1]);
+            }
+        }
+    }
+
+    public function actionDelCfgStruct(){
+        if(!empty($_GET['cfgName']) && !empty($_GET['pName'])){
+            $cfg = mConfigurator::getCurModel($_GET['cfgName']);
+            if(empty($cfg)){
+                echo json_encode(['error'=>'Не существующий конфиг']);
+            }
+            else{
+                $cfg->deleteParam($_GET['pName']);
+                echo json_encode(['state'=>1]);
+            }
         }
     }
     //endregion

@@ -7,10 +7,11 @@
  * настройки
  **/
 namespace build\erp\adm\m;
+use build\erp\inc\Project;
+use build\erp\inc\User;
 use mwce\Models\Model;
 use mwce\Tools\Configs;
 use mwce\Tools\DicBuilder;
-
 
 class mConfigurator extends Model
 {
@@ -22,13 +23,57 @@ class mConfigurator extends Model
 
     private static $curNamesDic = array();
     private static $curDescDic = array();
+    private static $curDataLists = array();
 
     public static $avaliableCfgTypeList = array(
         1 => 'Пользователь',
+        11 => 'Пользователь мультивыбор',
         2 => 'Стадии',
+        22 => 'Стадии мультивыбор',
         3 => 'Список да/нет',
         4 => 'Текст/Цифры',
     );
+
+    /**
+     * @param int $type
+     * @return array|mixed
+     */
+    public static function getCurDataType($type){
+        switch ($type){
+            case 1:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = User::getSelectList();
+                }
+                break;
+            case 11:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = User::getMultiSelectList();
+                }
+                break;
+            case 2:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = Project::getSelectList();
+                }
+                break;
+            case 22:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = Project::getMultiSelectList();
+                }
+                break;
+            case 3:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = [0=>'Нет',1=>'Да'];
+                }
+                break;
+            case 4:
+                self::$curDataLists[$type] = '';
+                break;
+            default:
+                return [];
+        }
+
+        return self::$curDataLists[$type];
+    }
 
     /**
      * @param null $params
@@ -97,6 +142,11 @@ class mConfigurator extends Model
 
             $desc = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_desc.php');
             $desc->delFromDic($name);
+
+            if(file_exists(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$name.'.php')){
+                unlink(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$name.'.php');
+            }
+
             return ['state'=>1];
         }
         else
@@ -123,6 +173,84 @@ class mConfigurator extends Model
             }
         }
         return [];
+    }
+
+    /**
+     * чтение параметров конфига
+     * @return array|bool
+     */
+    public function getParams(){
+        $cfg = Configs::readCfg($this['name'],Configs::currentBuild());
+        if (empty($cfg))
+            return [];
+
+        $dictionary = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$this['name'].'.php');
+        $array = [];
+        foreach ($cfg as $cID => $cVal){
+            if(strstr($cID,'_s_cfg') === false){
+                $typeNum = (int)$cfg[$cID.'_s_cfg'];
+                $array[]= array(
+                    $cID =>[
+                        'value' => $cVal,
+                        'typeData' => self::getCurDataType(!empty($typeNum) ? $typeNum : 4),
+                        'typeNum' => $typeNum,
+                        'legend' => (!empty($dictionary[$cID]) ? $dictionary[$cID] : ''),
+                        'desc' => (!empty($dictionary[$cID.'_desc']) ? $dictionary[$cID.'_desc'] : ''),
+                        'typeLegend' => (!empty(self::$avaliableCfgTypeList[$typeNum]) ? self::$avaliableCfgTypeList[$typeNum] : '?'),
+                    ]
+                );
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function deleteParam($name){
+        $cfg = Configs::readCfg($this['name'],Configs::currentBuild());
+        $dictionary = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$this['name'].'.php');
+
+        if(!empty($cfg[$name])){
+            unset($cfg[$name]);
+
+            if(!empty($cfg[$name.'_s_cfg']))
+                unset($cfg[$name.'_s_cfg']);
+
+            if(!empty($dictionary[$name]))
+                unset($dictionary[$name]);
+
+            if(!empty($dictionary[$name.'_desc']))
+                unset($dictionary[$name.'_desc']);
+
+            $db = new DicBuilder();
+            $db->buildDic($dictionary,baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$this['name'].'.php');
+            Configs::writeCfg($cfg,$this['name'],Configs::currentBuild());
+        }
+    }
+
+    /**
+     * добавление структуры конфигурации
+     * @param array $param
+     */
+    public function addNewParameter($param){
+
+        $curCfg = Configs::readCfg($this['name'],Configs::currentBuild());
+        $curCfg[$param['name']] = $param['value'];
+        $curCfg[$param['name'].'_s_cfg'] = $param['type'];
+        Configs::writeCfg($curCfg,$this['name'],Configs::currentBuild());
+
+        $dictionary = new DicBuilder(baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'cfg_'.$this['name'].'.php');
+
+        if(!is_null($param['legend'])){
+            $dictionary->add2Dic($param['legend'],$param['name']);
+        }
+
+        if(!is_null($param['desc'])){
+            $dictionary->add2Dic($param['desc'],$param['name'].'_desc');
+        }
+
     }
 
     protected function _adding($name, $value)

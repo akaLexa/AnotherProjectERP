@@ -70,13 +70,8 @@ class Configs
      */
     public static function readCfg($cname,$build = "default")
     {
-        if($build!="main")
-            $configDir = baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.$build.DIRECTORY_SEPARATOR."configs";
-        else
-            $configDir = baseDir.DIRECTORY_SEPARATOR."configs";
+        $path = baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . $build . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . "$cname.cfg";
 
-        $path = "$configDir".DIRECTORY_SEPARATOR."$cname.cfg";
-        
         if (file_exists($path))
         {
             return unserialize(trim(file_get_contents($path)));
