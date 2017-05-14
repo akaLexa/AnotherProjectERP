@@ -12,6 +12,7 @@ use build\erp\inc\User;
 use mwce\Models\Model;
 use mwce\Tools\Configs;
 use mwce\Tools\DicBuilder;
+use mwce\Tools\Tools;
 
 class mConfigurator extends Model
 {
@@ -220,6 +221,7 @@ class mConfigurator extends Model
     public function setParams($params){
         $cfg = Configs::readCfg($this['name'],Configs::currentBuild());
         $isNewCfg = false;
+        $newCfg = [];
 
         if(empty($cfg)){
             $cfg = [];
@@ -229,16 +231,40 @@ class mConfigurator extends Model
         foreach ($params as $paramName => $paramValue){
             if(isset($cfg[$paramName]) || $isNewCfg){
 
-                $cfg[$paramName] = $paramValue;
+                $newCfg[$paramName] = $paramValue;
 
                 if(!isset($cfg[$paramName.'_s_cfg']))
-                    $cfg[$paramName.'_s_cfg'] = 4;
+                    $newCfg[$paramName.'_s_cfg'] = 4;
+                else
+                    $newCfg[$paramName.'_s_cfg'] = $cfg[$paramName.'_s_cfg'];
 
+                unset($params[$paramName]);
             }
         }
 
-        if(!empty($cfg))
-            Configs::writeCfg($cfg,$this['name'],Configs::currentBuild());
+        if(!empty($params)){
+
+            foreach ($params as $paramName => $paramValue) {
+                foreach ($cfg as $cfgID => $cfgName) {
+
+                    if (strpos($paramName, $cfgID) === 0 && strpos($cfgID,'_s_cfg') === false) {
+
+                        if(empty($newCfg[$cfgID]))
+                            $newCfg[$cfgID] = $paramValue;
+                        else
+                            $newCfg[$cfgID] .= ','.$paramValue;
+
+                        if(!isset($cfg[$cfgID.'_s_cfg']))
+                            $newCfg[$cfgID.'_s_cfg'] = 4;
+                        else
+                            $newCfg[$cfgID.'_s_cfg'] = $cfg[$cfgID.'_s_cfg'];
+                    }
+                }
+            }
+        }
+
+        if(!empty($newCfg))
+            Configs::writeCfg($newCfg,$this['name'],Configs::currentBuild());
 
     }
 

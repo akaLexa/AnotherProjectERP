@@ -1210,6 +1210,9 @@ class UnitManager extends eController
             ->out('Configurator',$this->className);
     }
 
+    /**
+     * общий список конфигов
+     */
     public function actionGetCfgList(){
         $list = mConfigurator::getModels();
         if(empty($list)){
@@ -1237,12 +1240,18 @@ class UnitManager extends eController
         }
     }
 
+    /**
+     * удалить конфиг
+     */
     public function actionDelCfg(){
         if(!empty($_POST['cfgName'])){
             echo json_encode(mConfigurator::deleteCfg($_POST['cfgName']));
         }
     }
 
+    /**
+     * структура выборанного коифига. главная форма
+     */
     public function actionCfgStruct(){
         if(!empty($_GET['cfgName'])){
             $cfg = mConfigurator::getCurModel($_GET['cfgName']);
@@ -1355,7 +1364,38 @@ class UnitManager extends eController
                                     break;
                                 case 11:
                                 case 22:
+                                    if(!empty($cfgContent[$i]['typeData'])){
+                                        $selected = explode(',',$cfgContent[$i]['value']);
+                                        $checked = [];
+                                        $j=0;
+                                        foreach ($cfgContent[$i]['typeData'] as $id_ => $vals){
+                                            //$checked[$j] = $vals;
+                                            if(in_array($vals['id'],$selected)){
+                                                $checked[$j]['isChecked'] = true;
+                                            }
 
+                                            if(!empty($vals['item'])){
+                                                $checked[$j]['legend'] = $vals['item'];
+                                            }
+
+                                            $checked[$j]['value'] = $vals['id'];
+
+                                            $checked[$j]['params'] = [
+                                                'id' =>$key.'_'.$vals['id'],
+                                                'name' =>$key.'_'.$vals['id'],
+                                            ];
+                                            $checked[$j]['span'] =[
+                                                'style' => 'display:inline-block; width:150px;',
+                                            ];
+
+                                            $checked[$j]['label'] =[
+                                                'style' => 'display:block; width:auto;font-weight:normal;',
+                                            ];
+                                            $j++;
+                                        }
+
+                                        $cfgContent[$i]['element'] = '<div style="height:120px; width:auto; overflow-y:auto;">'.html::checkBoxGroup($checked).'</div>';
+                                    }
                                     break;
 
                                 case 3:
@@ -1381,6 +1421,7 @@ class UnitManager extends eController
                     foreach ($_POST as $pID => $pVal){
                         $params[self::paramsControl($pID,self::STR)] = self::paramsControl($pVal,self::STR);
                     }
+
                     if(!empty($params)){
                         $cfg->setParams($params);
                     }

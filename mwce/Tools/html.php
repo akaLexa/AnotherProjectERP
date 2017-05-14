@@ -52,34 +52,75 @@ class html
     }
 
     /**
-     *
-     * @param array $collect:
-     * [0] запись перед чекбоксом
-     * [1] имя = id
-     * [2] значение
-     * [3] функции js
-     * [4] нажат? (1/0)
-     * [5] css класс
-     * @return string сгенерированный html код
+     * Группа чекбоксов
+     * @param array $chArray массив со значениями
+     * [0] => [
+     *    [value] = ... ,
+     *    [isChecked] = true/false,
+     *    [legend] = ... ,
+     *    [params] = array|string - css,js, html атрибуты для каждого checkBox
+     *    [span] = array|string - css,js, html атрибуты для каждого span
+     * ]
+     * @return string html code
      */
-    public static function checkbox($collect)
-    {
-        $return = "";
-        foreach ($collect as $array)
-        {
-            if (isset($array[4]) && $array[4]>0)
-                $array[4]="CHECKED";
-            else
-                $array[4]="";
-            if(!isset($array[3]))
-                $array[3] = "";
-            if(!isset($array[5]))
-                $array[5] = "";
+    public static function checkBoxGroup($chArray){
+        $html = '';
+        if(!empty($chArray)){
+            foreach ($chArray as $checkBox){
+                $html .= '<label';
+                if(!empty($checkBox['label'])){
+                    if(is_array($checkBox['label'])){
+                        foreach ($checkBox['label'] as $name=>$var){
+                            $html .= " $name = \"$var\"";
+                        }
+                    }
+                    else
+                        $html .= $checkBox['label'];
+                }
 
-            $return.= " $array[0] <input type='checkbox' name='$array[1]' id='$array[1]' value='$array[2]' $array[3]  $array[4] class='$array[5]'>";
+                $html .= ' >';
+
+                if(!empty($checkBox['legend'])){
+                    $html .= '<span ';
+                    if(!empty($checkBox['span'])){
+                        if(is_array($checkBox['span'])){
+                            foreach ($checkBox['span'] as $name=>$var){
+                                $html .= " $name = \"$var\"";
+                            }
+                        }
+                        else
+                            $html .= $checkBox['span'];
+                    }
+
+                    $html .= '>'.$checkBox['legend'].'</span>';
+                }
+
+                $html .= '<input type="checkbox" ';
+
+                if(isset($checkBox['value'])){
+                    $html .= ' value="'.$checkBox['value'].'" ';
+                }
+
+                if(!empty($checkBox['isChecked']) && $checkBox['isChecked'] === true){
+                    $html .= ' checked ';
+                }
+
+                if(!empty($checkBox['span'])){
+                    if(is_array($checkBox['params'])){
+                        foreach ($checkBox['params'] as $name=>$var){
+                            $html .= " $name = \"$var\"";
+                        }
+                    }
+                    else
+                        $html .= $checkBox['params'];
+                }
+
+                $html .= ' >';
+
+                $html .= '</label>';
+            }
         }
-
-        return $return;
+        return $html;
     }
 
     /**

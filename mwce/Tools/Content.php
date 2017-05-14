@@ -535,7 +535,7 @@ class Content
                 foreach ($row as $key => $val) {
                     if (is_array($val) || is_object($val)) {
                         $pair = $this->loops($key, $val, $match[1]);
-                        if (!empty($pair)) {
+                        if (!empty($pair) && is_array($pair)) {
                             $temp = array_merge($temp, $pair);
                         }
 
