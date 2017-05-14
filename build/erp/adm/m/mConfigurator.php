@@ -7,7 +7,9 @@
  * настройки
  **/
 namespace build\erp\adm\m;
+use build\erp\inc\LangList;
 use build\erp\inc\Project;
+use build\erp\inc\ThemeList;
 use build\erp\inc\User;
 use mwce\Models\Model;
 use mwce\Tools\Configs;
@@ -36,6 +38,10 @@ class mConfigurator extends Model
         22 => 'Стадии мультивыбор',
         3 => 'Список да/нет',
         4 => 'Текст/Цифры',
+        5 => 'Список языков',
+        55 => 'Список языков мультивыбор',
+        6 => 'Список тем',
+        66 => 'Список тем мультивыбор',
     );
 
     /**
@@ -71,6 +77,26 @@ class mConfigurator extends Model
                 break;
             case 4:
                 self::$curDataLists[$type] = '';
+                break;
+            case 5:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = LangList::getSelectList();
+                }
+                break;
+            case 55:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = LangList::getMultiSelectList();
+                }
+                break;
+            case 6:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = ThemeList::getSelectList();
+                }
+                break;
+            case 66:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = ThemeList::getMultiSelectList();
+                }
                 break;
             default:
                 return [];
@@ -222,6 +248,7 @@ class mConfigurator extends Model
         $cfg = Configs::readCfg($this['name'],Configs::currentBuild());
         $isNewCfg = false;
         $newCfg = [];
+        $checkedCfg = [];
 
         if(empty($cfg)){
             $cfg = [];
@@ -238,18 +265,22 @@ class mConfigurator extends Model
                 else
                     $newCfg[$paramName.'_s_cfg'] = $cfg[$paramName.'_s_cfg'];
 
+                $checkedCfg[] = $paramName;
+
                 unset($params[$paramName]);
             }
         }
 
+        //мультивыбор, если есть
         if(!empty($params)){
-
             foreach ($params as $paramName => $paramValue) {
                 foreach ($cfg as $cfgID => $cfgName) {
+                    if(in_array($cfgID,$checkedCfg))
+                        continue;
 
                     if (strpos($paramName, $cfgID) === 0 && strpos($cfgID,'_s_cfg') === false) {
 
-                        if(empty($newCfg[$cfgID]))
+                        if(!isset($newCfg[$cfgID]))
                             $newCfg[$cfgID] = $paramValue;
                         else
                             $newCfg[$cfgID] .= ','.$paramValue;
@@ -258,7 +289,22 @@ class mConfigurator extends Model
                             $newCfg[$cfgID.'_s_cfg'] = 4;
                         else
                             $newCfg[$cfgID.'_s_cfg'] = $cfg[$cfgID.'_s_cfg'];
+
+                        unset($params[$paramName]);
                     }
+                }
+            }
+        }
+
+        // если есть пустые значения
+        if(count($cfg) != count($newCfg)){
+            foreach ($cfg as $cfgID => $cfgName) {
+                if(!isset($newCfg[$cfgID])){
+                    if(strstr($cfgID,'_s_cfg') === false) {
+                        $newCfg[$cfgID] = 0;
+                    }
+                    else
+                        $newCfg[$cfgID] = $cfgName;
                 }
             }
         }

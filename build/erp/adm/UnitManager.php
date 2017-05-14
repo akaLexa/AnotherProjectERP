@@ -1360,16 +1360,20 @@ class UnitManager extends eController
                             switch ($cfgContent[$i]['typeNum']){
                                 case 1:
                                 case 2:
+                                case 5:
+                                case 6:
                                     $cfgContent[$i]['element'] = html::select($cfgContent[$i]['typeData'],$key,$cfgContent[$i]['value'],'class="form-control inlineBlock" style="width:300px;"');
                                     break;
                                 case 11:
                                 case 22:
+                                case 55:
+                                case 66:
                                     if(!empty($cfgContent[$i]['typeData'])){
                                         $selected = explode(',',$cfgContent[$i]['value']);
                                         $checked = [];
                                         $j=0;
                                         foreach ($cfgContent[$i]['typeData'] as $id_ => $vals){
-                                            //$checked[$j] = $vals;
+
                                             if(in_array($vals['id'],$selected)){
                                                 $checked[$j]['isChecked'] = true;
                                             }
