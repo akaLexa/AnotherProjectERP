@@ -1166,7 +1166,6 @@ function editStruct(cfgName) {
         modal:true,
         resizable:false,
         width:500,
-        heght:500,
         buttons:{
             'Добавить':function () {
                 if(document.querySelector('#cfg_name_1').value.trim().length>0
@@ -1206,6 +1205,59 @@ function editStruct(cfgName) {
             genIn({
                 noresponse:true,
                 address:'|site|page/|currentPage|/CfgStruct?cfgName='+cfgName,
+                before:function () {
+                    obj.innerHTML = 'Загрузка...';
+                },
+                callback:function (r) {
+                    try{
+                        var rec = JSON.parse(r);
+                        if(rec['error'] != undefined)
+                            mwce_alert(rec['error'],'Внимание!');
+                    }
+                    catch (e){
+                        obj.innerHTML = r;
+                    }
+                }
+            })
+        },
+        close:function () {
+            $(this).dialog('destroy');
+        }
+    });
+}
+function editCfg(cfgName) {
+    $('<div/>').dialog({
+        title:'Редактирование фонфигурации ' + cfgName + '.cfg',
+        modal:true,
+        resizable:false,
+        width:700,
+        buttons:{
+            'Сохранить':function () {
+                var o = this;
+                    genIn({
+                        noresponse:true,
+                        address:'|site|page/|currentPage|/EditCfg?cfgName='+cfgName,
+                        type:'POST',
+                        data:$("#cfgEditForm").serialize(),
+                        callback:function () {
+                            $(o).dialog('close');
+                        }
+                    })
+
+            },
+            'Закрыть':function () {
+                $(this).dialog('close');
+            }
+        },
+        position:{
+            my:'center',
+            at:'top'
+        },
+        open:function () {
+            var obj = this;
+            genIn({
+                noresponse:true,
+                address:'|site|page/|currentPage|/EditCfg?cfgName='+cfgName,
                 before:function () {
                     obj.innerHTML = 'Загрузка...';
                 },

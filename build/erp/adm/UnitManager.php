@@ -1201,46 +1201,6 @@ class UnitManager extends eController
     }
     //endregion
 
-    //region главный конфиг
-    public function actionGetMainCfg(){
-        $cfg = Configs::readCfg('main',Configs::globalCfg('defaultBuild'));
-        $lang = DicBuilder::getLang(baseDir.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.Configs::globalCfg('defaultBuild').DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.Configs::buildCfg('dlang').DIRECTORY_SEPARATOR.'cfg_main.php');
-
-        if(!empty($_POST))
-        {
-            $toWrite = array();
-            foreach ($cfg as $_id=>$value){
-                if(!empty($_POST[$_id]))
-                    $toWrite[$_id] = $_POST[$_id];
-                else
-                    $toWrite[$_id] = $cfg[$_id];
-            }
-
-            if(!empty($toWrite))
-                Configs::writeCfg($toWrite,'main',Configs::globalCfg('defaultBuild'));
-
-        }
-        else{
-            if(!empty($cfg)){
-                foreach ($cfg as $_name => $_item) {
-                    $this->view
-                        ->set([
-                            'paramLegend' => !empty($lang[$_name]) ? $lang[$_name] : $_name,
-                            'paramName' => $_name,
-                            'paramValue' => $_item,
-                        ])
-                        ->out('MainCfgCenter',$this->className);
-                }
-
-                $this->view
-                    ->setFContainer('MainCfgTable',true)
-                    ->out('MainCfg',$this->className);
-            }
-        }
-
-    }
-    //endregion
-
     //region Настройки
     public function actionGetConfigurator(){
         self::actionGetCfgList();
@@ -1347,6 +1307,9 @@ class UnitManager extends eController
         }
     }
 
+    /**
+     * удалить параметр из конфига
+     */
     public function actionDelCfgStruct(){
         if(!empty($_GET['cfgName']) && !empty($_GET['pName'])){
             $cfg = mConfigurator::getCurModel($_GET['cfgName']);
@@ -1356,6 +1319,72 @@ class UnitManager extends eController
             else{
                 $cfg->deleteParam($_GET['pName']);
                 echo json_encode(['state'=>1]);
+            }
+        }
+    }
+
+    /**
+     * форма редактирования/редактирование конфига
+     */
+    public function actionEditCfg(){
+        if(!empty($_GET['cfgName'])){
+            $cfg = mConfigurator::getCurModel($_GET['cfgName']);
+            if(empty($cfg)){
+                echo json_encode(['error'=>'Не существующий конфиг']);
+            }
+            else{
+                if(empty($_POST)){
+                    $params = $cfg->getParams();
+
+                    if(empty($params))
+                        $this->view->out('structEmpty','configAdder');
+                    else{
+                        $cfgContent = [];
+                        $i = 0;
+                        foreach ($params as $item){
+
+                            $key = array_keys($item)[0];
+
+                            $cfgContent[$i]= $item[$key];
+                            $cfgContent[$i]['pID'] = $key;
+
+                            switch ($cfgContent[$i]['typeNum']){
+                                case 1:
+                                case 2:
+                                    $cfgContent[$i]['element'] = html::select($cfgContent[$i]['typeData'],$key,$cfgContent[$i]['value'],'class="form-control inlineBlock" style="width:300px;"');
+                                    break;
+                                case 11:
+                                case 22:
+
+                                    break;
+
+                                case 3:
+                                    $cfgContent[$i]['element'] = html::select([0=>'Нет',1=>'Да'],$key,$cfgContent[$i]['value'],'class="form-control inlineBlock" style="width:300px;"');
+                                    break;
+                                case 4:
+                                    $cfgContent[$i]['element'] = "<input type='text' name='$key' id ='$key' value='{$cfgContent[$i]['value']}' class='form-control inlineBlock' style='width:300px;'";
+                                    break;
+                            }
+
+                            $i++;
+                        }
+
+                        if(!empty($cfgContent)){
+                            $this->view
+                                ->loops('cfgContent',$cfgContent,'cfgEditForm','configAdder')
+                                ->out('cfgEditForm','configAdder');
+                        }
+                    }
+                }
+                else{
+                    $params = [];
+                    foreach ($_POST as $pID => $pVal){
+                        $params[self::paramsControl($pID,self::STR)] = self::paramsControl($pVal,self::STR);
+                    }
+                    if(!empty($params)){
+                        $cfg->setParams($params);
+                    }
+                }
             }
         }
     }

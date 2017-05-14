@@ -16,9 +16,12 @@ use mwce\Tools\DicBuilder;
 class mConfigurator extends Model
 {
     protected static $ignoredCfgs = array(
-        'main',
         'plugin_mainMenu',
         'project',
+    );
+
+    public static $notDelete = array(
+        'main',
     );
 
     private static $curNamesDic = array();
@@ -134,6 +137,11 @@ class mConfigurator extends Model
      * @return array
      */
     public static function deleteCfg($name){
+
+        if(in_array($name,self::$notDelete)){
+            return ['error'=>'Этот файл конфигурации не может быть удален'];
+        }
+
         $path = baseDir . DIRECTORY_SEPARATOR . 'build'. DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR;
         if(file_exists($path.$name.'.cfg')){
             unlink($path.$name.'.cfg');
@@ -188,7 +196,7 @@ class mConfigurator extends Model
         $array = [];
         foreach ($cfg as $cID => $cVal){
             if(strstr($cID,'_s_cfg') === false){
-                $typeNum = (int)$cfg[$cID.'_s_cfg'];
+                $typeNum = !empty($cfg[$cID.'_s_cfg']) ? (int)$cfg[$cID.'_s_cfg'] : 4;
                 $array[]= array(
                     $cID =>[
                         'value' => $cVal,
@@ -203,6 +211,35 @@ class mConfigurator extends Model
         }
 
         return $array;
+    }
+
+    /**
+     * сохранение конфига
+     * @param array $params
+     */
+    public function setParams($params){
+        $cfg = Configs::readCfg($this['name'],Configs::currentBuild());
+        $isNewCfg = false;
+
+        if(empty($cfg)){
+            $cfg = [];
+            $isNewCfg = true;
+        }
+
+        foreach ($params as $paramName => $paramValue){
+            if(isset($cfg[$paramName]) || $isNewCfg){
+
+                $cfg[$paramName] = $paramValue;
+
+                if(!isset($cfg[$paramName.'_s_cfg']))
+                    $cfg[$paramName.'_s_cfg'] = 4;
+
+            }
+        }
+
+        if(!empty($cfg))
+            Configs::writeCfg($cfg,$this['name'],Configs::currentBuild());
+
     }
 
     /**
