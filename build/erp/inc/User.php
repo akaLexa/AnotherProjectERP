@@ -104,7 +104,7 @@ AND tu.col_uID = $id")->fetch(static::class);
             $db = Connect::start();
             $roles = array();
             if($grpID < 1)
-                $query = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName");
+                $query = $db->query("SELECT * FROM tbl_user_roles ORDER BY col_roleName"); //todo: есть похожая функция в UserRoleList подумать, как убрать дублирование кода. и нужно ли.
             else
                 $query = $db->query("SELECT 
   tur.* 

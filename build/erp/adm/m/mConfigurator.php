@@ -11,6 +11,8 @@ use build\erp\inc\LangList;
 use build\erp\inc\Project;
 use build\erp\inc\ThemeList;
 use build\erp\inc\User;
+use build\erp\inc\UserGroupList;
+use build\erp\inc\UserRoleList;
 use mwce\Models\Model;
 use mwce\Tools\Configs;
 use mwce\Tools\DicBuilder;
@@ -42,6 +44,10 @@ class mConfigurator extends Model
         55 => 'Список языков мультивыбор',
         6 => 'Список тем',
         66 => 'Список тем мультивыбор',
+        7 => 'Список ролей пользователя',
+        77 => 'Список ролей пользователя мультивыбор',
+        8 => 'Список групп пользователя',
+        88 => 'Список групп пользователя мультивыбор',
     );
 
     /**
@@ -96,6 +102,26 @@ class mConfigurator extends Model
             case 66:
                 if(empty(self::$curDataLists[$type])){
                     self::$curDataLists[$type] = ThemeList::getMultiSelectList();
+                }
+                break;
+            case 7:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = UserRoleList::getSelectList();
+                }
+                break;
+            case 77:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = UserRoleList::getMultiSelectList();
+                }
+                break;
+            case 8:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = UserGroupList::getSelectList();
+                }
+                break;
+            case 88:
+                if(empty(self::$curDataLists[$type])){
+                    self::$curDataLists[$type] = UserGroupList::getMultiSelectList();
                 }
                 break;
             default:

@@ -1283,7 +1283,9 @@ class UnitManager extends eController
             else{
                 foreach ($params as $item){
                     $key = array_keys($item)[0];
-                    //Tools::debug($key);
+
+                    unset($item[$key]['typeData']);
+
                     $this->view
                         ->set($item[$key])
                         ->set('vlName',$key)
@@ -1362,12 +1364,16 @@ class UnitManager extends eController
                                 case 2:
                                 case 5:
                                 case 6:
+                                case 7:
+                                case 8:
                                     $cfgContent[$i]['element'] = html::select($cfgContent[$i]['typeData'],$key,$cfgContent[$i]['value'],'class="form-control inlineBlock" style="width:300px;"');
                                     break;
                                 case 11:
                                 case 22:
                                 case 55:
                                 case 66:
+                                case 77:
+                                case 88:
                                     if(!empty($cfgContent[$i]['typeData'])){
                                         $selected = explode(',',$cfgContent[$i]['value']);
                                         $checked = [];
