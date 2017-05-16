@@ -239,33 +239,31 @@ class install extends iController
         if(!$notOne)
         {
             $content .= '0=>[ ' . PHP_EOL;
-            $content .= '"server"=>"' . $array['server'] . '", ' . PHP_EOL;
-            $content .= '"db"=>"' . $array['db'] . '", ' . PHP_EOL;
-            $content .= '"user"=>"' . $array['user'] . '", ' . PHP_EOL;
-            $content .= '"password"=>"' . $array['password'] . '", ' . PHP_EOL;
-            $content .= '"type"=>' . $array['type'] . ', ' . PHP_EOL;
+            $content .= '\'server\' => \'' . $array['server'] . '\', ' . PHP_EOL;
+            $content .= '\'db\' => \'' . $array['db'] . '\', ' . PHP_EOL;
+            $content .= '\'user\' => \'' . $array['user'] . '\', ' . PHP_EOL;
+            $content .= '\'password\' => \'' . $array['password'] . '\', ' . PHP_EOL;
+            $content .= '\'type\' => ' . $array['type'] . ', ' . PHP_EOL;
             $content .= '],';
         }
         else
         {
             foreach ($array as $name=>$vals){
                 if(is_numeric($name))
-                    $content .= $name.'=>[ ' . PHP_EOL;
+                    $content .= $name.' => [ ' . PHP_EOL;
                 else
-                    $content .= '"'.$name.'"=>[ ' . PHP_EOL;
+                    $content .= '\''.$name.'\' => [ ' . PHP_EOL;
 
-                $content .= '"server"=>"' . $vals['server'] . '", ' . PHP_EOL;
-                $content .= '"db"=>"' . $vals['db'] . '", ' . PHP_EOL;
-                $content .= '"user"=>"' . $vals['user'] . '", ' . PHP_EOL;
-                $content .= '"password"=>"' . $vals['password'] . '", ' . PHP_EOL;
-                $content .= '"type"=>' . $vals['type'] . ', ' . PHP_EOL;
+                $content .= '\'server\' => \'' . $vals['server'] . '\', ' . PHP_EOL;
+                $content .= '\'db\' => \'' . $vals['db'] . '\', ' . PHP_EOL;
+                $content .= '\'user\' => \'' . $vals['user'] . '\', ' . PHP_EOL;
+                $content .= '\'password\' => \'' . $vals['password'] . '\', ' . PHP_EOL;
+                $content .= '\'type\' =>' . $vals['type'] . ', ' . PHP_EOL;
                 $content .= '],';
             }
         }
 
-
         $content .= '];';
         file_put_contents(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . $build . DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'connections.php', $content, LOCK_EX);
-
     }
 }
