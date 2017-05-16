@@ -12,4 +12,5 @@ INSERT INTO tbl_modules VALUES
   (11, 'auto_title12', 'adm/Logs', 0, '1', 'Logs'),
   (12, 'auto_title13', 'reports/Reports', 0, '1', 'Reports'),
   (13, 'auto_title15', 'reports/TaskReport', 0, '1', 'TaskReport'),
-  (14, 'auto_title16', 'user/UserCart', 0, '1', 'UserCart');
+  (14, 'auto_title16', 'user/UserCart', 0, '1', 'UserCart'),
+  (15, 'auto_title14', 'user/ProjectStageReport', 0, '1', 'ProjectStageReport');

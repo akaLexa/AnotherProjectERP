@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="media" style="margin: 25px auto; width: 500px;">
+        <div class="media-left">
+            <img class="media-object" src="|site|theme/imgs/users/|imgNum|.png" alt="photo">
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">|col_Sername| |col_Name| |col_Lastname|</h4>
+            <h4><small>|col_gName| : |col_roleName|</small></h4>
+            <h5><small>Работает с: |col_regDateLegend|</small></h5>
+            <h5 style="|vizDepStyle|"><small style="color: orange;">Замещается: <a href="|site|page/UserCart.html?user=|col_deputyID|" target="_blank">|col_deputy|</a></small></h5>
+        </div>
+    </div>
+</div>
+
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+        <a href="#tab_main" id="GetMain" aria-controls="tab_content" role="tab" data-toggle="tab">Основные</a>
+    </li>
+    <li role="presentation">
+        <a href="#tab_notice" aria-controls="tab_content" id="GetNotice" role="tab" data-toggle="tab">Оповещения в системе</a>
+    </li>
+    <li role="presentation">
+        <a href="#tab_mailer" aria-controls="tab_content" id="GetMailer" role="tab" data-toggle="tab">Рассылка на почту</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active tabIn" id="tab_content" style="padding: 10px;"></div>
+</div>

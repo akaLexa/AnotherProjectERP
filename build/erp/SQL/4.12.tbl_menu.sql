@@ -9,4 +9,5 @@ INSERT INTO tbl_menu VALUES
   (8, 'auto_title9', 3, 'page/EventJournal.html', 'EventJournal', 0),
   (9, 'auto_title10', 4, 'page/tasks.html', 'tasks', 0),
   (10, 'auto_title12', 1, 'page/Logs.html', 'Logs', 5),
-  (11, 'auto_title13', 2, 'page/Reports.html', 'Reports', 4);
+  (11, 'auto_title13', 2, 'page/Reports.html', 'Reports', 4),
+  (11, 'auto_title', 2, 'page/UserArea.html', 'UserArea', 99);

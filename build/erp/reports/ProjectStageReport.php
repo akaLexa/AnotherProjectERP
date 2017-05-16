@@ -12,7 +12,6 @@ use build\erp\inc\Project;
 use build\erp\inc\User;
 use build\erp\reports\m\mProjectStageReport;
 use mwce\Tools\html;
-use mwce\Tools\Tools;
 
 class ProjectStageReport extends eController
 {
