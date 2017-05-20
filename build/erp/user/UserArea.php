@@ -12,10 +12,15 @@ use build\erp\inc\eController;
 use build\erp\inc\User;
 use build\erp\user\m\mUserArea;
 use mwce\Tools\Configs;
+use mwce\Tools\html;
 use mwce\Tools\Tools;
 
 class UserArea extends eController
 {
+    protected $postField = array(
+        'depUser' => ['type'=>self::INT],
+    );
+
     public function actionIndex()
     {
         $obj = User::getCurModel(Configs::userID());
@@ -47,11 +52,25 @@ class UserArea extends eController
     }
 
     public function actionGetMain(){
-        if(empty($_POST)){
-            $this->view
-                ->out('tabMain',$this->className);
-        }
+        $obj = User::getCurModel(Configs::userID());
+        if(!empty($obj)) {
+            if (empty($_POST)) {
+                $userList = User::getUserList();
+                unset($userList[Configs::userID()]);
+                $userList[-1] = 'Не замещается';
 
+                $this->view
+                    ->set('userList',
+                        html::select($userList, 'depUser', (!empty($obj['col_deputyID']) ? $obj['col_deputyID'] : -1), [
+                            'class' => 'form-control inlineBlock',
+                            'style' => 'width:300px;',
+                            'onChange' => 'ChooseDep()',
+                        ]))
+                    ->out('tabMain', $this->className);
+            } else if (!empty($_POST['depUser'])) {
+                $obj->setDep($_POST['depUser']);
+            }
+        }
     }
 
     public function actionGetNotice(){

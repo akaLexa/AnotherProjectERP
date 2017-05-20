@@ -301,4 +301,14 @@ ORDER by tu.col_Sername");
 
         return $return;
     }
+
+    /**
+     * включить режим замещения на пользователя $depID
+     * @param int $depID
+     */
+    public function setDep($depID){
+        if ($depID == -1)
+            $depID = 'null';
+        $this->db->exec("UPDATE tbl_user SET col_deputyID = $depID, col_StartDep = NOW() WHERE col_uID =".$this['col_uID']);
+    }
 }

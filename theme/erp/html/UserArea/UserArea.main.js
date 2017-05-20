@@ -44,3 +44,26 @@ function deleteImg() {
         }
     });
 }
+
+function ChooseDep() {
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы уверены, что хотите изменить режим замещения?',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/GetMain',
+                    type:'POST',
+                    data:'depUser='+document.querySelector('#depUser').value,
+                    callback:function () {
+                        window.location.reload();
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close()
+            }
+        }
+    });
+}
