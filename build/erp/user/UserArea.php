@@ -10,7 +10,9 @@
 namespace build\erp\user;
 use build\erp\inc\eController;
 use build\erp\inc\User;
+use build\erp\user\m\mUserArea;
 use mwce\Tools\Configs;
+use mwce\Tools\Tools;
 
 class UserArea extends eController
 {
@@ -19,14 +21,27 @@ class UserArea extends eController
         $obj = User::getCurModel(Configs::userID());
         if(!empty($obj)) {
 
-            if(empty($obj['col_deputyID']))
-                $this->view->set('vizDepStyle','display:none');
+            if(empty($_POST)){
+                if(empty($obj['col_deputyID']))
+                    $this->view->set('vizDepStyle','display:none');
 
-            $this->view
-                ->set('imgNum',
-                    (file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'imgs' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . Configs::userID() . '.png') ? Configs::userID() : 'default'))
-                ->add_dict($obj)
-                ->out('main', $this->className);
+                $this->view
+                    ->set('imgNum',
+                        (file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'imgs' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . Configs::userID() . '.png') ? Configs::userID() : 'default'))
+                    ->add_dict($obj)
+                    ->out('main', $this->className);
+            }
+            else if (!empty($_POST['ismainTab']) && !empty($_FILES['avatarsImg'])){
+                try{
+                    mUserArea::DownloadAvatar('avatarsImg',Configs::userID());
+                    Tools::go();
+                }
+                catch (\Exception $e){
+                    $this->view->error($e);
+                }
+
+            }
+
         }
 
     }
@@ -36,13 +51,20 @@ class UserArea extends eController
             $this->view
                 ->out('tabMain',$this->className);
         }
+
     }
 
     public function actionGetNotice(){
-        echo 'notice';
+        echo 'Under construction!';
+        //echo 'notice';
     }
 
     public function actionGetMailer(){
-        echo 'mail';
+        echo 'Under construction!';
+        //echo 'mail';
+    }
+
+    public function actionDelPhoto(){
+        mUserArea::delPhoto(Configs::userID());
     }
 }

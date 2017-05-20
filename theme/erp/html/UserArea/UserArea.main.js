@@ -23,3 +23,24 @@ function genTabContent(tab) {
         }
     });
 }
+
+function deleteImg() {
+    mwce_confirm({
+        title:'Требуется подтверждение',
+        text:'Вы действительно хотите удалить свою фотографию? Внимание, удалить фото по умолчанию не удастся!',
+        buttons:{
+            'Да':function () {
+                genIn({
+                    noresponse:true,
+                    address:'|site|page/|currentPage|/DelPhoto',
+                    callback:function () {
+                        window.location.reload();
+                    }
+                })
+            },
+            'Нет':function () {
+                mwce_confirm.close()
+            }
+        }
+    });
+}

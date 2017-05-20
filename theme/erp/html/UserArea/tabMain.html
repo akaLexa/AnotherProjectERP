@@ -1,10 +1,11 @@
-<form method="post" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data">
 <table class="table table-hover" style="width: 60%;margin: 15px auto;">
     <tr>
         <td style="vertical-align: middle;" rowspan="2">Загрузить фото</td>
         <td>
             <input type="file" name="avatarsImg" class="btn btn-default">
         </td>
+        <input type="hidden" style="display: none;" name="ismainTab" value="1">
     </tr>
     <tr>
         <td>
@@ -12,6 +13,7 @@
                 <li>Изображение должно быть в формате *.png.</li>
                 <li>Размером не более 100 х 100 px.</li>
             </ul>
+            <button type="button" class="btn btn-default" onclick="deleteImg();">Удалить фото</button>
         </td>
     </tr>
     <tr>
@@ -19,7 +21,7 @@
         <td>< ... ></td>
     </tr>
     <tr>
-        <td colspan="2" style="text-align: center;"><button class="btn btn-default">Сохранить</button></td>
+        <td colspan="2" style="text-align: center;"><button class="btn btn-default" type="submit">Сохранить</button></td>
     </tr>
 </table>
 </form>
