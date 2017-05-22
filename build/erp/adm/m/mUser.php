@@ -37,6 +37,6 @@ class mUser extends User
             $bdate = '';
         }
 
-        $this->db->exec("UPDATE tbl_user SET col_Name='{$params['name']}',col_Sername ='{$params['surname']}',col_Lastname='{$params['lastname']}',col_login='{$params['login']}',{$params['pwd']} col_roleID = {$params['role']},col_isBaned = {$params['block']} {$bdate} WHERE col_uID = {$this['col_uID']}");
+        $this->db->exec("UPDATE tbl_user SET col_Name='{$params['name']}',col_Sername ='{$params['surname']}',col_Lastname='{$params['lastname']}',col_login='{$params['login']}',{$params['pwd']} col_roleID = {$params['role']},col_isBaned = {$params['block']},col_privatePhone={$params['privatePhone']},col_privateMail={$params['privateMail']},col_workMail={$params['workMail']},col_workPhone={$params['workPhone']}  {$bdate} WHERE col_uID = {$this['col_uID']}");
     }
 }

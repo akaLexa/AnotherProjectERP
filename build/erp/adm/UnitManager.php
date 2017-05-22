@@ -76,6 +76,12 @@ class UnitManager extends eController
         'cfg_legend_1' => ['type'=>self::STR],
         'cfg_type_1' => ['type'=>self::INT],
         'cfg_desc_1' => ['type'=>self::STR],
+
+
+        'privatePhone' => ['type'=>self::STR],
+        'workPhone' => ['type'=>self::STR],
+        'privateMail' => ['type'=>self::STR],
+        'workMail' => ['type'=>self::STR],
     );
 
     protected $getField = array(
@@ -1180,6 +1186,11 @@ class UnitManager extends eController
 
                 $params['role'] = $_POST['uAddRoleList'];
                 $params['block'] = $_POST['uBlockList'];
+
+                $params['privatePhone'] = !empty($_POST['privatePhone']) ? "'{$_POST['privatePhone']}'" : 'NULL';
+                $params['workPhone'] = !empty($_POST['workPhone']) ? "'{$_POST['workPhone']}'" : 'NULL';
+                $params['privateMail'] = !empty($_POST['privateMail']) ? "'{$_POST['privateMail']}'" : 'NULL';
+                $params['workMail'] = !empty($_POST['workMail']) ? "'{$_POST['workMail']}'" : 'NULL';
 
                 $info->editUser($params);
 
