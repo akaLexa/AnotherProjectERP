@@ -12,6 +12,7 @@ use build\erp\inc\eController;
 use build\erp\inc\UserGroupList;
 use build\erp\inc\UserRoleList;
 use build\erp\user\m\mUserHB;
+use mwce\Tools\Configs;
 use mwce\Tools\html;
 
 
@@ -57,7 +58,20 @@ class UserHB extends eController
 
         $list = mUserHB::getModels($params);
         if(!empty($list)){
+
+            $seePhone = in_array(Configs::curGroup(),$this->configs['allowPhoneGrp']) ? true : false;
+            $seeMail = in_array(Configs::curGroup(),$this->configs['allowMailGrp']) ? true : false;
+
             foreach ($list as $item) {
+
+                if($item['col_uID'] != Configs::userID()){
+                    if(!$seePhone)
+                        $item['col_privatePhone'] = '-';
+
+                    if(!$seeMail)
+                        $item['col_privateMail'] = '-';
+                }
+
                 $this->view
                     ->add_dict($item)
                     ->out('center',$this->className);
