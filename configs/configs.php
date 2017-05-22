@@ -1,1 +1,5 @@
-<?php return ["defaultBuild"=>"install","defaultConNum"=>"0","errorLevel"=>"1",];
+<?php return [
+'defaultBuild' => 'erp',
+'defaultConNum' => '0',
+'errorLevel' => '1',
+];

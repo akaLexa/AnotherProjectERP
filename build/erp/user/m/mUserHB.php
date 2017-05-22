@@ -37,7 +37,7 @@ class mUserHB extends Model
   tu.col_Sername,
   tu.col_Lastname,
   tu.col_login,
-  tu.col_deputyID,
+  f_getUserFIO(tu.col_deputyID) AS col_depName,
   tu.col_workPhone,
   tu.col_workMail,
   tu.col_privatePhone,
@@ -77,6 +77,11 @@ WHERE
                     if(empty($value))
                         $value = $this['col_login'].'@'.$_SERVER['HTTP_HOST'];
                 }
+                break;
+            case 'col_depName':
+                if(!empty($value))
+                    $value = "(Замещается $value)";
+                break;
 
         }
         parent::_adding($name, $value);
