@@ -7,10 +7,14 @@ CREATE TABLE tbl_user (
   col_pwd varchar(255) DEFAULT NULL COMMENT 'пароль',
   col_roleID int(11) DEFAULT NULL COMMENT 'роль',
   col_isBaned char(1) DEFAULT '0' COMMENT 'забанен ли?',
-  col_deputyID int(11) DEFAULT NULL,
-  col_StartDep datetime DEFAULT NULL,
-  col_banDate datetime DEFAULT NULL,
-  col_regDate timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  col_deputyID int(11) DEFAULT NULL COMMENT 'кем замещается',
+  col_StartDep datetime DEFAULT NULL COMMENT 'дата начала замещения',
+  col_banDate datetime DEFAULT NULL COMMENT 'Дата блокировки',
+  col_regDate timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'дата создания учетки',
+  col_workPhone varchar(255) DEFAULT NULL,
+  col_privatePhone varchar(255) DEFAULT NULL,
+  col_workMail varchar(255) DEFAULT NULL,
+  col_privateMail varchar(255) DEFAULT NULL,
   PRIMARY KEY (col_uID),
   CONSTRAINT FK_tbl_user_col_roleID FOREIGN KEY (col_roleID)
   REFERENCES tbl_user_roles (col_roleID) ON DELETE NO ACTION ON UPDATE RESTRICT
