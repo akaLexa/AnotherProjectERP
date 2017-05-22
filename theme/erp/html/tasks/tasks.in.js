@@ -31,7 +31,7 @@ function inWactions(type) {
         var curDate = new Date();
         var TaskDate = new Date(document.querySelector('#endPlanTask').value);
         if(TaskDate.getTime() < curDate.getTime() && document.querySelector('#acceptReason').value.trim().length  == 0){
-            mwce_alert('Для завершения задачи необходимо ввести причину просрочки','Внимание!');
+            mwceAPI.alert('Для завершения задачи необходимо ввести причину просрочки','Внимание!');
         }
         else{
             document.querySelector('#actionTaskForm').submit();
@@ -40,7 +40,7 @@ function inWactions(type) {
     else if(type == 2)
     {
         if(document.querySelector('#acceptReason').value.trim().length  == 0){
-            mwce_alert('Чтобы отклонить задачу, требуется указать причину','Внимание!');
+            mwceAPI.alert('Чтобы отклонить задачу, требуется указать причину','Внимание!');
         }
         else{
             document.querySelector('#actionTaskForm').submit();
@@ -49,7 +49,7 @@ function inWactions(type) {
     else if(type == 99){
         $('#taskDiag').dialog({
             open:function () {
-                genIn({
+                mwceAPI.genIn({
                     element:'taskDiag',
                     address:'|site|page/|currentPage|/ReStart?id=|col_taskID|',
                     loadicon:'Загружаю...'
@@ -64,11 +64,11 @@ function inWactions(type) {
                     var inF = new Date(document.querySelector('#_finishTo').value + ' ' + document.querySelector('#_finishToTime').value);
 
                     if(now.getTime() >= inF.getTime()){
-                        mwce_alert('Дата звершения должна быть больше, чем сегодня','Внимание');
+                        mwceAPI.alert('Дата звершения должна быть больше, чем сегодня','Внимание');
                     }
                     else{
                         $('#taskDiag').dialog('close');
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/ReStart?id=|col_taskID|',
                             type:'POST',
@@ -110,7 +110,7 @@ function choseAction(type) {
     }
     else if (type == 9) {
 
-        mwce_confirm({
+        mwceAPI.confirm({
             title: 'Запрос на продление',
             text: '<div class="alert alert-danger" style="width: 80%;margin: 10px auto;"><b>Внимание!</b> Пока запрос не будет обработан, все последующие запросы будут проигнорированы. О результате запроса можно узнать из комментариев.</div><form id="toContinue"><input type="text" class="form-control inlineBlock" style="width:480px;" name="continueDesc" id="_continueDesc" placeholder="Причина продления"> <input type="date" name="dEnd" id="_dEnd" class="form-control inlineBlock"></form>',
             width: 700,
@@ -118,7 +118,7 @@ function choseAction(type) {
                 'Запросить': function () {
                     if (document.querySelector('#_continueDesc').value.trim().length > 0
                         && document.querySelector('#_dEnd').value != '') {
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse: true,
                             address: '|site|page/|currentPage|/BeContinue',
                             type: 'POST',
@@ -127,11 +127,11 @@ function choseAction(type) {
                                 try{
                                     var receive = JSON.parse(r);
                                     if(receive['error'] !== undefined){
-                                        mwce_alert(receive['error'],'Ошибка');
-                                        mwce_confirm.close();
+                                        mwceAPI.alert(receive['error'],'Ошибка');
+                                        mwceAPI.confirm.close();
                                     }
                                     else{
-                                        mwce_confirm.close();
+                                        mwceAPI.confirm.close();
                                         loadComments();
                                     }
                                 }
@@ -144,7 +144,7 @@ function choseAction(type) {
                     }
                 },
                 'Отмена': function () {
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             }
         });
@@ -154,7 +154,7 @@ function choseAction(type) {
 function sendMessage() {
     tinymce.triggerSave('#_taskComment');
     if(document.querySelector("#_taskComment").value.trim().length >0){
-        genIn({
+        mwceAPI.genIn({
             noresponse:true,
             address:'|site|page/|currentPage|/AddComment',
             type:'POST',
@@ -169,7 +169,7 @@ function sendMessage() {
 }
 
 function loadComments() {
-    genIn({
+    mwceAPI.genIn({
         element:'commentsList',
         address:'|site|page/|currentPage|/ShowComment?id=|col_taskID|',
         loadicon:'Загружаю...'

@@ -2,7 +2,7 @@
 var curPage;
 
 function filterTask() {
-    genIn({
+    mwceAPI.genIn({
         element:'TaskBody',
         address:'|site|page/|currentPage|/GetList',
         loadicon:'<tr><td colspan="8" style="text-align: center; color:green">Загружаюсь...</td></tr>',
@@ -28,7 +28,7 @@ function addTask() {
         width:600,
         resizable:false,
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'dialogBx',
                 address:'|site|page/|currentPage|/add'
             });
@@ -49,7 +49,7 @@ function addTask() {
                     && document.querySelector('#_endTime').value.trim().length > 0
                     && dn.getTime() < dw.getTime()
                 ){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/Add',
                         type:'POST',
@@ -58,7 +58,7 @@ function addTask() {
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                                 else {
                                     $('#dialogBx').dialog('close');
@@ -71,7 +71,7 @@ function addTask() {
                     });
                 }
                 else
-                    mwce_alert('Не заполнены важные параметры или выставлена неадекватная дата','Внимание');
+                    mwceAPI.alert('Не заполнены важные параметры или выставлена неадекватная дата','Внимание');
             },
             'Отмена':function () {
 
@@ -81,14 +81,14 @@ function addTask() {
 }
 
 function getCurator(unit) {
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/GetCurators?id='+unit,
         callback:function (r) {
             try{
                 var receive = JSON.parse(r);
                 if(receive['error'] != undefined){
-                    mwce_alert(receive['error'],'Внимание');
+                    mwceAPI.alert(receive['error'],'Внимание');
                     $('#tdResp1').empty();
                 }
             }
@@ -101,14 +101,14 @@ function getCurator(unit) {
 }
 
 function getResp(unit) {
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/GetResps?id='+unit,
         callback:function (r) {
             try{
                 var receive = JSON.parse(r);
                 if(receive['error'] != undefined){
-                    mwce_alert(receive['error'],'Внимание');
+                    mwceAPI.alert(receive['error'],'Внимание');
                     $('#tdResp').empty();
                 }
             }

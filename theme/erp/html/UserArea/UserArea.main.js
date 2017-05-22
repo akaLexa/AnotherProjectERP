@@ -14,7 +14,7 @@ $(document).ready(function () {
 function genTabContent(tab) {
 
     currentTab = tab;
-    genIn({
+    mwceAPI.genIn({
         element:'tab_content',//+currentTab.toLowerCase(),
         address:'|site|page/|currentPage|/'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
@@ -25,12 +25,12 @@ function genTabContent(tab) {
 }
 
 function deleteImg() {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы действительно хотите удалить свою фотографию? Внимание, удалить фото по умолчанию не удастся!',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelPhoto',
                     callback:function () {
@@ -39,19 +39,19 @@ function deleteImg() {
                 })
             },
             'Нет':function () {
-                mwce_confirm.close()
+                mwceAPI.confirm.close()
             }
         }
     });
 }
 
 function ChooseDep() {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы уверены, что хотите изменить режим замещения?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/GetMain',
                     type:'POST',
@@ -62,7 +62,7 @@ function ChooseDep() {
                 })
             },
             'Нет':function () {
-                mwce_confirm.close()
+                mwceAPI.confirm.close()
             }
         }
     });

@@ -2,7 +2,7 @@
 var inProcess = false;
 
 function chosenBuild() {
-    genIn({
+    mwceAPI.genIn({
         element:'buildParams',
         address:'|site|page/|currentPage|/GetBuildInfo',
         type:'POST',
@@ -12,7 +12,7 @@ function chosenBuild() {
 }
 function beginSetup() {
     if(!inProcess){
-        genIn({
+        mwceAPI.genIn({
             noresponse:true,
             address:'|site|page/|currentPage|/Setup',
             type:'POST',
@@ -27,14 +27,14 @@ function beginSetup() {
                 try{
                     var receive = JSON.parse(r);
                     if(receive['error']!=undefined)
-                        mwce_alert(receive['error'],'|lng_errTitle|');
+                        mwceAPI.alert(receive['error'],'|lng_errTitle|');
                     else if(receive['success'] != undefined){
                         document.querySelector('#resultSetup').innerHTML = '<b class="text-success">'+receive['success']+'</b>';
                         document.querySelector('#startInstallButton').disabled = true;
                     }
                 }
                 catch (e){
-                    mwce_alert('|lng_err5|','|lng_errTitle|');
+                    mwceAPI.alert('|lng_err5|','|lng_errTitle|');
                     console.error(e.message);
                 }
                 finally {
@@ -44,6 +44,6 @@ function beginSetup() {
         })
     }
     else
-        mwce_alert('|lng_toSlow|','|lng_errTitle|');
+        mwceAPI.alert('|lng_toSlow|','|lng_errTitle|');
 
 }

@@ -11,7 +11,7 @@ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
 function genTabContent(tab) {
 
     currentTab = tab;
-    genIn({
+    mwceAPI.genIn({
         element:'tab_content',//+currentTab.toLowerCase(),
         address:'|site|page/|currentPage|/Get'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
@@ -35,7 +35,7 @@ function groupEdit(id) {
                 text:'Сохранить',
                 click:function () {
                     if(document.querySelector('#GroupNameText').value.trim().length>0){
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/EditGroup?id='+id,
                             type:'POST',
@@ -43,7 +43,7 @@ function groupEdit(id) {
                             callback:function (r) {
                                 var receive = JSON.parse(r);
                                 if(receive.error != undefined){
-                                    mwce_alert(receive.error,'Ошибка..');
+                                    mwceAPI.alert(receive.error,'Ошибка..');
                                 }
                                 else{
                                     genTabContent('Group');
@@ -63,7 +63,7 @@ function groupEdit(id) {
             }
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditGroup?id='+id,
                 loadicon:'Загружаю...'
@@ -85,7 +85,7 @@ function add() {
                 text:'Добавить',
                 click:function () {
                     if(document.querySelector('#GroupNameText').value.trim().length>0){
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/GetGroup',
                             type:'POST',
@@ -93,7 +93,7 @@ function add() {
                             callback:function (r) {
                                 var receive = JSON.parse(r);
                                 if(receive.error != undefined){
-                                    mwce_alert(receive.error,'Ошибка..');
+                                    mwceAPI.alert(receive.error,'Ошибка..');
                                 }
                                 else{
                                     genTabContent('Group');
@@ -113,7 +113,7 @@ function add() {
             }
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddGroup',
                 loadicon:'Загружаю...'
@@ -125,14 +125,14 @@ function add() {
     })
 }
 function groupDel(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Подтверждение действия',
         text:'Внимание, чтобы удалить гуппу, сначала убедитесь, что к ней не привязаны роли и пользователи. Вы точно уверены, что хотите удалить группу?',
         buttons:{
             'Да':{
                 text:'Да',
                 click:function () {
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/DelGroup',
                         type:'POST',
@@ -140,64 +140,64 @@ function groupDel(id) {
                         callback:function (r) {
                             var receive = JSON.parse(r);
                             if(receive.error != undefined)
-                                mwce_alert(receive.error,'Внимание!');
+                                mwceAPI.alert(receive.error,'Внимание!');
                             else{
                                 genTabContent(currentTab);
                             }
                         }
                     });
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             },
             'Нет':{
                 text:'Нет',
                 click:function () {
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             }
         }
     })
 }
 function addSpecialProject(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Данная функция создаст проект для выбранной группы пользователей. Проект не может быть удален, но может быть завершен. Вы уверены?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/SetSpecProject?id='+id,
                     callback:function () {
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                         genTabContent('Group');
                     }
                 })
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     })
 }
 function setGroupFounder(group,founder) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы уверены?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/SetFounder?id='+group,
                     type:'POST',
                     data:'id='+founder,
                     callback:function () {
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                         genTabContent('Group');
                     }
                 })
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     })
@@ -214,7 +214,7 @@ function addRole() {
                 text:'Добавить',
                 click:function () {
                     if(document.querySelector('#roleNameText').value.trim().length>0){
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/AddRole',
                             type:'POST',
@@ -222,7 +222,7 @@ function addRole() {
                             callback:function (r) {
                                 var receive = JSON.parse(r);
                                 if(receive.error != undefined){
-                                    mwce_alert(receive.error,'Ошибка..');
+                                    mwceAPI.alert(receive.error,'Ошибка..');
                                 }
                                 else{
                                     genTabContent(currentTab);
@@ -242,7 +242,7 @@ function addRole() {
             }
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddRole',
                 loadicon:'Загружаю...'
@@ -263,7 +263,7 @@ function roleEdit(id) {
                 text:'Сохранить',
                 click:function () {
                     if(document.querySelector('#roleNameText').value.trim().length>0){
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/EditRole?id='+id,
                             type:'POST',
@@ -271,7 +271,7 @@ function roleEdit(id) {
                             callback:function (r) {
                                 var receive = JSON.parse(r);
                                 if(receive.error != undefined){
-                                    mwce_alert(receive.error,'Ошибка..');
+                                    mwceAPI.alert(receive.error,'Ошибка..');
                                 }
                                 else{
                                     genTabContent(currentTab);
@@ -291,7 +291,7 @@ function roleEdit(id) {
             }
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditRole?id='+id,
                 loadicon:'Загружаю...'
@@ -303,14 +303,14 @@ function roleEdit(id) {
     })
 }
 function roleDel(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Подтверждение действия',
         text:'Внимание, чтобы удалить роль, сначала убедитесь, что к ней не привязаны гуппы и пользователи. Вы точно уверены, что хотите удалить группу?',
         buttons:{
             'Да':{
                 text:'Да',
                 click:function () {
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/DelRole',
                         type:'POST',
@@ -318,19 +318,19 @@ function roleDel(id) {
                         callback:function (r) {
                             var receive = JSON.parse(r);
                             if(receive.error != undefined)
-                                mwce_alert(receive.error,'Внимание!');
+                                mwceAPI.alert(receive.error,'Внимание!');
                             else{
                                 genTabContent(currentTab);
                             }
                         }
                     });
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             },
             'Нет':{
                 text:'Нет',
                 click:function () {
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             }
         }
@@ -338,7 +338,7 @@ function roleDel(id) {
 }
 
 function moduleFiltr() {
-    genIn({
+    mwceAPI.genIn({
         element:'ModulesLists',
         address:'|site|page/|currentPage|/GetModuleList',
         type:'POST',
@@ -359,7 +359,7 @@ function addModule() {
             add:{
                 text:'Добавить',
                 click:function () {
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/AddModule',
                             type:'POST',
@@ -368,7 +368,7 @@ function addModule() {
                                 try{
                                     var receive = JSON.parse(r);
                                     if(receive.error != undefined){
-                                        mwce_alert(receive.error,'Ошибка..');
+                                        mwceAPI.alert(receive.error,'Ошибка..');
                                     }
                                     else{
                                         $('#forDialogs').dialog('close');
@@ -392,7 +392,7 @@ function addModule() {
             }
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddModule',
                 loadicon:'Загружаю...'
@@ -413,7 +413,7 @@ function editModule(id) {
             add:{
                 text:'Сохранить',
                 click:function () {
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/EditModule?id='+id,
                             type:'POST',
@@ -422,7 +422,7 @@ function editModule(id) {
                                 try{
                                     var receive = JSON.parse(r);
                                     if(receive.error != undefined){
-                                        mwce_alert(receive.error,'Ошибка..');
+                                        mwceAPI.alert(receive.error,'Ошибка..');
                                     }
                                     else{
                                         $('#forDialogs').dialog('close');
@@ -447,7 +447,7 @@ function editModule(id) {
 
         },
         create:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditModule?id='+id,
                 loadicon:'Загружаю...'
@@ -459,45 +459,45 @@ function editModule(id) {
     })
 }
 function delModule(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы действительно ходите удалить текущий модуль?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     element:'forDialogs',
                     address:'|site|page/|currentPage|/DelModule?id='+id,
                     callback:function () {
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                         moduleFiltr();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
 }
 function clearModuleCache() {
-    mwce_confirm({
+    mwceAPI.confirm({
         title: 'Очистка кеша модулей',
         text: 'Вы уверены что хотите очистить кеш модулей?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ClearModuleCache',
                     before:function () {
                         document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
                     },
                     callback:function () {
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 })
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -505,7 +505,7 @@ function clearModuleCache() {
 
 function addPlugin() {
     var cPlugin = document.querySelector('#unregPl').value;
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/PluginAdd',
         type:'POST',
@@ -514,7 +514,7 @@ function addPlugin() {
             try{
                 var receive = JSON.parse(r);
                 if(receive.error != undefined){
-                    mwce_alert(receive.error,'Ошибка..');
+                    mwceAPI.alert(receive.error,'Ошибка..');
                 }
                 else{
                     PluginsFilter();
@@ -531,7 +531,7 @@ function addPlugin() {
     })
 }
 function PluginsFilter() {
-    genIn({
+    mwceAPI.genIn({
         element:'pluginsBodyTable',
         address:'|site|page/|currentPage|/GetPluginList',
         type:'POST',
@@ -546,7 +546,7 @@ function editPlugin(id) {
         resizable:false,
         buttons:{
             'Сохранить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/EditPlugin?id='+id,
                     type:'POST',
@@ -555,7 +555,7 @@ function editPlugin(id) {
                         try{
                             var receive = JSON.parse(r);
                             if(receive.error != undefined){
-                                mwce_alert(receive.error,'Ошибка..');
+                                mwceAPI.alert(receive.error,'Ошибка..');
                             }
                             else{
                                 PluginsFilter();
@@ -571,22 +571,22 @@ function editPlugin(id) {
                 });
             },
             'Удалить':function () {
-                mwce_confirm({
+                mwceAPI.confirm({
                     title:'Требуется подтверждение',
                     text:'Вы действительно хотите удалить плагин?',
                     buttons:{
                         'Да':function () {
-                            genIn({
+                            mwceAPI.genIn({
                                 noresponse:true,
                                 address:'|site|page/|currentPage|/DelPlugin?id='+id,
                                 callback:function (r) {
                                     try{
                                         var receive = JSON.parse(r);
                                         if(receive.error != undefined){
-                                            mwce_alert(receive.error,'Ошибка..');
+                                            mwceAPI.alert(receive.error,'Ошибка..');
                                         }
                                         else{
-                                            mwce_confirm.close();
+                                            mwceAPI.confirm.close();
                                             PluginsFilter();
                                             $('#forDialogs').dialog('close');
                                         }
@@ -599,7 +599,7 @@ function editPlugin(id) {
                             });
                         },
                         'Нет':function () {
-                            mwce_confirm.close();
+                            mwceAPI.confirm.close();
                         }
                     }
                 });
@@ -612,7 +612,7 @@ function editPlugin(id) {
             $(this).dialog('destroy');
         },
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditPlugin?id='+id,
                 loadicon:'Загружаю...'
@@ -621,31 +621,31 @@ function editPlugin(id) {
     });
 }
 function clearPluginCache() {
-    mwce_confirm({
+    mwceAPI.confirm({
         title: 'Очистка кеша плагинов',
         text: 'Вы уверены что хотите очистить кеш плагинов?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ClearPluginCache',
                     before:function () {
                         document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
                     },
                     callback:function () {
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 })
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
 }
 
 function UserFilter() {
-    genIn({
+    mwceAPI.genIn({
         element:'UserFormContent',
         address:'|site|page/|currentPage|/GetUserList',
         type:'POST',
@@ -660,7 +660,7 @@ function AddUserForm() {
         resizable:false,
         width:600,
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddUser',
                 loadicon:'Загружаю...'
@@ -671,7 +671,7 @@ function AddUserForm() {
         },
         buttons:{
             'Добавить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/AddUser',
                     type:'POST',
@@ -680,7 +680,7 @@ function AddUserForm() {
                         try{
                             var receive = JSON.parse(r.trim());
                             if(receive['error']!= undefined){
-                                mwce_alert(receive['error'],'Ошибка');
+                                mwceAPI.alert(receive['error'],'Ошибка');
                             }
                             else{
                                 UserFilter();
@@ -707,7 +707,7 @@ function EditUser(uid) {
         resizable:false,
         width:600,
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditUser?id='+uid,
                 loadicon:'Загружаю...'
@@ -718,7 +718,7 @@ function EditUser(uid) {
         },
         buttons:{
             'Сохранить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/EditUser?id='+uid,
                     type:'POST',
@@ -727,7 +727,7 @@ function EditUser(uid) {
                         try{
                             var receive = JSON.parse(r.trim());
                             if(receive['error']!= undefined){
-                                mwce_alert(receive['error'],'Ошибка');
+                                mwceAPI.alert(receive['error'],'Ошибка');
                             }
                             else{
                                 UserFilter();
@@ -749,7 +749,7 @@ function EditUser(uid) {
 }
 
 function mfilter() {
-    genIn({
+    mwceAPI.genIn({
         element:'menu_Body',
         address:'|site|page/|currentPage|/GetMenuList',
         type:'POST',
@@ -768,7 +768,7 @@ function addNewMenu(){
         resizable:false,
         buttons:{
             'Добавить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/AddNewMenu',
                     type:'POST',
@@ -807,7 +807,7 @@ function AddInMenu() {
         resizable:false,
         buttons:{
             'Сохранить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/AddInMenu?id='+curMenu,
                     type:'POST',
@@ -826,7 +826,7 @@ function AddInMenu() {
             }
         },
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddInMenu?id='+curMenu,
                 loadicon:'Загружаю'
@@ -846,7 +846,7 @@ function EditInMenu(id) {
         resizable:false,
         buttons:{
             'Сохранить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/EditInMenu?id='+id,
                     type:'POST',
@@ -865,7 +865,7 @@ function EditInMenu(id) {
             }
         },
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/EditInMenu?id='+id,
                 loadicon:'Загружаю'
@@ -877,51 +877,51 @@ function EditInMenu(id) {
     });
 }
 function DelPosMenu(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы уверены, что хотите удалить текущее меню?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelPosMenu?id='+id,
                     callback:function (r){
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                         mfilter();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     })
 }
 function DelMenu() {
     var curMenu = document.querySelector('#menuList').value;
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы уверены, что хотите удалить позицию из меню?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelMenu?id='+curMenu,
                     callback:function (r){
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                         genTabContent('Menu');
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
 }
 function knowMenuSec() {
     var curMenu = document.querySelector('#menuList').value;
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:"|site|page/|currentPage|/MenuSeq?id="+curMenu,
         callback:function (r) {
@@ -933,7 +933,7 @@ function knowMenuSec() {
 }
 function setMenuSec() {
     var curMenu = document.querySelector('#menuList').value;
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:"|site|page/|currentPage|/MenuSeq?id="+curMenu,
         type:'POST',
@@ -950,7 +950,7 @@ function getAccess(){
         resizable:false,
         buttons:{
             'Сохранить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/GetMenuAccess?upd=1',
                     type:'POST',
@@ -968,7 +968,7 @@ function getAccess(){
             }
         },
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/GetMenuAccess',
                 type:'POST',
@@ -998,12 +998,12 @@ function getlink(){
     }
 }
 function menuRefresh() {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется принять решение',
         text:'Вы действительно хотите очистеть кеш меню?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ClearMenuCache',
                     type:'POST',
@@ -1011,12 +1011,12 @@ function menuRefresh() {
                        document.querySelector('#for_mwce_confirm').style.opacity = 0.3;
                     },
                     callback:function (){
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -1024,13 +1024,13 @@ function menuRefresh() {
 }
 
 function saveMainCfg() {
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/GetMainCfg',
         type:'POST',
         data:$('#MainCfgForm').serialize(),
         callback:function () {
-            mwce_alert('Сохранено','Сообщение');
+            mwceAPI.alert('Сохранено','Сообщение');
         }
     });
 }
@@ -1044,10 +1044,10 @@ function addNewCfg() {
         buttons:{
             'Добавить':function () {
                 if(document.querySelector('#cfgName_').value.trim().length<1){
-                    mwce_alert('Не заполнено служебное название конфига','Внимание!');
+                    mwceAPI.alert('Не заполнено служебное название конфига','Внимание!');
                 }
                 else{
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse: true,
                         address:'|site|page/|currentPage|/GetFormCfg',
                         type:'POST',
@@ -1056,7 +1056,7 @@ function addNewCfg() {
                             try{
                                 var rec = JSON.parse(r);
                                 if(rec['error'] != undefined){
-                                    mwce_alert(rec['error'],'Внимание!');
+                                    mwceAPI.alert(rec['error'],'Внимание!');
                                 }
                                 else{
                                     $('#forDialogs').dialog('close');
@@ -1064,7 +1064,7 @@ function addNewCfg() {
                                 }
                             }
                             catch (e){
-                                mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                                mwceAPI.alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
                                 console.log(e.message);
                             }
                         }
@@ -1076,7 +1076,7 @@ function addNewCfg() {
             }
         },
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/GetFormCfg',
                 loadicon:'Загрузка...'
@@ -1088,12 +1088,12 @@ function addNewCfg() {
     });
 }
 function delCfg(name){
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы дейсвтительно хотите удалить файл конфигураций?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelCfg',
                     type:'POST',
@@ -1102,60 +1102,60 @@ function delCfg(name){
                         try{
                             var rec = JSON.parse(r);
                             if(rec['error'] != undefined){
-                                mwce_alert(rec['error'],'Внимание!');
+                                mwceAPI.alert(rec['error'],'Внимание!');
                             }
                             else{
-                                mwce_confirm.close();
+                                mwceAPI.confirm.close();
                                 genTabContent('Configurator');
                             }
                         }
                         catch (e){
-                            mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                            mwceAPI.alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
                             console.log(e.message);
                         }
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     })
 }
 
 function deleteStructCfg(cfgName,paramName){
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется подтверждение',
         text:'Вы дейсвтительно хотите удалить данную настройку?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelCfgStruct?cfgName='+cfgName+'&pName='+paramName,
                     callback:function (r) {
                         try{
                             var rec = JSON.parse(r);
                             if(rec['error'] != undefined){
-                                mwce_alert(rec['error'],'Внимание!');
+                                mwceAPI.alert(rec['error'],'Внимание!');
                             }
                             else{
-                                genIn({
+                                mwceAPI.genIn({
                                     element:'structList',
                                     address:'|site|page/|currentPage|/CfgStructList?cfgName='+cfgName,
                                     loadicon:'Загружаю...'
                                 });
-                                mwce_confirm.close();
+                                mwceAPI.confirm.close();
                             }
                         }
                         catch (e){
-                            mwce_alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
+                            mwceAPI.alert('Произошла ошибка, пожалуйста, попробуйте еще раз','Внимание!');
                             console.log(e.message);
                         }
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     })
@@ -1171,7 +1171,7 @@ function editStruct(cfgName) {
                 if(document.querySelector('#cfg_name_1').value.trim().length>0
                 && document.querySelector('#cfg_type_1').value>0
                 ){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/AddCfgStructParams?cfgName='+cfgName,
                         type:'POST',
@@ -1180,7 +1180,7 @@ function editStruct(cfgName) {
                             document.querySelector('#cfg_name_1').value ='';
                             document.querySelector('#cfg_legend_1').value ='';
                             document.querySelector('#cfg_desc_1').value ='';
-                            genIn({
+                            mwceAPI.genIn({
                                 element:'structList',
                                 address:'|site|page/|currentPage|/CfgStructList?cfgName='+cfgName,
                                 loadicon:'Загружаю...'
@@ -1189,7 +1189,7 @@ function editStruct(cfgName) {
                     })
                 }
                 else{
-                    mwce_alert('Не заполнено поле с названием переменной','Внимание!');
+                    mwceAPI.alert('Не заполнено поле с названием переменной','Внимание!');
                 }
             },
             'Закрыть':function () {
@@ -1202,7 +1202,7 @@ function editStruct(cfgName) {
         },
         open:function () {
             var obj = this;
-            genIn({
+            mwceAPI.genIn({
                 noresponse:true,
                 address:'|site|page/|currentPage|/CfgStruct?cfgName='+cfgName,
                 before:function () {
@@ -1212,7 +1212,7 @@ function editStruct(cfgName) {
                     try{
                         var rec = JSON.parse(r);
                         if(rec['error'] != undefined)
-                            mwce_alert(rec['error'],'Внимание!');
+                            mwceAPI.alert(rec['error'],'Внимание!');
                     }
                     catch (e){
                         obj.innerHTML = r;
@@ -1234,7 +1234,7 @@ function editCfg(cfgName) {
         buttons:{
             'Сохранить':function () {
                 var o = this;
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/EditCfg?cfgName='+cfgName,
                         type:'POST',
@@ -1255,7 +1255,7 @@ function editCfg(cfgName) {
         },
         open:function () {
             var obj = this;
-            genIn({
+            mwceAPI.genIn({
                 noresponse:true,
                 address:'|site|page/|currentPage|/EditCfg?cfgName='+cfgName,
                 before:function () {
@@ -1265,7 +1265,7 @@ function editCfg(cfgName) {
                     try{
                         var rec = JSON.parse(r);
                         if(rec['error'] != undefined)
-                            mwce_alert(rec['error'],'Внимание!');
+                            mwceAPI.alert(rec['error'],'Внимание!');
                     }
                     catch (e){
                         obj.innerHTML = r;

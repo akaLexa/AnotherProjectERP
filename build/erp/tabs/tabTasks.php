@@ -163,8 +163,8 @@ class tabTasks extends AProjectTabs
             $groups[0] = '...';
 
             $this->view
-                ->set('groupList',html::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=1&group=\'+this.value})"'))
-                ->set('groupList1',html::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="genIn({element:\'tdResp1\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=2&group=\'+this.value})"'))
+                ->set('groupList',html::select($groups,'respGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="mwceAPI.genIn({element:\'tdResp\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=1&group=\'+this.value})"'))
+                ->set('groupList1',html::select($groups,'curatorGroup',0,'class="form-control inlineBlock" style="width: 150px;" onchange="mwceAPI.genIn({element:\'tdResp1\',address:\''.$this->view->getAdr().'page/inProject/ExecAction?tab=tabTasks&id='.$_GET['id'].'&act=GenUser&quenue=2&group=\'+this.value})"'))
                 ->set('typeTaskList',html::select($types,'tTypes','0','class="form-control inlineBlock" style="width: 360px;" onchange="document.querySelector(\'#_taskName\').value = this.value"'))
                 ->out('Add',$this->className);
         }

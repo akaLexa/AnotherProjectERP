@@ -1,113 +1,235 @@
+var mwceAPI = {};
 
-function genIn(params)
-{
-    if(params["element"] != undefined || params["noresponse"] == true )
-    {
-        if(params["address"] != undefined)
-        {
-            if(params["type"] != undefined)
+mwceAPI.waitAsync = true;
+mwceAPI.debugMode = false;
+
+mwceAPI._isOpenAjax = false;
+mwceAPI.errors = [];
+mwceAPI.lang = {};
+
+mwceAPI.ajax = function (params) {
+
+    if(!params["dataType"]){
+        params["dataType"] = 'html';
+        if(mwceAPI.debugMode)
+            console.warn('-> dataType is empty. Default set html');
+    }
+
+    if(!params["type"]){
+        params["type"] = 'GET';
+        if(mwceAPI.debugMode)
+            console.warn('-> type is empty. Default set GET');
+    }
+    else{
+        params["type"] = params["type"].toUpperCase();
+    }
+
+    if(!params["data"]){
+        params["data"] = "";
+
+        if(mwceAPI.debugMode && params["type"] !== 'GET')
+            console.warn('-> Maybe send data is empty!');
+    }
+
+    if(!params["address"]){
+        throw 1;
+    }
+
+    if (mwceAPI.waitAsync && mwceAPI._isOpenAjax){
+        throw 2;
+    }
+
+    $.ajax({
+        url: params["address"],
+        cache: false,
+        type: params["type"],
+        data: params["data"],
+        dataType: params["dataType"],//xml, json, jsonp, script, html, text
+        async: true,
+        beforeSend: function(){
+            mwceAPI._isOpenAjax = true;
+
+            if(params["loadicon"] && params["element"])
             {
-                params["type"] = params["type"].toUpperCase();
+                $('#' + params['element']).empty();
+                $('#' + params['element']).append(params['loadicon']);
             }
-            else
-                params["type"] = 'GET';
 
-            if(params["dataType"] != undefined)
-            {
-                params["dataType"]='html';
-            }
-
-
-            if(params["loadicon"] != undefined)
-            {
-                $("#"+params["element"]).empty();
-                $("#"+params["element"]).append(params["loadicon"]);
-            }
-            if( params["data"] != undefined)
-                indata = params["data"];
-            else
-                var indata ="";
-
-            if(params["before"] != undefined)
-            {
+            if(params["before"]){
                 params["before"]();
             }
+        },
+        success: function(response)
+        {
+            mwceAPI._isOpenAjax = false;
+            if(params["element"])
+            {
+                $('#' + params["element"]).empty();
 
-            $.ajax({
-                url: params["address"],
-                cache: false,
-                type: params["type"],
-                data: indata,
-                dataType: params["dataType"],
-                async: true,
-                success: function(response)
-                {
-                    if(params["noresponse"] == undefined || params["noresponse"] == false)
-                    {
+                if(params["fade"] !== undefined)
+                    $('#' + params["element"]).append(response).fadeIn(params["fade"]);
+                else
+                    $('#' + params["element"]).append(response);
+            }
 
-                        $("#"+params["element"]).empty();
+            if(params["callback"])
+            {
+                params["callback"](response);
+            }
 
-                        if(params["fade"] != undefined)
-                            $("#"+params["element"]).append(response).fadeIn(params["fade"]);
-                        else
-                            $("#"+params["element"]).append(response);
-                    }
+        },
+        error:  function(jqXHR, textStatus, errorThrown){
 
-                    if(params["callback"] != undefined)
-                    {
-                        params["callback"](response);
-                    }
-                },
-                error:  function(){
+            mwceAPI._isOpenAjax = false;
 
-                    if(params["errcallback"] != undefined)
-                    {
-                        params["errcallback"]();
-                    }
+            if(params["error"])
+            {
+                params["error"](jqXHR, textStatus, errorThrown);
+            }
+            else
+            {
+                if(params["element"]){
+
+                    $("#" + params["element"]).empty();
+
+                    if(textStatus)
+                        $("#"+params["element"]).append(textStatus);
                     else
-                    {
-                        if(params["noresponse"] == true)
-                        {
-                            alert("Error 404?");
-                        }
-                        else
-                        {
-                            $("#"+params["element"]).empty();
-                            $("#"+params["element"]).append("ERROR 404.");
-                        }
-                    }
+                        $("#"+params["element"]).append("Resource load error. Maybe wrong web address");
                 }
-            });
+                else{
 
+                    if(textStatus)
+                        console.error('-> ' + textStatus);
+                    else
+                        console.error('-> Resource load error. Maybe wrong web address;');
+                }
+            }
         }
-        else
-            console.error("-> function genIn, parameter 'address' is undefined, action aborted");
+    });
+};
+
+mwceAPI.genIn = function (params) {
+    if (params["type"]) {
+        params["type"] = params["type"].toUpperCase();
     }
-    else
-        console.error("-> function genIn, parameter 'element' is undefined, action aborted");
 
-}
+    if(params['alertErrors'] === undefined){
+        params['alertErrors'] = true;
+    }
 
-function replacepoint(obj)
-{
+    try {
+        mwceAPI.ajax(params);
+    }
+    catch (e) {
+        if (typeof e == 'number') {
+            var msg = mwceAPI.errors[e] ? mwceAPI.errors[e] : 'error ' + e;
+            console.warn(' -> ',msg);
+            if(params['alertErrors']){
+                mwceAPI.alert(msg);
+            }
+        }
+        else {
+            console.error(e);
+        }
+    }
+};
+
+mwceAPI.alert = function (msg,title) {
+
+    if(!msg){
+        msg = 'em.. message text is empty 0_o';
+    }
+    if(!title){
+        title = mwceAPI.lang['alertTitle'] ? mwceAPI.lang['alertTitle'] : 'Warning!';
+    }
+
+    $('<div/>').dialog({
+        title: title,
+        modal: true,
+        buttons: {
+            Ok: function() {
+                $( this ).dialog( 'close' );
+            }
+        },
+        open:function () {
+            this.innerHTML = msg;
+        },
+        close:function () {
+            $( this ).dialog( 'destroy' );
+        }
+    });
+};
+
+mwceAPI.confirm = function (params){
+    mwceAPI.confirm.close();
+
+    if(params instanceof Object){
+
+        if(!params['title']){
+            params['title'] = mwceAPI.lang['alertTitle'] ? mwceAPI.lang['alertTitle'] : 'Attention!';
+        }
+
+        if(!params['text']){
+            console.warn('[mwceAPI.confirm]: params[text] is empty!');
+            return;
+        }
+
+        if(params['buttons'] === undefined || !(params['buttons'] instanceof Object))
+        {
+            console.warn('[mwceAPI.confirm]: params[buttons] is empty or wrong!');
+            return;
+        }
+
+        if(!params['width'])
+            params['width'] = 400;
+
+        if(!params['height'])
+            params['height'] = 'auto';
+
+        $('<div/>').dialog({
+            resizable: false,
+            height: params['height'],
+            width: params['width'],
+            title:params['title'],
+            modal: true,
+            buttons:params['buttons'],
+            open:function () {
+                mwceAPI.confirm._body = this;
+                this.innerHTML = params['text'];
+            },
+            close:function () {
+                $(this).dialog('destroy');
+            }
+        });
+    }
+    else{
+        console.warn('[mwce_confirm]: params must be a JSON');
+    }
+};
+
+mwceAPI.confirm.close = function () {
+    if(mwceAPI.confirm._body){
+        $(mwceAPI.confirm._body).dialog('close');
+    }
+};
+
+mwceAPI.replacePoint = function (obj) {
     obj.value = obj.value.replace(/\,/, ".");
-}
+};
 
-function withNDS_(idfrom,idto)
-{
+mwceAPI.AddObjNDS = function (objID) {
+    var _o = document.querySelector('#' + objID);
+    _o.value = (_o.value * 1.18).toFixed(2);
+};
 
-    document.getElementById(idto).value =  (document.getElementById(idfrom).value * 1.18).toFixed(2);
+mwceAPI.DelObjNDS = function (objID) {
+    var _o = document.querySelector('#' + objID);
+    _o = (_o.value * 100 / 118).toFixed(2);
+};
 
-}
-function withoutNDS_(idfrom,idto)
-{
-    document.getElementById(idto).value =  (document.getElementById(idfrom).value*100/118).toFixed(2);
-}
-
-function check_s(obj)
-{
-    if(obj.value != undefined)
-    {
+mwceAPI.ObjNumbersOnly = function (obj) {
+    if(obj.value){
         var value = obj.value;
         if(value.length>0)
         {
@@ -118,112 +240,34 @@ function check_s(obj)
             }
         }
     }
-}
-
-function _implode( glue, pieces ) {
-
-    return ( ( pieces instanceof Array ) ? pieces.join ( glue ) : pieces );
-}
-
-
-function mwce_alert(msg,title) {
-    if(title== undefined){
-        title = 'Warning!';
-    }
-    var d = document.createElement('DIV');
-    d.id='for_mwce_Alert';
-    d.style.display = 'none';
-    d.title = title;
-    d.innerHTML = msg;
-    document.body.appendChild(d);
-
-    $('#for_mwce_Alert').dialog({
-        modal: true,
-        buttons: {
-            Ok: function() {
-                $( this ).dialog( 'close' );
-            }
-        },
-        close:function () {
-            $( this ).dialog( 'destroy' );
-            $('#for_mwce_Alert').remove();
-        }
-    });
-}
-
-function mwce_confirm(params) {
-
-    if(params instanceof Object){
-
-        if(params['title'] == undefined)
-            params['title'] ='Attention!';
-
-        if(params['text'] == undefined){
-            console.error('[mwce_confirm]: params[text] is empty!');
-            return;
-        }
-
-        if(params['buttons'] == undefined || !(params['buttons'] instanceof Object))
-        {
-            console.error('[mwce_confirm]: params[buttons] is empty or wrong!');
-            return;
-        }
-
-        if(params['width'] == undefined)
-            params['width'] = 400;
-
-        if(params['height'] == undefined)
-            params['height'] = "auto";
-
-        var d = document.createElement('DIV');
-        d.id='for_mwce_confirm';
-        d.style.display = 'none';
-        d.title = params['title'];
-        d.innerHTML = params['text'];
-        document.body.appendChild(d);
-
-        $('#for_mwce_confirm').dialog({
-            resizable: false,
-            height: params['height'],
-            width: params['width'],
-            modal: true,
-            buttons:params['buttons'],
-            close:function () {
-                $(this).dialog('destroy');
-                $('#for_mwce_confirm').remove();
-            }
-        });
-    }
-    else{
-        console.error('[mwce_confirm]: params must be a JSON');
-    }
-}
-
-mwce_confirm.close = function () {
-    $('#for_mwce_confirm').dialog('close');
 };
 
-function htmlspecialchars_decode(string, quoteStyle) {
-    // eslint-disable-line camelcase
-    //       discuss at: http://locutus.io/php/htmlspecialchars_decode/
-    //      original by: Mirek Slugen
-    //      improved by: Kevin van Zonneveld (http://kvz.io)
-    //      bugfixed by: Mateusz "loonquawl" Zalega
-    //      bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
-    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
-    //         input by: ReverseSyntax
-    //         input by: Slawomir Kaniecki
-    //         input by: Scott Cariss
-    //         input by: Francois
-    //         input by: Ratheous
-    //         input by: Mailfaker (http://www.weedem.fr/)
-    //       revised by: Kevin van Zonneveld (http://kvz.io)
-    // reimplemented by: Brett Zamir (http://brett-zamir.me)
-    //        example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES')
-    //        returns 1: '<p>this -> &quot;</p>'
-    //        example 2: htmlspecialchars_decode("&amp;quot;")
-    //        returns 2: '&quot;'
+mwceAPI.implode = function ( glue, pieces) {
+    return ( ( pieces instanceof Array ) ? pieces.join ( glue ) : pieces );
+};
+
+mwceAPI.htmlspecialchars_decode = function (string, quoteStyle) {
+    /**
+     *  eslint-disable-line camelcase
+     *  discuss at: http://locutus.io/php/htmlspecialchars_decode/
+     *  original by: Mirek Slugen
+     *  improved by: Kevin van Zonneveld (http://kvz.io)
+     *  bugfixed by: Mateusz "loonquawl" Zalega
+     *  bugfixed by: Onno Marsman (https://twitter.com/onnomarsman)
+     *  bugfixed by: Brett Zamir (http://brett-zamir.me)
+     *  input by: ReverseSyntax
+     *  input by: Slawomir Kaniecki
+     *  input by: Scott Cariss
+     *  input by: Francois
+     *  input by: Ratheous
+     *  input by: Mailfaker (http://www.weedem.fr/)
+     *  revised by: Kevin van Zonneveld (http://kvz.io)
+     *  reimplemented by: Brett Zamir (http://brett-zamir.me)
+     *  example 1: htmlspecialchars_decode("<p>this -&gt; &quot;</p>", 'ENT_NOQUOTES')
+     *  returns 1: '<p>this -> &quot;</p>'
+     *  example 2: htmlspecialchars_decode("&amp;quot;")
+     *  returns 2: '&quot;'
+     */
 
     var optTemp = 0;
     var i = 0;
@@ -235,6 +279,7 @@ function htmlspecialchars_decode(string, quoteStyle) {
     string = string.toString()
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>');
+
     var OPTS = {
         'ENT_NOQUOTES': 0,
         'ENT_HTML_QUOTE_SINGLE': 1,
@@ -272,4 +317,63 @@ function htmlspecialchars_decode(string, quoteStyle) {
     string = string.replace(/&amp;/g, '&');
 
     return string
-}
+};
+
+//todo: в релизе сжать код.
+
+mwceAPI.errors[1] = 'Не указан параметр \'address\' в ajax.';
+mwceAPI.errors[2] = 'Предыдущее действие еще не завершено. Пожалуйста, попробуйте еще раз позднее';
+
+
+mwceAPI.lang = {
+    'alertTitle' : 'Внимание'
+};
+
+var _tmplCache_ = {};
+templateFunct= function(str, data) {
+/// <summary>
+/// Client side template parser that uses &lt;#= #&gt; and &lt;# code #&gt; expressions.
+/// and # # code blocks for template expansion.
+/// NOTE: chokes on single quotes in the document in some situations
+///       use &amp;rsquo; for literals in text and avoid any single quote
+///       attribute delimiters.
+/// </summary>
+/// <param name="str" type="string">The text of the template to expand</param>
+/// <param name="data" type="var">
+/// Any data that is to be merged. Pass an object and
+/// that object's properties are visible as variables.
+/// </param>
+/// <returns type="string" />
+    var err = "";
+    try {
+        var func = _tmplCache_[str];
+        if (!func) {
+            var strFunc =
+                "var p=[],print=function(){p.push.apply(p,arguments);};" +
+                "with(obj){p.push('" +
+                //                        str
+                //                  .replace(/[\r\t\n]/g, " ")
+                //                  .split("<#").join("\t")
+                //                  .replace(/((^|#>)[^\t]*)'/g, "$1\r")
+                //                  .replace(/\t=(.*?)#>/g, "',$1,'")
+                //                  .split("\t").join("');")
+                //                  .split("#>").join("p.push('")
+                //                  .split("\r").join("\\'") + "');}return p.join('');";
+
+                str.replace(/[\r\t\n]/g, " ")
+                    .replace(/'(?=[^#]*#>)/g, "\t")
+                    .split("'").join("\\'")
+                    .split("\t").join("'")
+                    .replace(/<#=(.+?)#>/g, "',$1,'")
+                    .split("<#").join("');")
+                    .split("#>").join("p.push('")
+                + "');}return p.join('');";
+
+            //alert(strFunc);
+            func = new Function("obj", strFunc);
+            _tmplCache_[str] = func;
+        }
+        return func(data);
+    } catch (e) { err = e.message; }
+    return "< # ERROR: " + err + " # >";
+};

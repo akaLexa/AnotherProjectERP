@@ -16,7 +16,7 @@ $(document).ready(function () {
 function getStagesByGroup(group){
     document.querySelector('#stageFormDate').style.visibility = 'hidden';
     document.querySelector('#stageFormPeople').innerHTML='';
-    genIn({
+    mwceAPI.genIn({
         element:'stageFormStages',
         address:'|site|page/|currentPage|/ExecAction?tab=tabMain&act=getStageList&id=|col_projectID|&group='+group,
         loadicon:'Загружаю'
@@ -24,7 +24,7 @@ function getStagesByGroup(group){
 }
 function getRespByStage(stage){
     document.querySelector('#stageFormDate').style.visibility = 'hidden';
-    genIn({
+    mwceAPI.genIn({
         element:'stageFormPeople',
         address:'|site|page/|currentPage|/ExecAction?tab=tabMain&act=getRespList&id=|col_projectID|&stage='+stage,
         loadicon:'Загружаю',
@@ -42,7 +42,7 @@ function changeProjectStage() {
         width:500,
         modal:true,
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=stageMove',
                 callback:function (r) {
@@ -50,7 +50,7 @@ function changeProjectStage() {
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
                             $('#forDialogs').dialog('close');
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error']);
                         }
                     }
                     catch(e) {
@@ -64,7 +64,7 @@ function changeProjectStage() {
         },
         buttons:{
             'Продолжить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=stageMove',
                     type:'POST',
@@ -73,7 +73,7 @@ function changeProjectStage() {
                         try{
                             var receive = JSON.parse(r);
                             if(receive['error'] != undefined){
-                                mwce_alert(receive['error'],'Внимание!');
+                                mwceAPI.alert(receive['error'],'Внимание!');
                             }
                             else{
                                 $('#forDialogs').dialog('close');
@@ -81,7 +81,7 @@ function changeProjectStage() {
                             }
                         }
                         catch(e) {
-                            mwce_alert('Произошла обшибка: скорее всего, Вы не заполнили какие-то обязательные поля','Внимание');
+                            mwceAPI.alert('Произошла обшибка: скорее всего, Вы не заполнили какие-то обязательные поля','Внимание');
                         }
                     }
                 });
@@ -98,18 +98,18 @@ function agreeStage(state) {
     var desc = document.querySelector('#disagreeDesc').value.trim();
 
     if(state == 2 && desc.length<1){
-        mwce_alert('Чтобы отказаться от стадии, необходимо указать причину отказа.','Внимание!');
+        mwceAPI.alert('Чтобы отказаться от стадии, необходимо указать причину отказа.','Внимание!');
         return;
     }
 
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=stageAction&type='+state+'&desc='+desc,
         callback:function (r) {
             try{
                 var receive = JSON.parse(r);
                 if(receive['error'] != undefined)
-                    mwce_alert(receive['error'],'Внимание!');
+                    mwceAPI.alert(receive['error'],'Внимание!');
                 else{
                     window.location.reload();
                 }
@@ -130,7 +130,7 @@ function changeStageTask() {
         text = 'Вы уверены, что хотите отключить выполнение плана?' +
             ' <textarea id="descPlanArea" class="form-control" style=" width:100%; height: 100px;" placeholder="Пожалуйста, укажите причину отключения автоплана"></textarea>';
 
-        mwce_confirm({
+        mwceAPI.confirm({
             title:'Внимание',
             text:text,
             buttons:{
@@ -140,7 +140,7 @@ function changeStageTask() {
                     }
                     else{
 
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=switchPlan',
                             type:'POST',
@@ -149,10 +149,10 @@ function changeStageTask() {
                                 try{
                                     var receive = JSON.parse(r);
                                     if(receive['error'] != undefined){
-                                        mwce_alert(receive['error'],'Внимание!');
+                                        mwceAPI.alert(receive['error'],'Внимание!');
                                     }
                                     else if(receive['stageIsLate'] != undefined){
-                                        mwce_alert('Не казана причина просрочки стадии','Внимание!');
+                                        mwceAPI.alert('Не казана причина просрочки стадии','Внимание!');
                                     }
                                     else{
                                         $('#glyphPlanIconStart').removeClass('planStarted');
@@ -165,7 +165,7 @@ function changeStageTask() {
 
                                 }
                                 finally {
-                                    mwce_confirm.close();
+                                    mwceAPI.confirm.close();
 
                                 }
                             }
@@ -174,7 +174,7 @@ function changeStageTask() {
                     }
                 },
                 'Нет':function () {
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             }
         });
@@ -185,7 +185,7 @@ function changeStageTask() {
         if(nowDate.getTime() > planDate.getTime())
             text+= '<textarea id="descStageArea" class="form-control" style=" width:100%; height: 100px;" placeholder="Пожалуйста, укажите причину просрочки стадии. Этот параметр обязателен!"></textarea>';
 
-        mwce_confirm({
+        mwceAPI.confirm({
             title:'Внимание',
             text:text,
             buttons:{
@@ -199,7 +199,7 @@ function changeStageTask() {
                             dataString = '&descStage='+document.querySelector('#descStageArea').value.trim();
                     }
 
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/ExecAction?tab=tabMain&id=|col_projectID|&act=switchPlan',
                         type:'POST',
@@ -208,10 +208,10 @@ function changeStageTask() {
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                                 else if(receive['stageIsLate'] != undefined){
-                                    mwce_alert('Не указана причина просрочки стадии','Внимание!');
+                                    mwceAPI.alert('Не указана причина просрочки стадии','Внимание!');
                                 }
                                 else{
                                     $('#glyphPlanIconStart').addClass('planStarted');
@@ -224,13 +224,13 @@ function changeStageTask() {
 
                             }
                             finally {
-                                mwce_confirm.close();
+                                mwceAPI.confirm.close();
                             }
                         }
                     });
                 },
                 'Нет':function () {
-                    mwce_confirm.close();
+                    mwceAPI.confirm.close();
                 }
             }
         });
@@ -240,7 +240,7 @@ function changeStageTask() {
 function genTabContent(tab) {
     if(tab.length >0){
         window.location.hash = tab;
-        genIn({
+        mwceAPI.genIn({
             element:'tab_content',
             address:'|site|page/|currentPage|/TabContent?tab='+tab+'&id=|col_projectID|',
             loadicon:'Загружаюсь...',
@@ -288,7 +288,7 @@ function genTabContent(tab) {
 
 function tabMainSave() {
     tinymce.triggerSave();
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=save',
         type:'POST',
@@ -302,7 +302,7 @@ function tabMainSave() {
             try{
                 var receive = JSON.parse(r);
                 if(receive['error'] != undefined){
-                    mwce_alert(receive['error'],'Внимание!');
+                    mwceAPI.alert(receive['error'],'Внимание!');
                 }
             }
             catch(e) {
@@ -317,7 +317,7 @@ function tabMainSave() {
 }
 
 function genUserFromGroup(targetID,groupID) {
-    genIn({
+    mwceAPI.genIn({
         element:targetID,
         address:'|site|page/|currentPage|/UserFromGroup?id=' + groupID,
         loadicon:'Загружаю...'
@@ -326,7 +326,7 @@ function genUserFromGroup(targetID,groupID) {
 
 var curAddStageSetings;
 function rebuildProjectPlan(project,startDate) {
-    genIn({
+    mwceAPI.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/RebuildPlan?id=' + project +'&dateStart='+startDate,
         before:function () {
@@ -339,7 +339,7 @@ function rebuildProjectPlan(project,startDate) {
     });
 }
 function tabProjectPlanGetPlan() {
-    genIn({
+    mwceAPI.genIn({
         element:'projectPlanBody',
         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
         loadicon:'<tr><td colspan="2" style="color:green;text-align: center">Загружаюсь..</td></tr>',
@@ -347,7 +347,7 @@ function tabProjectPlanGetPlan() {
             try{
                 var receive = JSON.parse(r);
                 if(receive['error'] != undefined){
-                    mwce_alert(receive['error'],'Внимание!');
+                    mwceAPI.alert(receive['error'],'Внимание!');
                 }
             }
             catch(e) {
@@ -359,7 +359,7 @@ function tabProjectPlanGetPlan() {
 function tabProjectPlanAdd(){
     $('#forDialogs').dialog({
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
                 loadicon:'Загружаюсь..',
@@ -367,7 +367,7 @@ function tabProjectPlanAdd(){
                     try{
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error'],'Внимание!');
                             $('#forDialogs').dialog('close');
                         }
                     }
@@ -383,7 +383,7 @@ function tabProjectPlanAdd(){
         buttons:{
             'Добавить':function () {
                 if(document.querySelector('#tbUserList') != undefined){
-                    genIn({
+                    mwceAPI.genIn({
                         element:'forDialogs',
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=add',
                         type:'POST',
@@ -393,7 +393,7 @@ function tabProjectPlanAdd(){
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                             }
                             catch(e) {
@@ -407,7 +407,7 @@ function tabProjectPlanAdd(){
                     });
                 }
                 else
-                    mwce_alert('Не выбран ответственный','Внимание');
+                    mwceAPI.alert('Не выбран ответственный','Внимание');
 
             },
             'Закрыть':function () {
@@ -421,12 +421,12 @@ function tabProjectPlanAdd(){
     });
 }
 function tabProjectPlanDeleteStage(stageID){
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Подтверждение',
         text:'Вы действительно хотите удалить данную стадию?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=deleteStage',
                     type:'POST',
@@ -434,7 +434,7 @@ function tabProjectPlanDeleteStage(stageID){
                         try{
                             var receive = JSON.parse(r);
                             if(receive['error'] != undefined){
-                                mwce_alert(receive['error'],'Внимание!');
+                                mwceAPI.alert(receive['error'],'Внимание!');
                             }
                         }
                         catch(e) {
@@ -442,13 +442,13 @@ function tabProjectPlanDeleteStage(stageID){
                         }
                         finally {
                             tabProjectPlanGetPlan();
-                            mwce_confirm.close();
+                            mwceAPI.confirm.close();
                         }
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -456,7 +456,7 @@ function tabProjectPlanDeleteStage(stageID){
 function tabProjectPlanEdit(id){
     $('#forDialogs').dialog({
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+id+'&act=edit',
                 loadicon:'Загружаюсь..',
@@ -464,7 +464,7 @@ function tabProjectPlanEdit(id){
                     try{
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error'],'Внимание!');
                             $('#forDialogs').dialog('close');
                         }
                     }
@@ -480,7 +480,7 @@ function tabProjectPlanEdit(id){
         buttons:{
             'Сохранить':function () {
                 if (document.querySelector('#tbUserList') != undefined) {
-                    genIn({
+                    mwceAPI.genIn({
                         element: 'forDialogs',
                         address: '|site|page/|currentPage|/ExecAction?tab=' + currentTab + '&id=|col_projectID|&stageID=' + id + '&act=edit',
                         type: 'POST',
@@ -490,7 +490,7 @@ function tabProjectPlanEdit(id){
                             try {
                                 var receive = JSON.parse(r);
                                 if (receive['error'] != undefined) {
-                                    mwce_alert(receive['error'], 'Внимание!');
+                                    mwceAPI.alert(receive['error'], 'Внимание!');
                                 }
                             }
                             catch (e) {
@@ -504,7 +504,7 @@ function tabProjectPlanEdit(id){
                     });
                 }
                 else
-                    mwce_alert('Не выбран ответственный', 'Внимание');
+                    mwceAPI.alert('Не выбран ответственный', 'Внимание');
             },
             'Закрыть':function () {
                 $(this).dialog('close');
@@ -519,7 +519,7 @@ function tabProjectPlanEdit(id){
 function tabProjectPlanAddTask(stageID) {
     $('#forDialogs').dialog({
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=addStageTask',
                 loadicon:'Загружаюсь..',
@@ -527,7 +527,7 @@ function tabProjectPlanAddTask(stageID) {
                     try{
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error'],'Внимание!');
                             $('#forDialogs').dialog('close');
                         }
                     }
@@ -546,7 +546,7 @@ function tabProjectPlanAddTask(stageID) {
                 var dw = new Date(document.querySelector('#_endDate').value + ' ' + document.querySelector('#_endTime').value);
 
                 if(document.querySelector('#tbUserList') != undefined && dn.getTime() < dw.getTime()){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&stageID='+stageID+'&act=addStageTask',
                         type:'POST',
@@ -555,7 +555,7 @@ function tabProjectPlanAddTask(stageID) {
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                             }
                             catch(e) {
@@ -570,7 +570,7 @@ function tabProjectPlanAddTask(stageID) {
                     });
                 }
                 else
-                    mwce_alert('Не выбран ответственный пользователь или дата неадекватна','Внимание');
+                    mwceAPI.alert('Не выбран ответственный пользователь или дата неадекватна','Внимание');
 
 
             },
@@ -587,7 +587,7 @@ function tabProjectPlanAddTask(stageID) {
 function tabProjectPlanEditTask(taskID) {
     $('#forDialogs').dialog({
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=editStageTask',
                 loadicon:'Загружаюсь..',
@@ -595,7 +595,7 @@ function tabProjectPlanEditTask(taskID) {
                     try{
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error'],'Внимание!');
                             $('#forDialogs').dialog('close');
                         }
                     }
@@ -611,7 +611,7 @@ function tabProjectPlanEditTask(taskID) {
         buttons:{
             'Сохранить':function () {
                 if(document.querySelector('#tbUserList') != undefined){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=editStageTask',
                         type:'POST',
@@ -620,7 +620,7 @@ function tabProjectPlanEditTask(taskID) {
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                             }
                             catch(e) {
@@ -634,7 +634,7 @@ function tabProjectPlanEditTask(taskID) {
                     });
                 }
                 else
-                    mwce_alert('Не выбран ответственный пользователь','Внимание');
+                    mwceAPI.alert('Не выбран ответственный пользователь','Внимание');
 
 
             },
@@ -649,12 +649,12 @@ function tabProjectPlanEditTask(taskID) {
     });
 }
 function DeleteTask(taskID){
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Подтверждение',
         text:'Вы действительно хотите удалить данную задачу?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&taskID='+taskID+'&act=deleteTask',
                     type:'POST',
@@ -662,7 +662,7 @@ function DeleteTask(taskID){
                         try{
                             var receive = JSON.parse(r);
                             if(receive['error'] != undefined){
-                                mwce_alert(receive['error'],'Внимание!');
+                                mwceAPI.alert(receive['error'],'Внимание!');
                             }
                         }
                         catch(e) {
@@ -670,13 +670,13 @@ function DeleteTask(taskID){
                         }
                         finally {
                             tabProjectPlanGetPlan();
-                            mwce_confirm.close();
+                            mwceAPI.confirm.close();
                         }
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -684,10 +684,10 @@ function DeleteTask(taskID){
 
 function SendProjectMessage(){
     if(document.querySelector('#_messageText').value.trim().length<1)
-        mwce_alert('Не введен текст сообщения','Внимание');
+        mwceAPI.alert('Не введен текст сообщения','Внимание');
     else{
 
-        genIn({
+        mwceAPI.genIn({
             noresponse:true,
             address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=addComment',
             type:'POST',
@@ -696,7 +696,7 @@ function SendProjectMessage(){
                 try{
                     var receive = JSON.parse(r);
                     if(receive['error'] != undefined){
-                        mwce_alert(receive['error'],'Внимание!');
+                        mwceAPI.alert(receive['error'],'Внимание!');
                     }
                     else{
                         $('#listenersSpanList input[type=checkbox]').each(function (id, elem) {
@@ -709,14 +709,14 @@ function SendProjectMessage(){
                     //console.error(e.message);
                 }
                 finally {
-                    genIn({
+                    mwceAPI.genIn({
                         element:'messageTabContent',
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
                         callback:function(r) {
                             try{
                                 var receive = JSON.parse(r);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Внимание!');
+                                    mwceAPI.alert(receive['error'],'Внимание!');
                                 }
                             }
                             catch(e) {
@@ -738,7 +738,7 @@ function SendProjectMessage(){
 function addTask() {
     $('#forDialogs').dialog({
         open:function () {
-            genIn({
+            mwceAPI.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/ExecAction?tab=tabTasks&id=|col_projectID|&act=add',
                 loadicon:'Загружаюсь..',
@@ -760,7 +760,7 @@ function addTask() {
                     try{
                         var receive = JSON.parse(r);
                         if(receive['error'] != undefined){
-                            mwce_alert(receive['error'],'Внимание!');
+                            mwceAPI.alert(receive['error'],'Внимание!');
                             $('#forDialogs').dialog('close');
                         }
                         else{
@@ -781,7 +781,7 @@ function addTask() {
             'Добавить':function () {
 
                 if(document.querySelector('#_taskName').value.trim().length<1){
-                    mwce_alert('Не заполнено название задачи','Внимание');
+                    mwceAPI.alert('Не заполнено название задачи','Внимание');
                 }
                 else if(document.querySelector('#_endDate').value){
 
@@ -789,11 +789,11 @@ function addTask() {
                     var inF = new Date(document.querySelector('#_endDate').value + ' ' + document.querySelector('#_endTime').value);
 
                     if(now.getTime() >= inF.getTime()){
-                        mwce_alert('Дата звершения должна быть больше, чем сегодня','Внимание');
+                        mwceAPI.alert('Дата звершения должна быть больше, чем сегодня','Внимание');
                     }
                     else if(document.querySelector('#tbUserList1')!= undefined){
                         tinymce.triggerSave('#taskDesc');
-                        genIn({
+                        mwceAPI.genIn({
                             noresponse:true,
                             address:'|site|page/|currentPage|/ExecAction?tab=tabTasks&id=|col_projectID|&act=add',
                             type:'POST',
@@ -802,25 +802,25 @@ function addTask() {
                                 try{
                                     var receive = JSON.parse(r);
                                     if(receive['error'] != undefined)
-                                        mwce_alert(receive['error'],'Ошибка');
+                                        mwceAPI.alert(receive['error'],'Ошибка');
                                     else{
 
                                     }
                                 }
                                 catch (e){
-                                    mwce_alert(e.message,'Ошибка');
+                                    mwceAPI.alert(e.message,'Ошибка');
                                 }
                                 $('#forDialogs').dialog('close');
                             }
                         });
                     }
                     else{
-                        mwce_alert('Не указан ответственный','Внимание');
+                        mwceAPI.alert('Не указан ответственный','Внимание');
                     }
 
                 }
                 else{
-                    mwce_alert('Не указана дата звершения','Внимание');
+                    mwceAPI.alert('Не указана дата звершения','Внимание');
                 }
             },
             'Закрыть':function () {
@@ -837,7 +837,7 @@ function addTask() {
     });
 }
 function filterTask(){
-    genIn({
+    mwceAPI.genIn({
         element:'tbTaskBody',
         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getList',
         loadicon:'<tr><td colspan="7" style="text-align: center; color:green">Загружаюсь</td></tr>',
@@ -862,7 +862,7 @@ function filterDocs(){
         document.querySelector('#toUploadFile').disabled = true;
         document.querySelector('#addFolder').disabled = true;
     }
-    genIn({
+    mwceAPI.genIn({
         element:'tabDocsContent',
         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=getFiles',
         loadicon:'<tr><td colspan="5" style="text-align: center; color:green">Загружаюсь</td></tr>',
@@ -897,7 +897,7 @@ function addNewDocFolder() {
         modal:true,
         buttons:{
             'Добавить':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=addFolder',
                     type:'POST',
@@ -932,43 +932,43 @@ function SetInFolder(id,group) {
     filterDocs();
 }
 function delFolder(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы дейстивтельно хотите удалить <mark>папку вместе с файлами</mark>?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFolder&folder='+id,
                     callback:function () {
                         filterDocs();
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
 }
 function delFile(id) {
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы дейстивтельно хотите удалить файл?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFile&file='+id,
                     callback:function () {
                         filterDocs();
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -1045,7 +1045,7 @@ function FilesDownload() {
 }
 function FilesDelete() {
 
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы дейстивтельно хотите удалить выбранные файлы?',
         buttons:{
@@ -1062,20 +1062,20 @@ function FilesDelete() {
                 });
 
                 if(queue.length>0){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/|currentPage|/ExecAction?tab='+currentTab+'&id=|col_projectID|&act=delFiles',
                         type:'POST',
                         data:'queue='+queue,
                         callback:function () {
-                            mwce_confirm.close();
+                            mwceAPI.confirm.close();
                             filterDocs();
                         }
                     });
                 }
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -1091,7 +1091,7 @@ function addInPlan(project) {
         buttons:{
             'Добавить':function () {
                 if(document.querySelector('#themName').value.trim().length > 0){
-                    genIn({
+                    mwceAPI.genIn({
                         noresponse:true,
                         address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=AddTheme',
                         type:'POST',
@@ -1100,7 +1100,7 @@ function addInPlan(project) {
                             try{
                                 var receive = JSON.parse(e);
                                 if(receive['error'] != undefined){
-                                    mwce_alert(receive['error'],'Ошибка');
+                                    mwceAPI.alert(receive['error'],'Ошибка');
                                 }
                                 else{
                                     genTabContent('tabProjectPlan');
@@ -1134,22 +1134,22 @@ function addInPlan(project) {
     });
 }
 function removePlanStage(){
-    mwce_confirm({
+    mwceAPI.confirm({
         title:'Требуется решение',
         text:'Вы дейсвительно хотите удалить позицию из шаблонов плана проекта?',
         buttons:{
             'Да':function () {
-                genIn({
+                mwceAPI.genIn({
                     noresponse:true,
                     address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=DelTheme&pos='+document.querySelector('#planStageTheme').value,
                     callback:function (e) {
                         genTabContent('tabProjectPlan');
-                        mwce_confirm.close();
+                        mwceAPI.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwce_confirm.close();
+                mwceAPI.confirm.close();
             }
         }
     });
@@ -1158,7 +1158,7 @@ function PlanImport() {
     var curPlanPiece = parseInt(document.querySelector('#planStageTheme').value);
     if(curPlanPiece >0)
     {
-        genIn({
+        mwceAPI.genIn({
             noresponse:true,
             address:'|site|page/inProject/ExecAction?tab=tabProjectPlan&id=|col_projectID|&act=addPlan&pos='+document.querySelector('#planStageTheme').value,
             callback:function (e) {
@@ -1167,6 +1167,6 @@ function PlanImport() {
         });
     }
     else{
-        mwce_alert('Прежде следует выбрать шаблон');
+        mwceAPI.alert('Прежде следует выбрать шаблон');
     }
 }

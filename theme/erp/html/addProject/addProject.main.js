@@ -6,8 +6,7 @@ function checkSerialProject() {
 
     var prj = parseInt(document.querySelector('#projectNum').value);
     if (prj !== undefined) {
-        genIn({
-            noresponse:true,
+        mwceAPI.mwceAPI.genIn({
             address:'|site|page/|currentPage|/CheckProjectNum',
             type:'POST',
             data:'projectNum='+prj,
@@ -49,7 +48,7 @@ function checkSerialProject() {
         });
     }
     else
-        mwce_alert('Не указан номер проекта','Внимание');
+        mwceAPI.alert('Не указан номер проекта');
 
 }
 
@@ -60,6 +59,6 @@ function beforeAdd() {
     }
     else
     {
-        mwce_alert('Не заполнено название проекта','Внимание!');
+        mwceAPI.alert('Не заполнено название проекта');
     }
 }

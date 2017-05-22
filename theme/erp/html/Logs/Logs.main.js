@@ -1,6 +1,6 @@
 
 function logFilter() {
-    genIn({
+    mwceAPI.genIn({
         element:'logContent',
         address:'|site|page/Logs/Center',
         type:'POST',

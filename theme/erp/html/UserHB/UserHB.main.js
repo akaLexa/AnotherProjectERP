@@ -1,5 +1,5 @@
 function filter() {
-    genIn({
+    mwceAPI.genIn({
         element:'uhbContent',
         address:'|site|page/|currentPage|/GetList',
         type:'POST',
