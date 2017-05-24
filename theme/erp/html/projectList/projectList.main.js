@@ -26,7 +26,7 @@ function projectFilter(cur_Page) {
     else
         curPage = 1;
 
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'projectListContent',
         address:'|site|page/|currentPage|/GetProjects',
         type:'POST',

@@ -10,7 +10,7 @@ $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
 function genTabContent(tab) {
 
     currentTab = tab;
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'tab_content',
         address:'|site|page/|currentPage|/'+currentTab,
         loadicon:'<div style="width: 100%; text-align: center;color:green; margin-top:100px;">Загружаю...</div>',
@@ -26,7 +26,7 @@ function genTabContent(tab) {
 }
 
 function getStagesList() {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'prStageBody',
         address:'|site|page/|currentPage|/GetStageList',
         loadicon:'<tr><td colspan="3" style="text-align: center;color:green;">Загружаю...</td></tr>'
@@ -41,7 +41,7 @@ function editStage(id) {
         buttons:{
             'Сохранить':function () {
                 if(document.querySelector('#stageName_').value.trim().length >0){
-                    mwceAPI.genIn({
+                    mwce.genIn({
                         noresponse:true,
                         before:function () {
                             document.querySelector('#forDialogs').style.opacity = 0.2;
@@ -56,7 +56,7 @@ function editStage(id) {
                     });
                 }
                 else{
-                    mwceAPI.alert('Не введено название','Сообщение');
+                    mwce.alert('Не введено название','Сообщение');
                 }
             },
             'Закрыть':function () {
@@ -65,7 +65,7 @@ function editStage(id) {
         },
         open:function () {
             document.querySelector('#forDialogs').style.opacity = 1;
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/StageEdit?id='+id,
                 loadicon:'Загружаю...'
@@ -84,7 +84,7 @@ function editStageAccess(id) {
         width:490,
         buttons:{
             'Сохранить':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse: true,
                     address: '|site|page/|currentPage|/StageAccessEdit?id=' + id+'&curGrp=' + document.querySelector('#curGrp').value,
                     type: 'POST',
@@ -100,7 +100,7 @@ function editStageAccess(id) {
         },
         open:function () {
             document.querySelector('#forDialogs').style.opacity = 1;
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/StageAccessEdit?id='+id,
                 loadicon:'Загружаю...'
@@ -112,7 +112,7 @@ function editStageAccess(id) {
     });
 }
 function editStageAccessRole(stage,group) {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'editAccessStageF',
         address:'|site|page/|currentPage|/GetStageRespUsers?id='+stage+'&curGrp='+group,
         loadicon:'Загружаю...'
@@ -127,7 +127,7 @@ function addStage() {
         buttons:{
             'Добавить':function () {
                 if(document.querySelector('#stageName_').value.trim().length >0){
-                    mwceAPI.genIn({
+                    mwce.genIn({
                         noresponse:true,
                         before:function () {
                             document.querySelector('#forDialogs').style.opacity = 0.2;
@@ -142,7 +142,7 @@ function addStage() {
                     });
                 }
                 else{
-                    mwceAPI.alert('Не введено название','Сообщение');
+                    mwce.alert('Не введено название','Сообщение');
                 }
             },
             'Закрыть':function () {
@@ -151,7 +151,7 @@ function addStage() {
         },
         open:function () {
             document.querySelector('#forDialogs').style.opacity = 1;
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/StageAdd',
                 loadicon:'Загружаю...'
@@ -163,12 +163,12 @@ function addStage() {
     });
 }
 function delStage(id) {
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Требуется решение',
         text:'Вы действительно хотите удалить стадию?',
         buttons:{
             'Да':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DeleteSage?id='+id,
                     before:function () {
@@ -176,12 +176,12 @@ function delStage(id) {
                     },
                     callback:function () {
                         getStagesList();
-                        mwceAPI.confirm.close();
+                        mwce.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     });
@@ -190,12 +190,12 @@ function delStage(id) {
 
 function saveCfg() {
 
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Требуется решение',
         text:'Вы уверены, что хотите сохранить конфигурацию?',
         buttons:{
             'Да':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/SaveProjecrCfg',
                     type:'POST',
@@ -209,10 +209,10 @@ function saveCfg() {
                         document.querySelector('#statusIds').innerHTML='';
                     }
                 });
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     });
@@ -222,7 +222,7 @@ function saveCfg() {
  * настройка вкладок
  */
 function showTabsCfg(tabName) {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'tabsCfgList',
         address:'|site|page/|currentPage|/TabCfg',
         type:"POST",
@@ -232,12 +232,12 @@ function showTabsCfg(tabName) {
 }
 function saveTabCfg() {
 
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Требуется решение',
         text:'Вы уверены, что хотите сохранить конфигурацию?',
         buttons:{
             'Да':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/SaveTabCfg?tab='+document.querySelector('#TabChosen').value,
                     type:'POST',
@@ -249,10 +249,10 @@ function saveTabCfg() {
                         document.querySelector('#configCustomForm').style.opacity = 1;
                     }
                 });
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     });
@@ -266,7 +266,7 @@ function addNewDocGroup(){
         width: 350,
         buttons: {
             'Добавить':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/AddDocGroup',
                     type:'POST',
@@ -283,7 +283,7 @@ function addNewDocGroup(){
             }
         },
         open:function () {
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'forDialogs',
                 address:'|site|page/|currentPage|/AddDocGroup',
                 loadicon:'Загружаюсь...'
@@ -295,7 +295,7 @@ function addNewDocGroup(){
     });
 }
 function getDocGroups() {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'docGroupLists',
         address:'|site|page/|currentPage|/GetDocGroups',
         loadicon:'<tr><td colspan="2">Загружаюсь...</td></tr>'
@@ -303,22 +303,22 @@ function getDocGroups() {
 }
 
 function delDocGroup(id) {
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Удаление группы',
         text:'Вы действительно хотите удалить группу документов?',
         buttons:{
             'Да':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/DelDocGroup?id='+id,
                     callback:function () {
                         document.querySelector('#docGIdPos_'+id).remove();
-                        mwceAPI.confirm.close();
+                        mwce.confirm.close();
                     }
                 })
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     })
@@ -330,7 +330,7 @@ function editDocGroup(id) {
         modal:true,
         resizable:false,
         open:function () {
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'forDialogs',
                 loadicon:'Загружаю...',
                 address:'|site|page/|currentPage|/EditDocGroup?id='+id
@@ -341,7 +341,7 @@ function editDocGroup(id) {
         },
         buttons:{
             'Применить':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/EditDocGroup?id='+id,
                     type:'POST',

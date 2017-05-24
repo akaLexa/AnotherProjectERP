@@ -1,6 +1,6 @@
 
 function hbTaskFilter() {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'hbTaskTypeBody',
         address:'|site|page/|currentPage|/GetList',
         loadicon:'<tr><td colspan="2" style="text-align: center; color:green;">Загружаюсь...</td></tr>'
@@ -8,12 +8,12 @@ function hbTaskFilter() {
 }
 
 function hbTypeDel(id) {
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Требуется подтверждение',
         text:'Вы действительно хотите удалить позицию?',
         buttons:{
             'Да':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/Del?id='+id,
                     before:function () {
@@ -21,12 +21,12 @@ function hbTypeDel(id) {
                     },
                     callback:function () {
                         document.querySelector('#tbTaskpos_'+id).remove();
-                        mwceAPI.confirm.close();
+                        mwce.confirm.close();
                     }
                 });
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     })
@@ -35,7 +35,7 @@ function hbTypeDel(id) {
 function hbTypeAdd() {
     $('#dialogs').dialog({
         open:function () {
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'dialogs',
                 address:'|site|page/|currentPage|/Add',
                 loadicon:'Загружаю'
@@ -46,7 +46,7 @@ function hbTypeAdd() {
         },
         buttons: {
             'Добавить':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/Add',
                     type:'POST',
@@ -75,7 +75,7 @@ function hbTypeAdd() {
 function hbTypeEdit(id) {
     $('#dialogs').dialog({
         open:function () {
-            mwceAPI.genIn({
+            mwce.genIn({
                 element:'dialogs',
                 address:'|site|page/|currentPage|/Edit?id='+id,
                 loadicon:'Загружаю'
@@ -86,7 +86,7 @@ function hbTypeEdit(id) {
         },
         buttons: {
             'Сохранить':function () {
-                mwceAPI.genIn({
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/Edit?id='+id,
                     type:'POST',

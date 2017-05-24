@@ -1,6 +1,6 @@
 function openReport(page){
     if(page !== '0'){
-        mwceAPI.genIn({
+        mwce.genIn({
             element:'reportContent',
             address:'|site|page/'+page,
             loadicon:'Загружаю...'

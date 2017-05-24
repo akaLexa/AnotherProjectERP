@@ -2,7 +2,7 @@
 var curPage;
 
 function evFilter() {
-    mwceAPI.genIn({
+    mwce.genIn({
         element:'evBody',
         address:'|site|page/|currentPage|/GetList',
         type:'POST',
@@ -18,7 +18,7 @@ function paginate(id) {
 
 function pushEvent(id) {
 
-    mwceAPI.genIn({
+    mwce.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/PushEvent?id='+id,
         before:function () {
@@ -39,7 +39,7 @@ function pushEvent(id) {
 
             }
             catch (e){
-                mwceAPI.alert(e.message,'Ошибка!');
+                mwce.alert(e.message,'Ошибка!');
             }
 
         }
@@ -47,7 +47,7 @@ function pushEvent(id) {
 }
 
 function goToLink(id,link) {
-    mwceAPI.genIn({
+    mwce.genIn({
         noresponse:true,
         address:'|site|page/|currentPage|/ReadEvent?id='+id,
         callback:function () {
@@ -60,13 +60,13 @@ function goToLink(id,link) {
 }
 
 function isReadEvent(id) {
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Подтвердить',
         text:'Вы уверены, что хотите отметить выбранное событие как прочитанное?',
         buttons:{
             'Да':function () {
-                mwceAPI.confirm.close();
-                mwceAPI.genIn({
+                mwce.confirm.close();
+                mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ReadEvent?id='+id,
                     before:function () {
@@ -78,19 +78,19 @@ function isReadEvent(id) {
                 });
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     });
 }
 function isReadAllEvent() {
-    mwceAPI.confirm({
+    mwce.confirm({
         title:'Подтвердить',
         text:'Вы уверены, что хотите отметить все события как прочитанное?',
         buttons:{
             'Да':function () {
-                mwceAPI.confirm.close();
-                mwceAPI.genIn({
+                mwce.confirm.close();
+                mwce.genIn({
                     address:'|site|page/|currentPage|/SetAllRead',
                     callback:function () {
                         evFilter();
@@ -98,7 +98,7 @@ function isReadAllEvent() {
                 });
             },
             'Нет':function () {
-                mwceAPI.confirm.close();
+                mwce.confirm.close();
             }
         }
     });

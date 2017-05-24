@@ -1,23 +1,23 @@
-var mwceAPI = {};
+var mwce = {};
 
-mwceAPI.waitAsync = true;
-mwceAPI.debugMode = false;
+mwce.waitAsync = true;
+mwce.debugMode = false;
 
-mwceAPI._isOpenAjax = false;
-mwceAPI.errors = [];
-mwceAPI.lang = {};
+mwce._isOpenAjax = false;
+mwce.errors = [];
+mwce.lang = {};
 
-mwceAPI.ajax = function (params) {
+mwce.ajax = function (params) {
 
     if(!params["dataType"]){
         params["dataType"] = 'html';
-        if(mwceAPI.debugMode)
+        if(mwce.debugMode)
             console.warn('-> dataType is empty. Default set html');
     }
 
     if(!params["type"]){
         params["type"] = 'GET';
-        if(mwceAPI.debugMode)
+        if(mwce.debugMode)
             console.warn('-> type is empty. Default set GET');
     }
     else{
@@ -27,7 +27,7 @@ mwceAPI.ajax = function (params) {
     if(!params["data"]){
         params["data"] = "";
 
-        if(mwceAPI.debugMode && params["type"] !== 'GET')
+        if(mwce.debugMode && params["type"] !== 'GET')
             console.warn('-> Maybe send data is empty!');
     }
 
@@ -35,7 +35,7 @@ mwceAPI.ajax = function (params) {
         throw 1;
     }
 
-    if (mwceAPI.waitAsync && mwceAPI._isOpenAjax){
+    if (mwce.waitAsync && mwce._isOpenAjax){
         throw 2;
     }
 
@@ -47,7 +47,7 @@ mwceAPI.ajax = function (params) {
         dataType: params["dataType"],//xml, json, jsonp, script, html, text
         async: true,
         beforeSend: function(){
-            mwceAPI._isOpenAjax = true;
+            mwce._isOpenAjax = true;
 
             if(params["loadicon"] && params["element"])
             {
@@ -61,7 +61,7 @@ mwceAPI.ajax = function (params) {
         },
         success: function(response)
         {
-            mwceAPI._isOpenAjax = false;
+            mwce._isOpenAjax = false;
             if(params["element"])
             {
                 $('#' + params["element"]).empty();
@@ -80,7 +80,7 @@ mwceAPI.ajax = function (params) {
         },
         error:  function(jqXHR, textStatus, errorThrown){
 
-            mwceAPI._isOpenAjax = false;
+            mwce._isOpenAjax = false;
 
             if(params["error"])
             {
@@ -109,7 +109,7 @@ mwceAPI.ajax = function (params) {
     });
 };
 
-mwceAPI.genIn = function (params) {
+mwce.genIn = function (params) {
     if (params["type"]) {
         params["type"] = params["type"].toUpperCase();
     }
@@ -119,14 +119,14 @@ mwceAPI.genIn = function (params) {
     }
 
     try {
-        mwceAPI.ajax(params);
+        mwce.ajax(params);
     }
     catch (e) {
         if (typeof e == 'number') {
-            var msg = mwceAPI.errors[e] ? mwceAPI.errors[e] : 'error ' + e;
+            var msg = mwce.errors[e] ? mwce.errors[e] : 'error ' + e;
             console.warn(' -> ',msg);
             if(params['alertErrors']){
-                mwceAPI.alert(msg);
+                mwce.alert(msg);
             }
         }
         else {
@@ -135,13 +135,13 @@ mwceAPI.genIn = function (params) {
     }
 };
 
-mwceAPI.alert = function (msg,title) {
+mwce.alert = function (msg,title) {
 
     if(!msg){
         msg = 'em.. message text is empty 0_o';
     }
     if(!title){
-        title = mwceAPI.lang['alertTitle'] ? mwceAPI.lang['alertTitle'] : 'Warning!';
+        title = mwce.lang['alertTitle'] ? mwce.lang['alertTitle'] : 'Warning!';
     }
 
     $('<div/>').dialog({
@@ -161,23 +161,23 @@ mwceAPI.alert = function (msg,title) {
     });
 };
 
-mwceAPI.confirm = function (params){
-    mwceAPI.confirm.close();
+mwce.confirm = function (params){
+    mwce.confirm.close();
 
     if(params instanceof Object){
 
         if(!params['title']){
-            params['title'] = mwceAPI.lang['alertTitle'] ? mwceAPI.lang['alertTitle'] : 'Attention!';
+            params['title'] = mwce.lang['alertTitle'] ? mwce.lang['alertTitle'] : 'Attention!';
         }
 
         if(!params['text']){
-            console.warn('[mwceAPI.confirm]: params[text] is empty!');
+            console.warn('[mwce.confirm]: params[text] is empty!');
             return;
         }
 
         if(params['buttons'] === undefined || !(params['buttons'] instanceof Object))
         {
-            console.warn('[mwceAPI.confirm]: params[buttons] is empty or wrong!');
+            console.warn('[mwce.confirm]: params[buttons] is empty or wrong!');
             return;
         }
 
@@ -195,7 +195,7 @@ mwceAPI.confirm = function (params){
             modal: true,
             buttons:params['buttons'],
             open:function () {
-                mwceAPI.confirm._body = this;
+                mwce.confirm._body = this;
                 this.innerHTML = params['text'];
             },
             close:function () {
@@ -208,27 +208,27 @@ mwceAPI.confirm = function (params){
     }
 };
 
-mwceAPI.confirm.close = function () {
-    if(mwceAPI.confirm._body){
-        $(mwceAPI.confirm._body).dialog('close');
+mwce.confirm.close = function () {
+    if(mwce.confirm._body){
+        $(mwce.confirm._body).dialog('close');
     }
 };
 
-mwceAPI.replacePoint = function (obj) {
+mwce.replacePoint = function (obj) {
     obj.value = obj.value.replace(/\,/, ".");
 };
 
-mwceAPI.AddObjNDS = function (objID) {
+mwce.AddObjNDS = function (objID) {
     var _o = document.querySelector('#' + objID);
     _o.value = (_o.value * 1.18).toFixed(2);
 };
 
-mwceAPI.DelObjNDS = function (objID) {
+mwce.DelObjNDS = function (objID) {
     var _o = document.querySelector('#' + objID);
     _o = (_o.value * 100 / 118).toFixed(2);
 };
 
-mwceAPI.ObjNumbersOnly = function (obj) {
+mwce.ObjNumbersOnly = function (obj) {
     if(obj.value){
         var value = obj.value;
         if(value.length>0)
@@ -242,11 +242,11 @@ mwceAPI.ObjNumbersOnly = function (obj) {
     }
 };
 
-mwceAPI.implode = function ( glue, pieces) {
+mwce.implode = function ( glue, pieces) {
     return ( ( pieces instanceof Array ) ? pieces.join ( glue ) : pieces );
 };
 
-mwceAPI.htmlspecialchars_decode = function (string, quoteStyle) {
+mwce.htmlspecialchars_decode = function (string, quoteStyle) {
     /**
      *  eslint-disable-line camelcase
      *  discuss at: http://locutus.io/php/htmlspecialchars_decode/
@@ -321,11 +321,11 @@ mwceAPI.htmlspecialchars_decode = function (string, quoteStyle) {
 
 //todo: в релизе сжать код.
 
-mwceAPI.errors[1] = 'Не указан параметр \'address\' в ajax.';
-mwceAPI.errors[2] = 'Предыдущее действие еще не завершено. Пожалуйста, попробуйте еще раз позднее';
+mwce.errors[1] = 'Не указан параметр \'address\' в ajax.';
+mwce.errors[2] = 'Предыдущее действие еще не завершено. Пожалуйста, попробуйте еще раз позднее';
 
 
-mwceAPI.lang = {
+mwce.lang = {
     'alertTitle' : 'Внимание'
 };
 
