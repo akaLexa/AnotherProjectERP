@@ -59,7 +59,7 @@ class Router
      */
     protected static $accessor;
 
-    /*
+    /**
      * Router constructor.
      */
     private function __construct()
@@ -226,6 +226,20 @@ class Router
      */
     public static function setCurAction($action){
         self::$curAction = $action;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getCurController(){
+        return self::$curController;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getCurAction(){
+        return self::$curAction;
     }
 
     /**

@@ -30,9 +30,8 @@ class Logs
             $dbh->SQLog($text . '<br> Uri:' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES), $errf, $ec);
         }
         catch (\Exception $e){
-            self::textLog(1,$e->getMessage().' WHEN try to log something else o0');
+            self::textLog(1,$e->getMessage().', file:'.$e->getFile().' WHEN try to log something else o0');
         }
-
     }
 
     /**

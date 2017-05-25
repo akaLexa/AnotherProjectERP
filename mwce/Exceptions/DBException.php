@@ -7,7 +7,6 @@
  *
  **/
 namespace mwce\Exceptions;
-
 use mwce\Tools\Logs;
 
 /**

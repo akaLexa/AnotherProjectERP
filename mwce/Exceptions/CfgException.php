@@ -7,6 +7,7 @@
  *
  **/
 namespace mwce\Exceptions;
+use mwce\Tools\Logs;
 
 
 /**
@@ -19,5 +20,6 @@ class CfgException extends \Exception
     public function __construct($message='', $code = 2, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
+        Logs::log($this);
     }
 }

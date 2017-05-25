@@ -45,7 +45,7 @@ class Configs
      */
     public static function writeCfg($config,$filename,$build = "default")
     {
-        if($build!="main")
+        if($build != "main")
             $configDir = baseDir.DIRECTORY_SEPARATOR."build".DIRECTORY_SEPARATOR.$build.DIRECTORY_SEPARATOR."configs";
         else
             $configDir = baseDir.DIRECTORY_SEPARATOR."configs";
@@ -55,10 +55,10 @@ class Configs
 
         if (file_exists($path)) //если есть конфиг - делаем бекапчик
         {
-            @rename($path,$repath);
+            rename($path,$repath);
         }
 
-        $handle = fopen($path,"w");
+        $handle = fopen($path,'w');
         fwrite($handle,serialize($config));
         fclose($handle);
     }

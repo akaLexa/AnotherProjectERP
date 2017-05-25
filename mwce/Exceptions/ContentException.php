@@ -7,6 +7,7 @@
  *
  **/
 namespace mwce\Exceptions;
+use mwce\Tools\Logs;
 
 /**
  * ошибки в шаблонизаторе
@@ -19,5 +20,6 @@ class ContentException extends \Exception
     public function __construct($message="", $code =4, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
+        Logs::log($this);
     }
 }

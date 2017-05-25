@@ -666,7 +666,7 @@ class Content
         else
             $this->replace('errTitle','title');
 
-        if ($erNum instanceof \Exception && !empty(Configs::globalCfg('errorLevel')) && Configs::globalCfg('errorLevel') > 0) {
+        if (($erNum instanceof \Exception || $erNum instanceof \Throwable) && !empty(Configs::globalCfg('errorLevel')) && Configs::globalCfg('errorLevel') > 0) {
             $this->set('msg_desc', $this->getVal('err' . $erNum->getCode()).': '.$erNum->getMessage());
         }
         else {
