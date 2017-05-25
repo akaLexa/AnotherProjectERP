@@ -10,7 +10,7 @@ namespace build\erp\plugins;
 use build\erp\plugins\m\mLogin;
 use mwce\Tools\Configs;
 use mwce\Controllers\PluginController;
-use mwce\Routing\router;
+use mwce\Routing\Router;
 use mwce\Tools\Tools;
 
 class Login extends PluginController
@@ -51,11 +51,11 @@ class Login extends PluginController
 
             $cfg = Configs::readCfg('main', Configs::currentBuild());
             if (!empty($cfg['defpage']) && Configs::userID()>0) {
-                router::setCurController($cfg['defpage']);
-                router::setCurAction('actionErrorInLogin');
+                Router::setCurController($cfg['defpage']);
+                Router::setCurAction('actionErrorInLogin');
             }
             else
-                router::setCurController('MainPage');
+                Router::setCurController('MainPage');
             $this->view->out('Login', 'plugin_' . $this->className);
 
         }

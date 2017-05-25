@@ -394,7 +394,6 @@ class tabProjectPlan extends AProjectTabs
                         ->add_dict($this->project)
                         ->set('stageList',html::select($stages,'tbStageList',0,'class="form-control inlineBlock"'))
                         ->set('userList',html::select($users,'tbGroupList',0,'class="form-control inlineBlock" onchange="genUserFromGroup(\'tdUserList\',this.value)"'))
-                        //->set('userList',html_::select($users,'tbUserList',router::getCurUser(),'class="form-control inlineBlock"'))
                         ->set('curSettings', json_encode($curSettings))
                         ->out('addStageForm',$this->className);
                 }

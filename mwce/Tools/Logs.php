@@ -21,7 +21,7 @@ class Logs
                 $text = $errNum->getMessage() . ' Line: ' . $errNum->getLine();
             } else {
                 $ec = $errNum;
-                $errf = 'router';
+                $errf = 'Router';
             }
 
             if(empty($_SERVER['REQUEST_URI']))

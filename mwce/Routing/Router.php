@@ -17,7 +17,7 @@ use mwce\Tools\Logs;
 use mwce\Tools\Tools;
 use mwce\traits\tSingleton;
 
-class router
+class Router
 {
     /**
      * mwce/Traits
@@ -59,8 +59,8 @@ class router
      */
     protected static $accessor;
 
-    /**
-     * router constructor.
+    /*
+     * Router constructor.
      */
     private function __construct()
     {
