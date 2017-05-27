@@ -6,7 +6,7 @@ function checkSerialProject() {
 
     var prj = parseInt(document.querySelector('#projectNum').value);
     if (prj !== undefined) {
-        mwce.mwce.genIn({
+        mwce.genIn({
             address:'|site|page/|currentPage|/CheckProjectNum',
             type:'POST',
             data:'projectNum='+prj,
