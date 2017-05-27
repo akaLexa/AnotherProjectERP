@@ -64,7 +64,10 @@ class Login extends PluginController
                 session_destroy();
                 Tools::go();
             }
-            $this->view->out('LoginIn','plugin_'.$this->className);
+            //default
+            $this->view
+                ->set('uid',(file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'imgs' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . Configs::userID() . '.png') ? Configs::userID() : 'default'))
+                ->out('LoginIn','plugin_'.$this->className);
         }
     }
 
