@@ -486,11 +486,7 @@ function clearModuleCache() {
         buttons:{
             'Да':function () {
                 mwce.genIn({
-                    noresponse:true,
                     address:'|site|page/|currentPage|/ClearModuleCache',
-                    before:function () {
-                        document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
-                    },
                     callback:function () {
                         mwce.confirm.close();
                     }
@@ -629,9 +625,6 @@ function clearPluginCache() {
                 mwce.genIn({
                     noresponse:true,
                     address:'|site|page/|currentPage|/ClearPluginCache',
-                    before:function () {
-                        document.querySelector('#for_mwce_confirm').innerHTML = 'Думаю, подождите, пожалуйста...';
-                    },
                     callback:function () {
                         mwce.confirm.close();
                     }
@@ -1007,9 +1000,6 @@ function menuRefresh() {
                     noresponse:true,
                     address:'|site|page/|currentPage|/ClearMenuCache',
                     type:'POST',
-                    before:function () {
-                       document.querySelector('#for_mwce_confirm').style.opacity = 0.3;
-                    },
                     callback:function (){
                         mwce.confirm.close();
                     }

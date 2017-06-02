@@ -8,6 +8,7 @@
  **/
 namespace build\erp\inc;
 use build\erp\inc\interfaces\iConfigurable;
+use build\erp\user\m\mUserCart;
 use mwce\db\Connect;
 use mwce\Tools\Date;
 use mwce\Models\Model;
@@ -70,7 +71,7 @@ ORDER BY tu.col_Sername")->fetchAll(static::class);
 
     /**
      * @param int $id
-     * @return User
+     * @return User|mUserCart
      */
     public static function getCurModel($id)
     {
