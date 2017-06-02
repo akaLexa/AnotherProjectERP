@@ -69,7 +69,7 @@ class Router
             $data = URLparser::Parse();
             $this->parseData = $data;
 
-            $tmp_ = require_once baseDir . '/configs/configs.php';
+            $tmp_ = require_once baseDir .  DIRECTORY_SEPARATOR . 'configs' . DIRECTORY_SEPARATOR . 'configs.php';
 
             if(!empty($this->parseData['build'])){
                 $tmp_['defaultBuild'] = $this->parseData['build'];

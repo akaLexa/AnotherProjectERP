@@ -143,7 +143,7 @@ class PluginController extends Controller
      */
     protected function cacheDif($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_plugin_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->curLang() . "_plugin_$fname";
 
         if (file_exists($path)) {
             return time() - filemtime($path);
@@ -158,7 +158,7 @@ class PluginController extends Controller
      */
     protected function cacheDelete($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_plugin_" . $this->className . "_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->curLang() . "_plugin_" . $this->className . "_$fname";
 
         if (file_exists($path)) {
             unlink($path);
@@ -187,7 +187,7 @@ class PluginController extends Controller
      */
     protected function cacheGive($fname)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_plugin_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->curLang() . "_plugin_$fname";
 
         if (file_exists($path)) {
             return file_get_contents($path);
@@ -203,7 +203,7 @@ class PluginController extends Controller
      */
     protected function cacheWrite($fname, $content)
     {
-        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->cLAng() . "_plugin_$fname";
+        $path = baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "_dat" . DIRECTORY_SEPARATOR . "cache" . DIRECTORY_SEPARATOR . $this->view->curLang() . "_plugin_$fname";
         $h = fopen($path, "w");
         fwrite($h, $content);
         fclose($h);

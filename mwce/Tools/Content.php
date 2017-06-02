@@ -26,12 +26,6 @@ class Content
     private $vars = array();
 
     /**
-     * @var int
-     * 1/0 показывать или нет пустые переменные
-     */
-    private $debug;
-
-    /**
      * @var string
      * текущее название темы
      */
@@ -50,10 +44,10 @@ class Content
     private $adr;
 
     /**
-     * @var string
-     * разделитель
+     * @var array
+     * разделитель 0 - левый 1 - правый
      */
-    private $separator;
+    private $separator = [];
 
     /**
      * @var string
@@ -75,15 +69,9 @@ class Content
 
     /**
      * @var array
-     * список подключеаемых css файлов
+     * подключенные скрипты css/js/ и т.д.
      */
-    private $connectCss = array();
-
-    /**
-     * @var array
-     * список подключеаемых js файлов
-     */
-    private $connectjs = array();
+    private $attScripts = [];
 
     /**
      * @var string
@@ -105,37 +93,48 @@ class Content
     );
 
     /**
+     * @var array
+     * отрезки по тегам из общего шаблона
+     */
+    private $segments = [];
+    /**
+     * @var array
+     * 0 => folder 1 => name
+     */
+    private $curTemplate = [];
+
+    /**
      * @var string
      * отображаемая по умолчанию главная страница
      */
     public $defHtml = 'index';
+
 
     /**
      * @param string $adr - адресс сайта
      * @param string $theme - назщвание темы
      * @param string $lang - язык
      * @param string $separator - суффикс и преффикс показывающий признак, что слово ключевое
-     * @param int $debug - 1 - режим дебага, пр икотором все не заполненные ключевые фразы видны
      * @throws /Exception
      */
-    public function __construct($adr, $theme, $lang, $separator = "|", $debug = 0)
+    public function __construct($adr, $theme, $lang, $separator = ['|','|'] )
     {
-        $this->debug = $debug;
         $this->clang = $lang;
         $this->themName = $theme;
         $this->adr = $adr;
         $this->separator = $separator;
 
         $this->vars['baseVals'] = array(
-            $this->separator . 'site' . $this->separator => $this->adr,
-            $this->separator . 'theme' . $this->separator => $this->themName,
-            $this->separator . 'global_js' . $this->separator => "",
-            $this->separator . 'global_css' . $this->separator => "",
+            $this->separator[0] . 'site' . $this->separator[1] => $this->adr,
+            $this->separator[0] . 'theme' . $this->separator[1] => $this->themName,
+            $this->separator[0] . 'global_js' . $this->separator[1] => '',
+            $this->separator[0] . 'global_css' . $this->separator[1] => '',
         );
 
         $this->add_dict('site'); //если есть общий словарь, то подгружаем
 
         $path = baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'index.html';
+
         if (!file_exists($path)) {
             throw new ContentException("there is no theme \"{$this->themName}\" or " . $this->themName . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "public" . DIRECTORY_SEPARATOR . "index.html doesn't exists.");
         }
@@ -148,18 +147,208 @@ class Content
      */
     static public function gContent($path)
     {
-        return @file_get_contents($path);
+        if(file_exists($path))
+            return file_get_contents($path);
+        return '';
+    }
+
+    /**
+     * анализ шаблона
+     * @param string $tplName
+     * @param string $folder
+     * @return Content $this
+     */
+    public function parseTemplate($tplName,$folder){
+        if(!empty($this->curModule)){
+            $module = $this->curModule;
+        }
+        else{
+            $module = 'commonStack';
+        }
+
+        $this->curTemplate = [$folder,$tplName];
+
+        $path = baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $tplName . '.html';
+        if(file_exists($path)){
+            $tpl = self::gContent($path);
+            preg_match_all("/(".preg_quote($this->separator[0]).")+(\/)?(\w){1,}(".preg_quote($this->separator[1]).")+/", $tpl, $matches);
+            if(!empty($matches[0])){
+                $tagAreas = [];
+                $i =0;
+                foreach ($matches[0] as $_id=>$keys){
+                    $i++;
+                    $j=0;
+                    $keys = str_replace('|','',$keys);
+                    foreach ($matches[0] as $__id => $subKeys){
+                        $j++;
+
+                        $subKeys = str_replace($this->separator,'',$subKeys);
+                        if ($subKeys == '/'.$keys){
+                            $tagAreas[] = $keys;
+                            unset($matches[0][$__id],$matches[0][$_id]);
+                            break;
+                        }
+                    }
+                }
+
+                if(!empty($tagAreas)){
+                    foreach ($tagAreas as $tag){
+                        preg_match("#". preg_quote($this->separator[0].$tag.$this->separator[1]).'(.+?)'.preg_quote($this->separator[0].'/'.$tag.$this->separator[1]).'#s', $tpl, $matches);
+
+                        if(!empty($matches)){
+                            $this->segments[$module][$tag] = $matches;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * парсинг шабона между тегами {some_tag} string... {/some_tag}
+     * thx to codeigniter
+     * @param string $tag тег, вокруг которого пляски
+     * @param array $data словарь
+     * @param string $content адрес
+     * @param string $folder папка, где искать шаблон
+     * @return Content
+     */
+    public function loops($tag, $data, $content, $folder = 'public')
+    {
+        $path = baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $content . '.html';
+
+        if (file_exists($path)) {
+            $content = self::gContent($path);
+        }
+        else {
+            return $this;
+        }
+
+        $this->_loop($tag,$data,$content);
+
+        return $this;
+    }
+
+    private function _loop($tag,$data,$content){
+        preg_match_all('#' . preg_quote($this->separator[0] . $tag . $this->separator[1]) . '(.+?)' . preg_quote($this->separator[0] . '/' . $tag . $this->separator[1]) . '#s', $content, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $str = '';
+            foreach ($data as $row) {
+
+                $temp = array();
+                foreach ($row as $key => $val) {
+                    if (is_array($val) || is_object($val)) {
+                        $this->_loop($key, $val, $match[1]);
+                        continue;
+                    }
+
+                    $temp[$this->separator[0] . $key . $this->separator[1]] = $val;
+                }
+
+                $str .= strtr($match[1], $temp);
+            }
+
+            if (!empty($this->curModule)) {
+                $this->vars[$this->curModule][$match[0]] = $str;
+            }
+            else {
+                $this->vars[$match[0]] = $str;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $tag
+     * @param array $data
+     * @return Content $this
+     */
+    public function loopInSegment($tag,$data){
+        if(!empty($this->curTemplate)) {
+
+            if(!empty($this->curModule)){
+                $module = $this->curModule;
+            }
+            else{
+                $module = 'commonStack';
+            }
+
+            if (!empty($this->segments[$module][$tag])) {
+                $this->_loop($tag, $data, $this->segments[$module][$tag][0]);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * вывод на экран только сегмента под тегами $segment
+     * @param string $segment
+     */
+    public function outSegment($segment){
+        if(!empty($this->curTemplate)) {
+
+            if(!empty($this->curModule)){
+                $module = $this->curModule;
+            }
+            else{
+                $module = 'commonStack';
+            }
+            if (!empty($this->segments[$module][$segment])) {
+                $content = $this->segments[$module][$segment][0];
+                if (!empty($this->curModule) && !empty($this->vars[$this->curModule]) && is_array($this->vars[$this->curModule])) {
+                    $content = strtr($content, $this->vars[$this->curModule]);
+                }
+
+                $ars = [];
+                $ai = new \ArrayIterator($this->vars);
+                foreach ($ai as $id => $val) {
+                    if (!is_array($val)) {
+                        $ars[$id] = $val;
+                    }
+                }
+
+                $content = strtr($content, $ars);
+                $content = strtr($content, $this->vars['baseVals']);
+
+                if (!empty($this->segments)) {
+                    if (!empty($this->curModule)) {
+                        $module = $this->curModule;
+                    }
+                    else {
+                        $module = 'commonStack';
+                    }
+
+                    if (!empty($this->segments[$module])) {
+                        $tags = array_keys($this->segments[$module]);
+
+                        foreach ($tags as $tag) {
+                            $content = str_replace($this->segments[$module][$tag][0], '', $content);
+                            unset($this->segments[$module][$tag]);
+                        }
+                    }
+                }
+
+                $content = preg_replace("/[" . $this->separator[0] . "]+[A-Za-z0-9_]{1,25}[" . $this->separator[1] . "]+/", ' ', $content);
+
+                $this->container .= $content;
+            }
+        }
     }
 
     /**
      * выставить имя текущего контейнера
      * @param string $name
      * @return Content
+     * @throws \mwce\Exceptions\ContentException
      * @throws /Exception
      */
     public function setName($name)
     {
-        if (in_array($name, $this->deniedArray)) {
+        if (in_array($name, $this->deniedArray, true)) {
             throw new ContentException(" you can't use $name for object name");
         }
 
@@ -169,8 +358,7 @@ class Content
             unset($this->adedDic[$name]);
         }
 
-
-        self::add_dict($name);
+        $this->add_dict($name);
 
         return $this;
     }
@@ -211,7 +399,7 @@ class Content
      */
     public function getVal($id, $cname = NULL)
     {
-        $id = $this->separator . $id . $this->separator;
+        $id = $this->separator[0] . $id . $this->separator[1];
 
         if (is_null($cname) && empty($this->curModule)) {
             if(!empty($this->vars[$id]))
@@ -243,7 +431,7 @@ class Content
     /**
      * Добавляет язык к контенту
      *
-     * @param  string $file - название файла "словаря"
+     * @param  array|string $file - название файла "словаря"
      * @param  bool $isJSON - json ворфмат или нет
      * @return Content
      */
@@ -260,22 +448,23 @@ class Content
             foreach ($file as $d => $v) {
 
                 if (!empty($this->curModule)) {
-                    $this->vars[$this->curModule][$this->separator . $d . $this->separator] = $v;
+                    $this->vars[$this->curModule][$this->separator[0] . $d . $this->separator[1]] = $v;
                 }
                 else {
-                    $this->vars[$this->separator . $d . $this->separator] = $v;
+                    $this->vars[$this->separator[0] . $d . $this->separator[1]] = $v;
                 }
             }
 
         }
         else {
 
-            $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . "build" . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . ".php");
+            $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . '.php');
 
             if(!empty($lang)){
-                if($file == 'titles'){
+                /*if($file == 'titles'){
 
-                }
+                }*/
+
                 if (!empty($this->adedDic[$file])) // если словарь уже подключен, второй раз лопатить смысла нет
                 {
                     return $this;
@@ -285,10 +474,10 @@ class Content
 
                     foreach ($lang as $d => $v) {
                         if (!empty($this->curModule)) {
-                            $this->vars[$this->curModule][$this->separator . $d . $this->separator] = $v;
+                            $this->vars[$this->curModule][$this->separator[0] . $d . $this->separator[1]] = $v;
                         }
                         else {
-                            $this->vars[$this->separator . $d . $this->separator] = $v;
+                            $this->vars[$this->separator[0] . $d . $this->separator[1]] = $v;
                         }
                     }
                     $this->adedDic[$file] = 1;
@@ -303,7 +492,7 @@ class Content
      *
      * @return string
      */
-    public function cLAng()
+    public function curLang()
     {
         return $this->clang;
     }
@@ -324,10 +513,10 @@ class Content
         }
         else {
             if (!empty($this->curModule)) {
-                $this->vars[$this->curModule][$this->separator . $name . $this->separator] = $val;
+                $this->vars[$this->curModule][$this->separator[0] . $name . $this->separator[1]] = $val;
             }
             else {
-                $this->vars[$this->separator . $name . $this->separator] = $val;
+                $this->vars[$this->separator[0] . $name . $this->separator[1]] = $val;
             }
         }
 
@@ -342,10 +531,10 @@ class Content
     public function setEmpty($name){
 
         if (!empty($this->curModule)) {
-            $this->vars[$this->curModule][$this->separator . $name . $this->separator] = '';
+            $this->vars[$this->curModule][$this->separator[0] . $name . $this->separator[1]] = '';
         }
         else {
-            $this->vars[$this->separator . $name . $this->separator] = '';
+            $this->vars[$this->separator[0] . $name . $this->separator[1]] = '';
         }
         return $this;
     }
@@ -359,12 +548,12 @@ class Content
     public function replace($what, $where)
     {
         if (!empty($this->curModule)
-            && !empty($this->vars[$this->curModule][$this->separator . $what . $this->separator])
+            && !empty($this->vars[$this->curModule][$this->separator[0] . $what . $this->separator[1]])
         ) {
-            $this->set($where, $this->vars[$this->curModule][$this->separator . $what . $this->separator]);
+            $this->set($where, $this->vars[$this->curModule][$this->separator[0] . $what . $this->separator[1]]);
         }
-        else if (!empty($this->vars[$this->separator . $what . $this->separator])) {
-            $this->set($where, $this->vars[$this->separator . $what . $this->separator]);
+        else if (!empty($this->vars[$this->separator[0] . $what . $this->separator[1]])) {
+            $this->set($where, $this->vars[$this->separator[0] . $what . $this->separator[1]]);
         }
 
         return $this;
@@ -375,7 +564,7 @@ class Content
      */
     public function clearContainer()
     {
-        $this->container = "";
+        $this->container = '';
     }
 
     /**
@@ -433,27 +622,24 @@ class Content
     /**
      * функция выводит на экран или возвращает строку с содержимым шаблона и скрипта
      * @param string $tpl - название шаблона
-     * @param int $type -
-     * 1 = данные собираются в контенер, иначе просто выводятся на экран?
-     * 2 = возвращается в виде строки
      * @param string $folder - папка под группу файлов (обычно для модуля)
-     * @param int $gentime , вывод времени генерации скрипта, если не 0
      * @return mixed|string
      */
-    public function out($tpl, $folder = "", $type = 1, $gentime = 0)
+    public function out($tpl, $folder = '')
     {
         if (empty($folder)) {
-            $folder = "public";
+            $folder = 'public';
         }
 
-        $path = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $tpl . ".html";
+        $path = baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $tpl . '.html';
 
         if (file_exists($path)) {
-            $this->inputScripts($folder, $tpl); //подключаемые css, js скрипты
 
-            if ($gentime != 0) {
-                $this->vars[$this->separator . "gentime" . $this->separator] = round(microtime() - $gentime, 4);
-            }
+            $this->loadScripts('js' . DIRECTORY_SEPARATOR,$folder.'.'.$tpl.'.js');
+            $this->loadScripts('html' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR,$folder.'.'.$tpl.'.js');
+
+            $this->loadScripts('css' . DIRECTORY_SEPARATOR,$folder.'.'.$tpl.'.css',2);
+            $this->loadScripts('html' . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR,$folder.'.'.$tpl.'.css',2);
 
             //region collect_dictionary
             $content = self::gContent($path);
@@ -462,7 +648,6 @@ class Content
                 && !empty($this->vars[$this->curModule])
                 && is_array($this->vars[$this->curModule]))
             {
-
                 $content = strtr($content, $this->vars[$this->curModule]);
             }
 
@@ -474,148 +659,80 @@ class Content
             }
 
             $content = strtr($content, $ars);
-
-
-
             $content = strtr($content, $this->vars['baseVals']);
-
-            if ($this->debug == 0) {
-                $content = preg_replace("/[\{$this->separator}]+[A-Za-z0-9_]{1,25}[\{$this->separator}]+/", " ", $content);
-            }
-
             //endregion
 
-            if ($type == 1 && $this->notWrite == 0) //если собираем
+            //region clean unused tags
+
+            if(empty($this->segments)){
+                $this->parseTemplate($tpl,$folder);
+            }
+
+            if(!empty($this->segments)) {
+                if (!empty($this->curModule)) {
+                    $module = $this->curModule;
+                }
+                else {
+                    $module = 'commonStack';
+                }
+
+                if (!empty($this->segments[$module])) {
+                    $tags = array_keys($this->segments[$module]);
+
+                    foreach ($tags as $tag) {
+                        $content = str_replace ( $this->segments[$module][$tag][0] , '', $content);
+                        unset($this->segments[$module][$tag]);
+                    }
+                }
+            }
+
+            $content = preg_replace("/[".$this->separator[0]."]+[A-Za-z0-9_]{1,25}[".$this->separator[1]."]+/", ' ', $content);
+            //endregion
+
+            if ($this->notWrite == 0) //если собираем
             {
                 $this->container .= $content;
             }
             else {
-                if ($type != 2) {
-                    echo $content;
-                }
+                echo $content;
             }
 
             return $content;
         }
-        else {
-            $this->errortext("file \"$path\" doesn't exists");
-        }
+
+        $this->errortext("file \"$path\" doesn't exists");
+
         return '';
     }
 
     /**
-     * парсинг шабона между тегами {some_tag} string... {/some_tag}
-     * thx to codeigniter
-     * @param string $tag тег, вокруг которого пляски
-     * @param array $data словарь
-     * @param string $content адрес
-     * @param string $folder папка, где искать шаблон
-     * @return Content
+     * подключить скрипты
+     * @param string $address адрес до директории со скриптом (от дирректории с темой)
+     * @param string $name название скрипта
+     * @param int $type 1 = js, 2 = css
      */
-    public function loops($tag, $data, $content, $folder = 'public')
-    {
-        $path = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $content . ".html";
+    public function loadScripts($address,$name,$type = 1){
 
+        $path = baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . $address . $name;
         if (file_exists($path)) {
-            $content = self::gContent($path);
-        }
-        else {
-            return $this;
-        }
 
-        preg_match_all('#' . preg_quote($this->separator . $tag . $this->separator) . '(.+?)' . preg_quote($this->separator . '/' . $tag . $this->separator) . '#s', $content, $matches, PREG_SET_ORDER);
+            $script = strtr(trim(file_get_contents($path)), $this->vars['baseVals']);
 
-        foreach ($matches as $match) {
-            $str = '';
-            foreach ($data as $row) {
-                if (!is_array($row) && !is_object($row)) {
-                    continue;
-                }
-                $temp = array();
-                foreach ($row as $key => $val) {
-                    if (is_array($val) || is_object($val)) {
-                        $pair = $this->loops($key, $val, $match[1]);
-                        if (!empty($pair) && is_array($pair)) {
-                            $temp = array_merge($temp, $pair);
-                        }
-
-                        continue;
-                    }
-
-                    $temp[$this->separator . $key . $this->separator] = $val;
+            if (!empty($script)) {
+                if (!empty($this->curModule)) {
+                    $script = strtr($script, $this->vars[$this->curModule]);
                 }
 
-                $str .= strtr($match[1], $temp);
-            }
+                if ($type == 1) {
+                    $this->vars['baseVals'][$this->separator[0] . 'global_js' . $this->separator[1]] .= "\r\n/* injected script */\r\n" . $script;
+                }
+                else {
+                    $this->vars['baseVals'][$this->separator[0] . 'global_css' . $this->separator[1]] .= "\r\n/* injected script */\r\n" . $script;
+                }
 
-
-            if (!empty($this->curModule)) {
-                $this->vars[$this->curModule][$match[0]] = $str;
-            }
-            else {
-                $this->vars[$match[0]] = $str;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * добавляем подключаемые скрипты
-     * @param string $folder папка
-     * @param string $tpl название шаблона (без расширения)
-     */
-    public function inputScripts($folder, $tpl)
-    {
-        $jspath = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "js" . DIRECTORY_SEPARATOR . $folder . "." . $tpl . ".js";
-        if (file_exists($jspath)) {
-            if (empty($this->connectjs[$folder . "." . $tpl . ".js"])) {
-
-                $js = strtr(trim(@file_get_contents($jspath)), $this->vars['baseVals']);
-
-                if(!empty($this->curModule))
-                    $js = strtr($js, $this->vars[$this->curModule]);
-
-                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "\r\n/* imputed $tpl */\r\n" . $js;
-                $this->connectjs[$folder . "." . $tpl . ".js"] = 1;
+                $this->attScripts[$name] = 1;
             }
         }
-
-        $jspath1 = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $folder . "." . $tpl . ".js";
-        if (file_exists($jspath1)) {
-            if (empty($this->connectjs[$folder . "." . $tpl . ".js_"])) {
-
-                $js = strtr(trim(@file_get_contents($jspath1)), $this->vars['baseVals']);
-
-                if(!empty($this->curModule))
-                    $js = strtr($js, $this->vars[$this->curModule]);
-
-                $this->vars['baseVals'][$this->separator . "global_js" . $this->separator] .= "\r\n/* imputed $tpl */\r\n " . $js;
-                $this->connectjs[$folder . "." . $tpl . ".js_"] = 1;
-            }
-        }
-
-        $csspath = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "css" . DIRECTORY_SEPARATOR . $folder . "." . $tpl . ".css";
-
-        if (file_exists($csspath)) {
-            if (empty($this->connectCss[$folder . "." . $tpl . ".css"])) {
-
-                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "\r\n{/*imputed $tpl*/}\r\n  " . trim(@file_get_contents($csspath));
-                $this->connectCss[$folder . "." . $tpl . ".css"] = 1;
-            }
-
-        }
-
-        $csspath = baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . $this->themName . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR . $folder . "." . $tpl . ".css";
-
-        if (file_exists($csspath)) {
-            if (empty($this->connectCss[$folder . "." . $tpl . ".css_"])) {
-                $this->vars['baseVals'][$this->separator . "global_css" . $this->separator] .= "\r\n{/*imputed $tpl*/}\r\n  " . trim(@file_get_contents($csspath));
-                $this->connectCss[$folder . "." . $tpl . ".css_"] = 1;
-            }
-
-        }
-
     }
 
     /**
@@ -624,12 +741,12 @@ class Content
      * @param string $args - зарезервированное слово, в которое сольется весь накомпленный контейнер
      * @param string $tpl - файл шаблона, в который все будет сливаться
      * @param string $folder - папка
-     * @param int $gentime - время microtime() для подсчета времени выполнения
      */
-    public function global_out($tpl, $folder = "", $args = "page", $gentime = 0)
+    public function global_out($tpl, $folder = '', $args = 'page')
     {
         $this->setFContainer($args); //суем из контенера в переменную
-        $this->out($tpl, $folder, 0, $gentime);
+        $this->showOnly(true);
+        $this->out($tpl, $folder);
     }
 
     /**
@@ -638,11 +755,11 @@ class Content
      * @param string $msg - заглавие ошибки
      * @param string $descr - подробности ошибки
      */
-    public static function showError($msg, $descr = " ")
+    public static function showError($msg, $descr = ' ')
     {
-        if (file_exists(baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . "error.html")) {
-            $content = file_get_contents(baseDir . DIRECTORY_SEPARATOR . "theme" . DIRECTORY_SEPARATOR . "error.html");
-            $c = array( "|msg|" => $msg, "|msg_desc|" => $descr );
+        if (file_exists(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'error.html')) {
+            $content = file_get_contents(baseDir . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . 'error.html');
+            $c = array( '|msg|' => $msg, '|msg_desc|' => $descr );
             foreach ($c as $key => $val) {
                 $content = str_replace($key, $val, $content);
             }
