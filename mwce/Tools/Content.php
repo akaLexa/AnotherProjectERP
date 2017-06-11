@@ -461,14 +461,9 @@ class Content
             $lang = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $this->clang . DIRECTORY_SEPARATOR . $file . '.php');
 
             if(!empty($lang)){
-                /*if($file == 'titles'){
-
-                }*/
 
                 if (!empty($this->adedDic[$file])) // если словарь уже подключен, второй раз лопатить смысла нет
-                {
                     return $this;
-                }
 
                 if (is_array($lang)) {
 
@@ -703,6 +698,14 @@ class Content
         $this->errortext("file \"$path\" doesn't exists");
 
         return '';
+    }
+
+    /**
+     * отображает на экране только массив, преобраозованный в JSON
+     * @param array $data
+     */
+    public function showJSON($data){
+        $this->container = json_encode($data);
     }
 
     /**
