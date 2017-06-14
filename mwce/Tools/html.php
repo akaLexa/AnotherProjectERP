@@ -39,7 +39,7 @@ class html
             foreach ($args as $id=>$val)
             {
                 $text.="<option value=\"$id\"";
-                if ($chosen === $id && $wassel == 0)
+                if ($chosen == $id && $wassel == 0)
                 {
                     $text.=" SELECTED ";
                     $wassel=1;
