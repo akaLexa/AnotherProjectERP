@@ -30,7 +30,7 @@ class mUserArea extends Model
         $errorCode = $_FILES[$fName]['error'];
 
         if ($errorCode !== UPLOAD_ERR_OK || !is_uploaded_file($filePath)) {
-            $lng = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'file_errors.php');
+            $lng = DicBuilder::getLang(baseDir . DIRECTORY_SEPARATOR . 'build' . Configs::currentBuild() . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . Configs::curLang() . DIRECTORY_SEPARATOR . 'file_errors.php');
             $error = !empty($lng[$errorCode]) ? $lng[$errorCode] : 'Неизвестная ошибка при загрузке файла';
             throw  new \Exception($error);
         }

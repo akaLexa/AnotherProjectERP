@@ -4,6 +4,7 @@ mwce.waitAsync = true;
 mwce.debugMode = false;
 
 mwce._isOpenAjax = false;
+mwce._openNotify = 0;
 mwce.errors = [];
 mwce.lang = {};
 
@@ -199,6 +200,7 @@ mwce.confirm = function (params){
                 this.innerHTML = params['text'];
             },
             close:function () {
+                mwce.confirm._body = undefined;
                 $(this).dialog('destroy');
             }
         });
@@ -206,6 +208,72 @@ mwce.confirm = function (params){
     else{
         console.warn('[mwce_confirm]: params must be a JSON');
     }
+};
+
+mwce.notify = function (msg,title,type,callback) {
+
+    if(!document.querySelector('#_mwce_notifiesDiv')){
+        var MainNotice = document.createElement('div');
+        MainNotice.style.position = 'fixed';
+        MainNotice.style.width = '350px';
+        MainNotice.style.height = 'auto';
+        MainNotice.style.bottom = '5px';
+        MainNotice.style.left = '5px';
+        MainNotice.id = '_mwce_notifiesDiv';
+
+        document.body.appendChild(MainNotice);
+
+        console.log('-> [mwce]: append notice div');
+    }
+
+    mwce._openNotify ++;
+    var types = ['info','warning','danger','success'];
+
+    if(!type){
+        type = 0;
+    }
+
+    if(!title){
+        switch(type) {
+            case 0:
+                title = 'Информация';
+                break;
+            case 1:
+                title = 'Внимание';
+                break;
+            case 2:
+                title = 'Ошибка';
+                break;
+            case 3:
+            case 4:
+                title = 'Уведомление';
+                break;
+        }
+
+    }
+
+    msg = '<strong style="margin-right: 15px;">' + title + '</strong><p>' + msg + '</p>';
+
+    var notice = document.createElement('div');
+    notice.classList.add('alert','alert-'+types[type]);
+    notice.style.float = 'left';
+    notice.style.minWidth = '250px';
+    notice.innerHTML = "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>×</span></button>"+msg;
+
+    $(notice).on('closed.bs.alert', function () {
+        mwce._openNotify--;
+    });
+
+    setTimeout(function () {
+        $(notice).fadeOut(3000,function () {
+            $(notice).alert('close');
+            if(callback)
+                callback();
+        });
+
+    }, 2000);
+
+    document.querySelector('#_mwce_notifiesDiv').append(notice);
 };
 
 mwce.confirm.close = function () {
